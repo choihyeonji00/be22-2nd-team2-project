@@ -23,7 +23,7 @@
 | **김태형** | **Sub Leader** | **🔐 Member & Auth**<br>- Spring Security 기반 인증/인가 (회원가입, 로그인)<br>- **Soft Delete**를 적용한 안전한 회원 탈퇴 처리<br>- 마이페이지 (내 서재, 프로필 관리) |
 | **최현지** | **Core Dev** | **✍️ Writing (Command)**<br>- 문장 작성(Append) 비즈니스 로직 구현<br>- 연속 작성 방지 및 입력 데이터 유효성 검사(Validation)<br>- 이야기 완결(State Transition) 처리 |
 | **윤성원** | **Core Dev** | **📖 Reading (Query)**<br>- 소설 조회 및 검색 최적화 (Read Model 설계)<br>- 장르별/인기별 필터링 및 페이징 처리<br>- 완성된 소설 '책 뷰' 렌더링 API |
-| **정병진** | **Developer** | **❤️ Reaction & Support**<br>- 소설 개추/비추(LIKE/DISLIKE) 투표 기능<br>- 문장별 댓글 및 감상평 CRUD<br>- UI/UX 인터랙션 요소 개발 지원 |
+| **정병진** | **Developer** | **❤️ Reaction & Support**<br>- 문장/소설 투표(LIKE/DISLIKE) 기능<br>- 소설 감상평(댓글) CRUD (문장 댓글 제외)<br>- UI/UX 인터랙션 요소 개발 지원 |
 
 <br>
 
@@ -68,7 +68,70 @@
 
 <br>
 
-## 5. 🗂️ ERD 설계 (Entity Relationship)
+<br>
+
+## 5. 📋 요구사항 및 유스케이스 (Requirements & Use Case)
+
+### ✅ 기능 요구사항 (Functional Requirements)
+
+1.  **회원 (Member)**
+    *   사용자는 이메일과 비밀번호로 **회원가입** 및 **로그인**을 할 수 있다.
+    *   **마이페이지**에서 자신의 프로필과 참여한 소설 목록을 확인할 수 있다.
+    *   회원 탈퇴 시 **Soft Delete** 처리되어 데이터 무결성을 유지해야 한다.
+
+2.  **소설 창작 (Writing)**
+    *   회원은 제목, 장르, 첫 문장을 입력하여 새로운 **소설(방)을 생성**할 수 있다.
+    *   **이어 쓰기:** 현재 순서(`current_sequence`)인 경우에만 다음 문장을 작성할 수 있다.
+    *   **연속 작성 제한:** 본인이 작성한 문장의 바로 다음 순서에는 작성할 수 없다.
+    *   **완결:** 설정된 최대 문장 수(20개)에 도달하면 소설은 자동으로 **완결 상태**가 된다.
+
+3.  **조회 및 감상 (Reading & Interaction)**
+    *   모든 사용자는 소설 목록을 최신순/인기순/장르별로 **필터링**하여 조회할 수 있다.
+    *   완결된 소설은 **'책 뷰' 모드**로 처음부터 끝까지 이어서 읽을 수 있다.
+    *   **투표:** 소설 전체와 개별 문장에 대해 **좋아요(LIKE) / 싫어요(DISLIKE)** 투표를 할 수 있다.
+    *   **댓글:** 소설(Book)에 대한 감상평을 댓글로 남길 수 있다. (문장별 댓글 불가)
+
+<br>
+
+### 👤 유스케이스 다이어그램 (Use Case Diagram)
+
+```mermaid
+usecaseDiagram
+    actor "비회원 (Guest)" as G
+    actor "회원 (Member)" as M
+    
+    package "System (Next Page)" {
+        usecase "회원가입/로그인" as UC1
+        usecase "소설 목록 조회\n(필터링/검색)" as UC2
+        usecase "소설 읽기\n(책 뷰)" as UC3
+        usecase "소설 생성\n(방 만들기)" as UC4
+        usecase "문장 이어 쓰기" as UC5
+        usecase "투표 (개추/비추)\n[소설/문장]" as UC6
+        usecase "댓글 작성\n[소설 Only]" as UC7
+        usecase "마이페이지 확인" as UC8
+        usecase "회원 탈퇴" as UC9
+    }
+
+    G --> UC1
+    G --> UC2
+    G --> UC3
+
+    M --> UC2
+    M --> UC3
+    M --> UC4
+    M --> UC5
+    M --> UC6
+    M --> UC7
+    M --> UC8
+    M --> UC9
+    
+    %% Inheritance
+    M --|> G
+```
+
+<br>
+
+## 6. 🗂️ ERD 설계 (Entity Relationship)
 `users`의 Soft Delete 상태값과 역할별로 명확히 구분된 FK(`writer_id`, `voter_id`) 구조입니다.
 
 ```mermaid
