@@ -489,21 +489,44 @@ src/main/java/com/team2/nextpage
 *   `feature/{domain}/{function}`: 기능 단위 개발 브랜치
     *   Ex) `feature/member/login`, `feature/book/create`
 
-### 💬 Commit Message Convention
-`type: subject` 형식을 준수합니다.
-*   `feat`: 새로운 기능 추가
-*   `fix`: 버그 수정
-*   `docs`: 문서 수정
-*   `style`: 코드 포맷팅, 세미콜론 누락 등 (로직 변경 X)
-*   `refactor`: 코드 리팩토링
-*   `test`: 테스트 코드 추가
-*   `chore`: 빌드 업무, 패키지 매니저 수정
+## 9. 📦 패키지 구조 (Package Structure)
+`com.team2.nextpage` 패키지 하위에 **Command(JPA)** 와 **Query(MyBatis)**, 그리고 **Common** 영역으로 나누어 설계했습니다. 요청/응답(DTO)과 계층별 의존성을 명확히 분리합니다.
 
-### 🌳 SourceTree Workflow
-1.  **브랜치 생성:** `develop`에서 `feature/기능명` 브랜치 생성
-2.  **작업 및 커밋:** 기능 구현 후 `feat: ...` 메시지로 커밋
-3.  **푸시 & PR:** 작업 브랜치 푸시 후 GitHub/GitLab에서 `develop`으로 PR 생성
-4.  **코드 리뷰:** 팀원 리뷰 후 Merge
+```text
+src/main/java/com/team2/nextpage
+├── 📂 common                  // 공통 모듈 (정진호)
+│   ├── 📂 entity              // BaseEntity 등
+│   ├── 📂 error               // ErrorCode, Exception 클래스
+│   ├── 📂 exception           // GlobalExceptionHandler
+│   └── 📂 response            // ApiResponse
+├── 📂 command                 // [CUD] JPA 영역
+│   ├── 📂 member              // 회원 (김태형)
+│   │   ├── 📂 controller
+│   │   ├── 📂 service
+│   │   ├── 📂 repository
+│   │   ├── 📂 entity          // DB Tables (Domain)
+│   │   └── 📂 dto             // Request DTO
+│   ├── 📂 book                // 소설 (최현지)
+│   │   ├── 📂 controller
+│   │   ├── 📂 service
+│   │   ├── 📂 repository
+│   │   ├── 📂 entity
+│   │   └── 📂 dto
+│   └── 📂 reaction            // 반응 (정병진)
+│       ├── 📂 controller
+│       ├── 📂 service
+│       ├── 📂 repository
+│       ├── 📂 entity
+│       └── 📂 dto
+└── 📂 query                   // [R] MyBatis 영역
+    ├── 📂 member              // 회원 조회 (김태형)
+    │   ├── 📂 controller
+    │   ├── 📂 service
+    │   ├── 📂 mapper          // MyBatis Interface
+    │   └── 📂 dto             // Response DTO
+    ├── 📂 book                // 소설 조회 (최현지)
+    └── 📂 reaction            // 반응 조회 (정병진)
+```
 
 <br>
 
