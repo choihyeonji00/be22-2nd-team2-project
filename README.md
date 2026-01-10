@@ -437,5 +437,29 @@ CREATE TABLE `sentence_votes` (
 
 <br>
 
+
+<br>
+
+## 9. 📦 패키지 구조 (Package Structure)
+`com.team2.nextpage` 패키지 하위에 **Command(JPA)** 와 **Query(MyBatis)**, 그리고 **Common** 영역으로 나누어 설계했습니다.
+
+```text
+com.team2.nextpage
+├── common          # 공통 모듈 (정진호)
+│   ├── BaseEntity.java
+│   ├── ApiResponse.java
+│   └── GlobalExceptionHandler.java
+├── command         # [CUD] JPA 영역 (쓰기, 상태 변경)
+│   ├── member      # 회원 (김태형)
+│   ├── book        # 소설/문장 (최현지)
+│   └── reaction    # 댓글/투표 (정병진)
+└── query           # [R] MyBatis 영역 (조회 전용)
+    ├── member      # 회원 조회 (김태형)
+    ├── book        # 소설 조회 (최현지)
+    └── reaction    # 댓글 조회 (정병진)
+```
+
+<br>
+
 ---
 Copyright © 2026 **Team Next Page**. All rights reserved.
