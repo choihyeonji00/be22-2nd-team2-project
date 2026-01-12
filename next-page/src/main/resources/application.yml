@@ -20,7 +20,7 @@ mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
-  type-aliases-package: com.team2.nextpage.query.member.dto, com.team2.nextpage.query.book.dto.response
+  type-aliases-package: com.team2.nextpage.query.member.dto, com.team2.nextpage.query.book.dto.response, com.team2.nextpage.query.reaction.dto.response
 
 # JWT Configuration
 jwt:
