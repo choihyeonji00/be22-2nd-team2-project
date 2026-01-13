@@ -18,4 +18,8 @@ public class CommentDto {
     private String content;
     private String writerNicknm;
     private LocalDateTime createdAt;
+
+    // 대댓글 지원
+    private Long parentId;
+    private java.util.List<CommentDto> children = new java.util.ArrayList<>();
 }

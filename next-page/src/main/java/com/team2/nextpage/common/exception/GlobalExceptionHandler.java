@@ -35,10 +35,13 @@ public class GlobalExceptionHandler {
         log.error("handleMethodArgumentNotValidException", e);
         BindingResult bindingResult = e.getBindingResult();
         StringBuilder sb = new StringBuilder();
-        for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            sb.append("[").append(fieldError.getField()).append("](은)는 ").append(fieldError.getDefaultMessage())
-                    .append(" 입력된 값: [").append(fieldError.getRejectedValue()).append("] ");
+        // Get the first error message to keep it clean, or join them.
+        // Usually showing the first one is enough for a toast.
+        FieldError firstError = bindingResult.getFieldError();
+        if (firstError != null) {
+            sb.append(firstError.getDefaultMessage());
         }
+
         final ApiResponse<Void> response = ApiResponse.error(ErrorCode.INVALID_INPUT_VALUE.getCode(), sb.toString());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -62,6 +65,17 @@ public class GlobalExceptionHandler {
         log.error("handleAccessDeniedException", e);
         final ApiResponse<Void> response = ApiResponse.listError(ErrorCode.ACCESS_DENIED);
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    /**
+     * 로그인 실패 시 발생 (비밀번호 불일치 등)
+     */
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    protected ResponseEntity<ApiResponse<Void>> handleBadCredentialsException(
+            org.springframework.security.authentication.BadCredentialsException e) {
+        log.error("handleBadCredentialsException", e);
+        final ApiResponse<Void> response = ApiResponse.error("LOGIN_FAILED", "이메일 또는 비밀번호가 일치하지 않습니다.");
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
     /**

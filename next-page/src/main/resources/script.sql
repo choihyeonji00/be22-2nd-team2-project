@@ -50,9 +50,11 @@ CREATE TABLE `sentences` (
 -- 5. 댓글 (Comments)
 CREATE TABLE `comments` (
     `comment_id` INT NOT NULL AUTO_INCREMENT,
+    `parent_id` INT NULL COMMENT '대댓글 부모 ID',
     `book_id` INT NOT NULL,
     `writer_id` INT NOT NULL,
     `content` TEXT NOT NULL,
+    `deleted_at` DATETIME NULL COMMENT 'Soft Delete',
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     `updated_at` DATETIME NULL,
     PRIMARY KEY (`comment_id`)

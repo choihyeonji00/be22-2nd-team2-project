@@ -1,6 +1,8 @@
-# 📚 Next Page : 우리가 함께 만드는 이야기
+<div align="center"><img src="images/logo.png" width="300" alt="Next Page Logo"></div>
+
+# 📚 Next Page : 우리가 함께 만드는 실시간 릴레이 소설
 > **"당신의 한 문장이 베스트셀러의 시작이 됩니다."**  
-> 누구나 작가가 되어 릴레이로 소설을 완성하는 집단 지성 창작 플랫폼
+> 누구나 작가가 되어 실시간으로 소설을 완성하는 집단 지성 창작 플랫폼
 
 <br>
 
@@ -29,7 +31,7 @@
 ## 1. 📝 프로젝트 소개
 **Next Page**는 한 사람이 모든 이야기를 쓰는 것이 아니라, 여러 사용자가 **문장 단위로 이어 쓰며 하나의 소설을 완성**하는 릴레이 창작 서비스입니다.
 
-단순한 게시판이 아닙니다. **순서(Sequence)와 상태(Status) 관리**가 핵심인 이 프로젝트는, 앞사람이 글을 완료해야만 뒷사람이 쓸 수 있는 **동시성 제어**와 **도메인 규칙**을 엄격하게 준수합니다.
+단순한 게시판이 아닙니다. **WebSocket을 활용한 실시간 타이핑 표시**, **순서(Sequence) 제어**, **투표 기반 평가**가 결합된 몰입형 창작 플랫폼입니다. 앞사람이 글을 완료해야만 뒷사람이 쓸 수 있는 **동시성 제어**와 **도메인 규칙**을 엄격하게 준수합니다.
 
 ### 📅 개발 기간
 * **2025.12.23 ~ 2026.01.16**
@@ -38,14 +40,15 @@
 
 | 기능 영역 | 상태 | 완료 항목 |
 |:---:|:---:|:---|
-| **🔐 인증/인가** | ✅ 완료 | JWT 기반 로그인/로그아웃, 토큰 갱신, Spring Security 설정, Refresh Token 관리 |
-| **👤 회원 관리** | ✅ 완료 | 회원가입, 관리자 가입, 회원 탈퇴, SecurityUtil 통한 사용자 정보 조회 |
-| **📖 소설 생성/집필** | ✅ 완료 | 소설 생성 API, 문장 이어쓰기 API, SecurityUtil 연동 |
-| **📚 소설 조회** | ✅ 완료 | 목록 조회(페이징/정렬/필터링), 상세 조회, 뷰어 모드 조회 |
-| **💬 댓글** | ✅ 완료 | 댓글 CRUD (생성/수정/삭제), Soft Delete, SecurityUtil 연동 |
-| **❤️ 투표** | ✅ 완료 | 소설 투표 API, 문장 투표 API, LIKE/DISLIKE 토글 방식 지원 |
-| **🧑‍💼 마이페이지** | ✅ 완료 | 마이페이지 조회 API 구현 |
-| **🧪 HTTP 테스트** | ✅ 완료 | 전체 API 테스트 파일 작성 (`http/api-test.http`) |
+| **⚡ 실시간/웹소켓** | ✅ 완료 | **실시간 타이핑 표시(Typing Indicator)**, **새 소설/문장/댓글 실시간 푸시**, STOMP 프로토콜 적용 |
+| **🔐 인증/인가** | ✅ 완료 | JWT 기반 로그인/로그아웃, 토큰 갱신, **Refresh Token 자동 로그인**, 강제 로그인 모달 UX |
+| **👤 회원 관리** | ✅ 완료 | 회원가입/탈퇴(Soft Delete), 관리자 기능, **실시간 입력값 검증(이메일/닉네임/패스워드)** |
+| **📖 소설 집필** | ✅ 완료 | 소설 생성, 이어쓰기(순서 제어), **연속 작성 방지**, 자동 완결 처리 |
+| **📚 소설 조회** | ✅ 완료 | 목록 조회(페이징/정렬/필터링/검색), 상세 조회, **책 넘김 효과 뷰어 모드** |
+| **❤️ 반응/평가** | ✅ 완료 | **개추/비추(Thumb Up/Down) 투표 시스템**, 계층형 댓글/대댓글, Soft Delete |
+| **🧑‍💼 마이페이지** | ✅ 완료 | 활동 통계 대시보드 (집필/반응 수), 내 서재 관리 |
+| **🎨 UI/UX** | ✅ 완료 | **Cute Pop 디자인**, **모바일 Pull-to-Refresh**, 토스트 알림, 반응형 레이아웃 |
+| **🧪 테스트** | ✅ 완료 | 전체 API 시나리오 테스트 (`http/api-test.http`) |
 
 <br>
 
@@ -54,9 +57,9 @@
 
 | 이름 | 포지션 | 담당 도메인 & 핵심 역할 |
 |:---:|:---:|:---|
-| **정진호** | **Team Leader** | **🏛 Core & Architecture**<br>- 프로젝트 아키텍처 설계 (CQRS 패턴 적용)<br>- `Story` 애그리거트 상태 관리 및 순서 제어 로직<br>- 전역 예외 처리 및 공통 응답 포맷 정의<br>**✍️ Writing (Command) & 📖 Reading (Query)**<br>- 문장 작성(Append) 및 유효성 검사, 이야기 완결 처리<br>- 소설 조회 및 검색 최적화, 필터링 및 페이징 처리<br>- 완성된 소설 '책 뷰' 렌더링 API |
-| **김태형** | **Sub Leader** | **🔐 Member & Auth**<br>- Spring Security 기반 인증/인가 (회원가입, 로그인)<br>- **Soft Delete**를 적용한 안전한 회원 탈퇴 처리<br>- 마이페이지 (내 서재, 프로필 관리) |
-| **정병진** | **Developer** | **❤️ Reaction & Support**<br>- 문장/소설 투표(LIKE/DISLIKE) 기능<br>- 소설 감상평(댓글) CRUD (문장 댓글 제외)<br>- UI/UX 인터랙션 요소 개발 지원 |
+| **정진호** | **Team Leader** | **🏛 Core & Architecture**<br>- 프로젝트 아키텍처 설계 (CQRS, WebSocket)<br>- 실시간 타이핑 및 알림 시스템 구현<br>- `Story` 애그리거트 상태/순서 제어 로직<br>**✍️ Writing & Query**<br>- 문장 작성(Append) 및 유효성 검사<br>- 동적 쿼리(MyBatis) 기반 조회/검색 최적화 |
+| **김태형** | **Sub Leader** | **🔐 Member & Auth**<br>- Spring Security + JWT 인증/인가 시스템<br>- **Soft Delete**를 적용한 안전한 회원 탈퇴/관리<br>- 실시간 유효성 검증 로직 및 마이페이지 |
+| **정병진** | **Developer** | **❤️ Reaction & Support**<br>- **개추/비추(Thumb Up/Down)** 투표 시스템<br>- 계층형 댓글(대댓글) 구조 설계 및 구현<br>- 관리자 권한(댓글/유저 관리) 기능 구현 |
 
 <br>
 
@@ -69,42 +72,56 @@
 *   **Build Tool:** Gradle
 *   **Framework:** Spring Boot 3.5.9
 
-### Backend
+### Backend & Real-time
 ![Java](https://img.shields.io/badge/Java-17-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?style=flat-square&logo=springboot&logoColor=white)
+![WebSocket](https://img.shields.io/badge/WebSocket-STOMP-000000?style=flat-square&logo=websocket&logoColor=white)
 ![JPA](https://img.shields.io/badge/JPA-Hibernate-59666C?style=flat-square&logo=hibernate&logoColor=white)
 ![MyBatis](https://img.shields.io/badge/MyBatis-3.5-C63B2B?style=flat-square&logo=mybatis&logoColor=white)
 ![MariaDB](https://img.shields.io/badge/MariaDB-10.6-003545?style=flat-square&logo=mariadb&logoColor=white)
 
+### Frontend
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
+![jQuery](https://img.shields.io/badge/jQuery-3.6-0769AD?style=flat-square&logo=jquery&logoColor=white)
+![SockJS](https://img.shields.io/badge/SockJS-Realtime-000000?style=flat-square)
+
 ### Architecture Strategy
 *   **RESTful API:** 자원(Resource) 중심의 명확한 URI 설계 및 HTTP Method 활용
-*   **DDD (Domain-Driven Design):** 비즈니스 로직을 Service가 아닌 **Entity(도메인 객체)에 위임**하여 응집도 강화
-*   **CQRS (Command Query Responsibility Segregation):**
-    *   **Command (쓰기):** 데이터 무결성이 중요한 로직 (JPA Dirty Checking 활용)
-    *   **Query (읽기):** 조회 성능 최적화를 위한 별도 DTO 조회 로직 분리
+*   **CQRS Pattern:**
+    *   **Command (쓰기):** JPA (Domain Logic, Dirty Checking) - 데이터 무결성 보장
+    *   **Query (읽기):** MyBatis (Dynamic Query) - 복잡한 통계/조회 성능 최적화
+*   **Event-Driven:** WebSocket을 통한 실시간 상태 동기화 (작성 중, 댓글 작성 등)
 
 <br>
 
 ## 4. ✨ 주요 기능 (Key Features)
 
-### 🚀 1. 릴레이 소설 창작 (Core)
-*   **이야기 시작:** 제목, 장르, 첫 문장을 등록하여 방을 개설합니다.
-*   **이어 쓰기 (Sequence Control):**
+### ⚡ 1. 실시간 인터랙션 (Real-time Interaction)
+*   **타이핑 인디케이터:** 누가 지금 다음 문장을 쓰고 있는지, 댓글을 달고 있는지 실시간으로 보여줍니다.
+*   **라이브 업데이트:** 새로 고침 없이도 새로운 소설, 이어진 문장, 달린 댓글이 화면에 즉시 나타납니다.
+*   **Pull-to-Refresh:** 모바일 환경에서 화면을 당겨서 손쉽게 새로고침할 수 있습니다.
+
+### 🚀 2. 릴레이 소설 창작 (Core)
+*   **이야기 시작:** 제목, 장르(로맨스/스릴러 등), 첫 문장을 등록하여 방을 개설합니다.
+*   **순서 제어 (Sequence Control):**
     *   현재 순서(`current_sequence`)인 경우에만 작성 권한이 부여됩니다.
-    *   **연속 작성 금지:** 바로 앞 문장을 쓴 사람은 연달아 쓸 수 없습니다. (`last_writer_id` 체크)
+    *   **연속 작성 금지:** 독점을 막기 위해 바로 앞 문장을 쓴 사람은 연달아 쓸 수 없습니다.
 *   **자동 완결:** 설정된 최대 문장 수에 도달하면 이야기는 `COMPLETED` 상태로 잠깁니다.
 
-### 📚 2. 완결 소설 서재 (Query)
-*   **명예의 전당:** 완결된 소설은 별도의 '서재' 공간에 전시됩니다.
-*   **뷰어 모드:** 문장 단위가 아닌, 한 권의 책을 읽는 듯한 매끄러운 뷰를 제공합니다.
+### ❤️ 3. 평가 및 소통 (Reaction)
+*   **개추/비추 (Thumb Up/Down):** 단순 좋아요가 아닌, 문장과 소설에 대해 명확한 호불호를 표현할 수 있습니다.
+*   **계층형 댓글:** 소설에 대해 깊이 있는 토론을 할 수 있도록 대댓글 기능을 제공합니다.
 
-### 🔐 3. 회원 서비스 (Soft Delete)
-*   **안전한 탈퇴:** 회원이 탈퇴해도 작성한 문장은 사라지지 않습니다.
-*   **상태 관리:** 탈퇴한 회원의 닉네임은 "탈퇴한 사용자"로 표시되어 소설의 맥락을 유지합니다.
+### 🔐 4. 회원 서비스 (Secure & Soft Delete)
+*   **안전한 탈퇴:** 회원이 탈퇴해도 작성한 문장은 사라지지 않습니다 (데이터 보존).
+*   **강제 로그인 유도:** 비회원도 구경은 가능하지만, 참여하려고 하면 자연스럽게 로그인 모달이 뜹니다.
+*   **자동 로그인:** Refresh Token을 활용해 매번 로그인할 필요 없이 앱처럼 바로 이용 가능합니다.
 
-### ❤️ 4. 소통 및 평가
-*   **개추/비추:** 소설에 대해 `LIKE` 또는 `DISLIKE`로 투표할 수 있습니다. (1인 1투표 제한)
-*   **감상평:** 소설에 댓글을 남겨 작가들과 소통할 수 있습니다.
+### 🎨 5. 사용자 경험 (Cute Pop UI)
+*   **감성 디자인:** 파스텔톤 컬러(#FF8BA7, #845EF7)와 둥근 모서리, 통통 튀는 애니메이션.
+*   **책 뷰어 모드:** 완결된 소설은 실제 전자책처럼 편하게 읽을 수 있는 전용 뷰어를 제공합니다.
+*   **스마트 검증:** 가입 시 닉네임/이메일 중복을 키보드를 떼자마자 알려줍니다.
 
 <br>
 
@@ -114,137 +131,42 @@
 
 ### ✅ 기능 요구사항 (Functional Requirements)
 
-### 5.1 요구사항 분류 기준 (Requirements Classification Standards)
-본 프로젝트의 요구사항은 도메인 컨텍스트와 비즈니스 주체에 따라 아래와 같이 5가지 영역으로 분류하여 체계적으로 관리합니다.
-
-*   **FR-1xx (회원/인증):** 사용자 라이프사이클(가입, 로그인, 정보수정, 탈퇴) 및 신원 검증
-*   **FR-2xx (소설 관리):** 소설 방(Book)의 생성, 조회, 검색, 정렬 등 메타데이터 관리
-*   **FR-3xx (집필/릴레이):** 문장(Sentence) 작성, 순서 제어, 완결 처리 등 핵심 비즈니스 로직
-*   **FR-4xx (반응/소통):** 투표, 댓글, 신고 등 사용자 간 인터랙션
-*   **FR-5xx (시스템/기타):** 관리자 기능, 파일 처리, 스케줄링, 보안 정책
+### 5.1 요구사항 분류 기준
+*   **FR-1xx (회원/인증):** 가입, 로그인(JWT), 탈퇴, 마이페이지
+*   **FR-2xx (소설 관리):** 생성, 조회, 검색(MyBatis), 뷰어
+*   **FR-3xx (집필/릴레이):** 이어쓰기, 순서 제어, 실시간 알림
+*   **FR-4xx (반응/소통):** 개추/비추 투표, 댓글/대댓글
+*   **FR-5xx (시스템):** WebSocket, 보안, 에러 처리
 
 <br>
 
-### 5.2 상세 기능 요구사항 (Functional Requirements)
+### 5.2 상세 기능 요구사항
 
-| ID | 대분류 | 중분류 | 소분류 | 요구사항 명 | 상세 내용 및 검증 기준 (Acceptance Criteria) |
-|:---:|:---:|:---:|:---:|:---:|:---|
-| **FR-101** | **회원** | 계정 | 가입 | 이메일 가입 | 이메일 형식의 아이디, 비밀번호, 닉네임을 입력받아 가입한다. |
-| **FR-102** | **회원** | 계정 | 검증 | 중복 확인 | 이미 가입된 이메일이나 사용 중인 닉네임은 사용할 수 없다 (비동기 확인). |
-| **FR-103** | **회원** | 계정 | 검증 | 입력 유효성 | 비밀번호는 영문/숫자/특수문자 포함 8~20자, 닉네임은 특수문자 제외 2~10자로 제한. |
-| **FR-104** | **회원** | 인증 | 로그인 | 일반 로그인 | 등록된 이메일/비밀번호 일치 시 JWT Access Token과 Refresh Token 발급. |
-| **FR-105** | **회원** | 인증 | 상태 | 토큰 갱신 | Access Token 만료 시 Refresh Token을 통해 로그인 상태 연장 (Silent Refresh). |
-| **FR-106** | **회원** | 인증 | 로그아웃 | 로그아웃 | 클라이언트 토큰 삭제 및 서버 측 Refresh Token 만료 처리 (Redis 블랙리스트 등). |
-| **FR-107** | **회원** | 정보 | 수정 | 프로필 변경 | 닉네임 및 비밀번호 변경 가능. 비밀번호 변경 시 현재 비밀번호 확인 필수. |
-| **FR-108** | **회원** | 정보 | 조회 | 마이페이지 | 내 작성 소설, 내 작성 문장, 내가 받은 좋아요 수 등 활동 지표 대시보드 제공. |
-| **FR-109** | **회원** | 탈퇴 | 처리 | 계정 정지 | 탈퇴 요청 시 즉시 삭제가 아닌 `DELETED` 상태로 변경(Soft Delete). 30일 후 데이터 파기 고려. |
-| **FR-201** | **소설** | 생성 | 설정 | 소설 방 생성 | 제목(50자), 카테고리, 최대 문장 수(10~100)를 설정하여 방 개설. |
-| **FR-202** | **소설** | 생성 | 검증 | 생성 제한 | 도배 방지를 위해 동일 사용자는 1분 내 연속 생성 불가. |
-| **FR-203** | **소설** | 조회 | 목록 | 페이징 처리 | 소설 목록은 10개/20개 단위 페이징 또는 무한 스크롤로 조회. |
-| **FR-204** | **소설** | 조회 | 정렬 | 다중 정렬 | 최신순, 좋아요순, 조회수순 정렬 옵션 제공. |
-| **FR-205** | **소설** | 조회 | 필터 | 카테고리 필터 | 전체/로맨스/스릴러/판타지 등 장르별 필터링 기능. |
-| **FR-206** | **소설** | 조회 | 검색 | 키워드 검색 | 제목 및 닉네임에 포함된 키워드로 검색 (LIKE 검색 또는 Full-text Search). |
-| **FR-207** | **소설** | 조회 | 상세 | 메타 정보 | 상세 페이지 상단에 제목, 장르, 현재 진행률(현 문장수/최대 문장수), 참여 작가 수 표시. |
-| **FR-208** | **소설** | 조회 | 뷰어 | 리더 모드 | 완결(`COMPLETED`)된 소설은 책 넘김 애니메이션이 적용된 '읽기 전용 뷰' 제공. |
-| **FR-301** | **집필** | 작성 | 권한 | 순서 검증 | 현재 진행 중인 순서(`current_sequence`)가 아니면 작성 불가 요청 차단. |
-| **FR-302** | **집필** | 작성 | 권한 | 중복 방지 | `last_writer_id`와 현재 작성자 `user_id`가 같으면 연속 작성 불가 (단, 1인 소설 모드 제외). |
-| **FR-303** | **집필** | 데이터 | 저장 | 문장 등록 | 10~200자 이내의 내러티브 저장. 저장 시 `sequence_no` 자동 채번 및 소설 `updated_at` 갱신. |
-| **FR-304** | **집필** | 로직 | 상태 | 자동 완결 | 등록된 문장이 설정된 `max_sequence`에 도달하면 소설 상태를 `COMPLETED`로 변경. |
-| **FR-305** | **집필** | 수정 | 규칙 | 과거 수정 제한 | 이미 다음 문장이 이어진 경우, 맥락 보존을 위해 이전 문장은 수정/삭제 절대 불가. |
-| **FR-306** | **집필** | 수정 | 허용 | 최근 문장 수정 | 다음 문장이 없는(가장 최신) 문장에 한해 작성자 본인은 수정/삭제 가능. |
-| **FR-307** | **집필** | 삭제 | 연쇄 | 문장 삭제 | 마지막 문장 삭제 시 `current_sequence`를 1 감소시키고 `last_writer_id`를 이전 작성자로 롤백. |
-| **FR-308** | **집필** | 관리 | 신고 | 문장 신고 | 욕설/비하 등 부적절한 문장 신고 기능. 누적 신고 수 초과 시 블라인드 처리. |
-| **FR-401** | **반응** | 투표 | 소설 | 북마크/좋아요 | 소설 자체에 대한 '좋아요' 및 '관심 등록'. 마이페이지에서 모아보기 가능. |
-| **FR-402** | **반응** | 투표 | 문장 | 문장 좋아요 | 특정 문장이 인상 깊을 때 '좋아요' 클릭. 문장별 득표수 집계. |
-| **FR-403** | **반응** | 댓글 | 작성 | 감상평 등록 | 소설 상세 페이지 하단에 감상평(댓글) 등록. (글자수 500자 제한). |
-| **FR-404** | **반응** | 댓글 | 관리 | 댓글 권한 | 본인 댓글 수정/삭제 가능. 타인 댓글 삭제 불가. |
-| **FR-501** | **시스템** | 보안 | 인증 | API 보호 | Public API(조회)를 제외한 모든 CUD/Private API는 JWT 유효성 검증 필터 적용. |
-| **FR-502** | **시스템** | 보안 | 입력 | XSS 방어 | 사용자가 입력하는 문장 및 댓글에 스크립트 태그 포함 시 Escape 처리. |
-| **FR-503** | **시스템** | 운영 | 오류 | 글로벌 예외 | 400/401/403/404/500 에러 발생 시 규격화된 JSON 포맷 (`code`, `message`)으로 응답. |
-| **FR-504** | **시스템** | 데이터 | 무결성 | 트랜잭션 | 문장 등록과 소설 상태 변경은 하나의 트랜잭션으로 묶여야 함 (Atomic). |
+| ID | 대분류 | 요구사항 명 | 상세 내용 |
+|:---:|:---:|:---:|:---|
+| **FR-101** | 회원 | 가입/검증 | 이메일/닉네임 실시간 중복 검증, 비밀번호 복잡도 체크. |
+| **FR-104** | 회원 | 자동 로그인 | Refresh Token을 쿠키/스토리지에 저장해 세션 유지 (Silent Refresh). |
+| **FR-109** | 회원 | Soft Delete | 탈퇴 시 실제 삭제하지 않고 상태만 변경, 작성 글 유지. |
+| **FR-201** | 소설 | 소설 생성 | 제목, 카테고리, 최대 문장 수 설정. |
+| **FR-208** | 소설 | 뷰어 모드 | 완결된 소설은 깔끔한 텍스트 뷰어로 제공. |
+| **FR-301** | 집필 | 순서 제어 | 현재 시퀀스 및 이전 작성자 체크(연속 작성 불가). |
+| **FR-303** | 집필 | 문장 등록 | 문장 등록 시 WebSocket으로 구독자들에게 실시간 전송. |
+| **FR-310** | 집필 | 작성 중 알림 | "000님이 작성 중..." 메시지를 실시간으로 브로드캐스팅. |
+| **FR-401** | 반응 | 개추/비추 | 소설 및 문장에 대해 Up/Down 투표 기능 (1인 1투표). |
+| **FR-501** | 시스템 | WebSocket | STOMP 활용 `/topic/books`, `/topic/typing` 등 구독/발행. |
 
 <br>
 
 ### ✅ 비기능 요구사항 (Non-Functional Requirements)
 
-| ID | 분류 | 요구사항 명 | 상세 내용 및 기준 |
+| ID | 분류 | 요구사항 명 | 상세 내용 |
 |:---:|:---:|:---:|:---|
-| **NFR-101** | 보안 | 인증/인가 | 작성/투표/마이페이지 등 CUD 작업 시 반드시 세션/토큰 검증 수행 (비회원 403). |
-| **NFR-102** | 보안 | 권한 제어 | 본인 확인이 필요한 기능(수정/삭제)은 서버 단에서 `writer_id`와 세션 `user_id` 일치 여부 검사 필수. |
-| **NFR-103** | 보안 | 입력 검증 | XSS 방지를 위해 문장/댓글 입력 시 HTML 태그 이스케이프 또는 허용 목록(Sanitizer) 처리. |
-| **NFR-201** | UX | 반응성 | 연속적인 문장 읽기 경험을 위해 스크롤 페이징(Infinite Scroll) 또는 최적화된 페이지네이션 적용. |
-| **NFR-202** | UX | 실시간성 | 소설 완결 시 또는 문장 업데이트 시 지연 없이 상태 반영 (캐시 무효화 전략). |
-| **NFR-203** | UX | 로딩 처리 | 데이터 로딩이 500ms(0.5초) 이상 소요될 경우, 사용자가 인지할 수 있도록 로딩 스피너(Loading Spinner) 또는 스켈레톤 UI를 표시. |
-| **NFR-301** | 성능 | 동시성 제어 | 동일 소설, 동일 시퀀스에 대한 다중 쓰기 요청 시 1건만 성공하고 나머지는 우아하게 실패(Locking) 처리. |
-| **NFR-302** | 성능 | 조회 최적화 | 메인 페이지 소설 목록 조회(쿼리 복잡도 높음)는 조회 전용 모델(읽기 DB) 또는 캐싱 활용 고려. |
+| **NFR-101** | 보안 | 토큰 검증 | 모든 API 요청 시 JWT 유효성 검증 (만료 시 401). |
+| **NFR-201** | UX | 반응성 | 모든 액션에 토스트 알림 제공, 모달 UX 활용. |
+| **NFR-202** | UX | 실시간성 | 타이핑 인디케이터는 3초 유휴 시 자동 사라짐 처리. |
+| **NFR-301** | 성능 | 조회 최적화 | 복잡한 통계/목록 조회는 MyBatis로 최적화. |
+| **NFR-302** | 아키텍처 | CQRS | 명령(JPA)과 조회(MyBatis)의 명확한 분리. |
 
-
-<br>
-
-### 👤 유스케이스 다이어그램 (Use Case Diagram)
-
-```mermaid
-graph LR
-    %% Actors
-    G((비회원<br>Guest))
-    M((회원<br>Member))
-    
-    %% System Boundary
-    subgraph System ["System (Next Page)"]
-        direction TB
-        
-        %% Use Cases
-        UC_Join((회원가입))
-        UC_Login((로그인))
-        UC_List((목록 조회))
-        UC_Search((검색))
-        UC_Filter((필터링))
-        UC_View((상세 조회))
-        UC_BookView((책 뷰 모드))
-        
-        UC_Create((소설 생성))
-        UC_Relay((이어 쓰기))
-        UC_Check((데이터 검증))
-        
-        UC_VoteBook((소설 투표))
-        UC_VoteSent((문장 투표))
-        UC_Comment((댓글 작성))
-        
-        UC_My((마이페이지))
-        UC_Out((회원 탈퇴))
-    end
-
-    %% Relations - Guest (Only Join & View)
-    G --> UC_Join
-    G --> UC_List
-    G --> UC_View
-    
-    %% Relations - Member (Login + Interaction)
-    M --> UC_Login
-    M --> UC_Create
-    M --> UC_Relay
-    M --> UC_VoteBook
-    M --> UC_VoteSent
-    M --> UC_Comment
-    M --> UC_My
-    M --> UC_Out
-    
-    %% Relationships (Include/Extend)
-    %% Extension: Arrow points from Extension to Base
-    UC_Search -.->|&lt;&lt;extend&gt;&gt;| UC_List
-    UC_Filter -.->|&lt;&lt;extend&gt;&gt;| UC_List
-    UC_BookView -.->|&lt;&lt;extend&gt;&gt;| UC_View
-    
-    %% Include: Arrow points from Base to Included
-    UC_Relay -.->|&lt;&lt;include&gt;&gt;| UC_Check
-    UC_Create -.->|&lt;&lt;include&gt;&gt;| UC_Check
-    
-    %% Styles
-    style UC_Check stroke-dasharray: 5 5,fill:#eee
-    
-    %% Inheritance: Member is a Guest (can View/List)
-    M -.-> G
-```
 
 <br>
 
@@ -256,6 +178,7 @@ erDiagram
     users ||--o{ books : "writer_id (생성)"
     users ||--o{ sentences : "writer_id (작성)"
     users ||--o{ comments : "writer_id (작성)"
+    users ||--o{ comments : "writer_id (작성)"
     users ||--o{ book_votes : "voter_id (투표)"
     users ||--o{ sentence_votes : "voter_id (투표)"
 
@@ -265,77 +188,68 @@ erDiagram
     books ||--o{ comments : has
     books ||--o{ book_votes : has
     sentences ||--o{ sentence_votes : has
+    comments |o--o{ comments : "parent_id (대댓글)"
 
     users {
         int user_id PK "AUTO_INCREMENT"
-        varchar(100) user_email UK "로그인 ID"
-        varchar(255) user_pw "비밀번호"
-        varchar(50) user_nicknm UK "닉네임"
+        varchar(100) user_email UK
+        varchar(255) user_pw
+        varchar(50) user_nicknm UK
         varchar(20) user_role "USER/ADMIN"
         varchar(20) user_status "ACTIVE/DELETED"
-        datetime left_at "탈퇴일시"
+        datetime left_at
         datetime created_at
         datetime updated_at
     }
     
     categories {
-        varchar(20) category_id PK "THRILLER, ROMANCE"
+        varchar(20) category_id PK "THRILLER, ROMANCE..."
         varchar(50) category_nm
     }
     
     books {
-        int book_id PK "AUTO_INCREMENT"
+        int book_id PK
         int writer_id FK
         varchar(20) category_id FK
         varchar(200) title
         varchar(20) status "WRITING/COMPLETED"
-        int current_sequence "현재 문장 순서"
-        int max_sequence "최대 문장 수"
-        int last_writer_user_id "연속 작성 방지"
+        int current_sequence
+        int max_sequence
+        int last_writer_user_id
         datetime created_at
         datetime updated_at
     }
 
     sentences {
-        int sentence_id PK "AUTO_INCREMENT"
+        int sentence_id PK
         int book_id FK
-        int writer_id FK
-        text content "문장 내용"
-        int sequence_no "순서 번호"
+        text content
+        int sequence_no
         datetime created_at
     }
     
     comments {
-        int comment_id PK "AUTO_INCREMENT"
-        int book_id FK
-        int writer_id FK
-        text content "댓글 내용"
+        int comment_id PK
+        int parent_id FK
+        text content
+        datetime deleted_at "Soft Delete"
         datetime created_at
-        datetime updated_at
     }
     
     book_votes {
-        int vote_id PK "AUTO_INCREMENT"
-        int book_id FK
-        int voter_id FK
+        int vote_id PK
         varchar(10) vote_type "LIKE/DISLIKE"
-        datetime created_at
     }
 
     sentence_votes {
-        int vote_id PK "AUTO_INCREMENT"
-        int sentence_id FK
-        int voter_id FK
+        int vote_id PK
         varchar(10) vote_type "LIKE/DISLIKE"
-        datetime created_at
     }
 ```
 
 <br>
 
 ## 7. 💾 Database Schema (DDL)
-
-프로젝트 초기 설정을 위한 MariaDB DDL 스크립트입니다.
 
 <details>
 <summary>👉 <b>Click to view SQL Script</b></summary>
@@ -393,9 +307,11 @@ CREATE TABLE `sentences` (
 -- 5. 댓글 (Comments)
 CREATE TABLE `comments` (
     `comment_id` INT      NOT NULL AUTO_INCREMENT,
+    `parent_id`  INT      NULL COMMENT '대댓글 부모 ID',
     `book_id`    INT      NOT NULL,
     `writer_id`  INT      NOT NULL,
     `content`    TEXT     NOT NULL,
+    `deleted_at` DATETIME NULL COMMENT 'Soft Delete',
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     `updated_at` DATETIME NULL,
     PRIMARY KEY (`comment_id`)
@@ -433,200 +349,65 @@ CREATE TABLE `sentence_votes` (
 
 ### 🔐 인증 (Auth) API
 
-| Method | URI | 설명 | 권한 |
-|:---:|:---|:---|:---:|
-| POST | `/api/auth/signup` | 회원가입 (일반 사용자) | All |
-| POST | `/api/auth/admin` | 관리자 가입 | All |
-| POST | `/api/auth/login` | 로그인 (JWT 토큰 발급) | All |
-| POST | `/api/auth/refresh` | Access Token 갱신 | User |
-| POST | `/api/auth/logout` | 로그아웃 (Refresh Token 무효화) | User |
-| DELETE | `/api/auth/withdraw` | 회원 탈퇴 | User |
+| Method | URI | 설명 |
+|:---:|:---|:---|
+| POST | `/api/auth/signup` | 회원가입 (실시간 중복 검증 포함) |
+| POST | `/api/auth/login` | 로그인 (JWT 발급, 자동로그인 지원) |
+| POST | `/api/auth/refresh` | Silent Refresh Token 갱신 |
+| DELETE | `/api/auth/admin/users/{id}` | 관리자 권한 회원 강제 탈퇴 |
 
-### 👤 회원 (Member) API
+### 📖 소설 & 실시간 API (Books)
 
-| Method | URI | 설명 | 권한 |
-|:---:|:---|:---|:---:|
-| GET | `/api/members/me` | 마이페이지 조회 (활동 통계 포함) | User |
-
-### 📖 소설 (Book) API
-
-| Method | URI | 설명 | 권한 |
-|:---:|:---|:---|:---:|
-| POST | `/api/books` | 새로운 이야기 시작 (소설 생성) | User |
-| GET | `/api/books` | 소설 목록 조회 (페이징, 정렬, 필터링, 검색) | All |
-| GET | `/api/books/{bookId}` | 소설 상세 조회 | All |
-| GET | `/api/books/{bookId}/view` | 소설 뷰어 모드 조회 (문장 목록 포함) | All |
-| POST | `/api/books/{bookId}/sentences` | 문장 이어 쓰기 (릴레이 핵심 기능) | User |
-
-### ❤️ 반응 (Reaction) API
-
-| Method | URI | 설명 | 권한 |
-|:---:|:---|:---|:---:|
-| POST | `/api/reactions/comments` | 댓글 등록 | User |
-| PATCH | `/api/reactions/comments/{commentId}` | 댓글 수정 | User |
-| DELETE | `/api/reactions/comments/{commentId}` | 댓글 삭제 (Soft Delete) | User |
-| GET | `/api/reactions/comments/{bookId}` | 소설별 댓글 목록 조회 | All |
-| POST | `/api/reactions/votes/books` | 소설 투표 (LIKE/DISLIKE 토글) | User |
-| POST | `/api/reactions/votes/sentences/{sentenceId}` | 문장 투표 (LIKE/DISLIKE 토글) | User |
-
-### 📁 HTTP 테스트
-
-모든 API에 대한 테스트 파일이 `http/api-test.http`에 작성되어 있습니다. IntelliJ IDEA에서 바로 실행할 수 있습니다.
-
-<br>
+| Method | URI | 설명 |
+|:---:|:---|:---|
+| GET | `/api/books` | 소설 검색/조회 (Query Service) |
+| GET | `/api/books/{id}` | 상세 정보 (실시간 투표수 포함) |
+| POST | `/api/books/{id}/sentences` | 문장 이어쓰기 (WebSocket 알림 발송) |
+| WS | `/ws` | WebSocket 연결 엔드포인트 |
+| SUB | `/topic/typing` | 실시간 타이핑 상태 구독 |
 
 <br>
 
 ## 9. 📦 패키지 구조 (Package Structure)
-`com.team2.nextpage` 패키지 하위에 **Auth/JWT**, **Command(JPA)**, **Query(MyBatis)**, **Common**, **Config** 영역으로 나누어 설계했습니다. 요청/응답(DTO)과 계층별 의존성을 명확히 분리합니다.
+**CQRS 패턴**을 적용하여 Command(변화)와 Query(조회) 책임을 분리했습니다.
 
 ```text
 src/main/java/com/team2/nextpage
 │
-├── 📄 NextPageApplication.java   // 메인 애플리케이션 진입점
+├── 📂 auth                       // 🔐 인증 (JWT, UserDetails)
+├── 📂 config                     // ⚙️ 설정 (Security, WebSocket, Swagger)
+├── 📂 common                     // 🧰 공통 (Exception, Utils, Response)
 │
-├── 📂 auth                       // 🔐 인증 모듈 (김태형)
-│   ├── 📂 controller             // AuthController (로그인, 로그아웃, 토큰 갱신)
-│   ├── 📂 service                // AuthService, CustomUserDetailsService
-│   ├── 📂 repository             // AuthRepository (RefreshToken)
-│   ├── 📂 entity                 // RefreshToken
-│   └── 📂 dto                    // LoginRequest, TokenResponse
+├── 📂 command                    // ✏️ [Command: Write/Update/Delete] - JPA
+│   ├── 📂 member                 // 회원 가입/탈퇴/수정
+│   ├── 📂 book                   // 소설 생성/문장 작성 (Domain Logic)
+│   └── 📂 reaction               // 투표/댓글 작성 (Interaction)
 │
-├── 📂 jwt                        // 🔑 JWT 토큰 모듈 (정진호)
-│   ├── 📄 JwtTokenProvider.java  // 토큰 생성/검증
-│   ├── 📄 JwtAuthenticationFilter.java
-│   ├── 📄 JwtAccessDeniedHandler.java
-│   ├── 📄 JwtAuthenticationEntryPoint.java
-│   └── 📂 dto                    // JwtTokenResponse
-│
-├── 📂 config                     // ⚙️ 설정 (정진호)
-│   ├── 📄 SecurityConfig.java    // Spring Security 설정
-│   ├── 📄 SwaggerConfig.java     // OpenAPI/Swagger 설정
-│   ├── 📄 WebMvcConfig.java      // CORS, 리소스 핸들러
-│   ├── 📄 ModelMapperConfig.java
-│   └── 📂 security               // CustomUserDetails, CustomUserDetailsService
-│
-├── 📂 common                     // 🧰 공통 모듈 (정진호)
-│   ├── 📂 entity                 // BaseEntity
-│   ├── 📂 error                  // ErrorCode, BusinessException
-│   ├── 📂 exception              // GlobalExceptionHandler
-│   ├── 📂 response               // ApiResponse
-│   └── 📂 util                   // SecurityUtil
-│
-├── 📂 command                    // ✏️ [CUD] JPA 영역
-│   ├── 📂 member                 // 👤 회원 (김태형)
-│   │   ├── 📂 controller         // MemberController
-│   │   ├── 📂 service            // MemberService
-│   │   ├── 📂 repository         // MemberRepository
-│   │   ├── 📂 entity             // Member, UserRole, UserStatus
-│   │   └── 📂 dto/request        // SignUpRequest
-│   ├── 📂 book                   // 📖 소설 (정진호)
-│   │   ├── 📂 controller         // BookController
-│   │   ├── 📂 service            // BookService
-│   │   ├── 📂 repository         // BookRepository, SentenceRepository
-│   │   ├── 📂 entity             // Book, Sentence, BookStatus
-│   │   └── 📂 dto/request        // CreateBookRequest, SentenceAppendRequest
-│   └── 📂 reaction               // ❤️ 반응 (정병진)
-│       ├── 📂 controller         // ReactionController
-│       ├── 📂 service            // ReactionService
-│       ├── 📂 repository         // CommentRepository, BookVoteRepository, SentenceVoteRepository
-│       ├── 📂 entity             // Comment, BookVote, SentenceVote, VoteType
-│       └── 📂 dto/request        // CreateCommentRequest, UpdateCommentRequest
-│
-└── 📂 query                      // 📖 [R] MyBatis 영역
-    ├── 📂 member                 // 👤 회원 조회 (김태형)
-    │   ├── 📂 controller         // MemberQueryController
-    │   ├── 📂 service            // MemberQueryService
-    │   ├── 📂 mapper             // MemberMapper (MyBatis Interface)
-    │   └── 📂 dto/response       // MemberDto
-    ├── 📂 book                   // 📖 소설 조회 (정진호)
-    │   ├── 📂 controller         // BookQueryController
-    │   ├── 📂 service            // BookQueryService
-    │   ├── 📂 mapper             // BookMapper
-    │   └── 📂 dto/response       // BookDto
-    └── 📂 reaction               // ❤️ 반응 조회 (정병진)
-        ├── 📂 controller         // ReactionQueryController
-        ├── 📂 service            // ReactionQueryService
-        ├── 📂 mapper             // ReactionMapper
-        └── 📂 dto/response       // CommentDto
+└── 📂 query                      // 📖 [Query: Read/Search] - MyBatis
+    ├── 📂 member                 // 마이페이지 조회
+    ├── 📂 book                   // 소설 목록/통계/상세 조회 (Optimized)
+    └── 📂 reaction               // 댓글 목록 조회 (Tree Structure)
 ```
 
 <br>
 
-<br>
-
-# 🛠️ Part 2. 개발자 가이드 (Developer Guidelines)
-> **"우리는 하나의 원칙 아래 코드를 작성합니다."**
-이 섹션은 Next Page 프로젝트에 참여하는 모든 개발자(및 AI 어시스턴트)가 준수해야 할 핵심 컨벤션과 가이드라인입니다.
+# 🛠️ Part 2. 개발자 가이드
 
 ## 1. 🏛️ 코딩 컨벤션 및 패턴
 
-### 1.1 Entity & Domain Logic (DDD)
-*   **Setter 사용 금지:** Entity에는 `@Setter`를 절대 사용하지 않는다. 상태 변경은 명확한 의도를 가진 메서드(Business Method)로 구현한다.
-    *   *Bad:* `book.setStatus("COMPLETED");`
-    *   *Good:* `book.completeStory();`
-*   **생성자:** `@NoArgsConstructor(access = AccessLevel.PROTECTED)`를 기본으로 사용하며, 필요한 필드만 받는 `@Builder`를 별도로 구현한다.
-*   **도메인 로직 위치:** 비즈니스 규칙은 Service가 아닌 **Entity 내부**에 위치시킨다.
-    *   Ex) '다음 순서인지 확인', '소설 완결 조건 체크' 등은 Entity 메서드로 구현.
+### 1.1 CQRS & Architecture
+*   **Command:** 데이터 상태를 변경하는 모든 로직은 `command` 패키지에서 **JPA**를 사용해 처리합니다.
+    *   Entity의 비즈니스 메서드를 통해 상태를 변경합니다 (Setter 지양).
+*   **Query:** 데이터 조회가 주 목적(화면 표시 등)인 로직은 `query` 패키지에서 **MyBatis**를 사용합니다.
+    *   복잡한 조인, 통계, DTO 매핑 최적화에 유리합니다.
 
-### 1.2 Layered Architecture Rules
-*   **Controller:** 요청값 검증(`@Valid`), 응답 변환(Representation)만 담당. 로직 포함 금지.
-*   **Service:** 트랜잭션 관리(`@Transactional`) 및 도메인 객체 간의 협력 조율(Orchestration).
-    *   순수 비즈니스 로직은 Entity에 위임하고, Service는 그것을 호출하는 형태.
-*   **DTO:**
-    *   Entity를 직접 반환하지 않는다 (**Strict Rule**).
-    *   Request/Response DTO는 `record` 또는 `static class`로 정의하여 불변성을 유지 권장.
-    *   JPA Entity <-> DTO 변환은 `ModelMapper`나 생성자/Builder 패턴 사용.
+### 1.2 WebSocket Convention
+*   **Prefix:** 클라이언트 요청은 `/app`, 서버 브로드캐스팅은 `/topic`을 사용합니다.
+*   **Payload:** 모든 실시간 메시지는 JSON 포맷으로 주고받습니다.
 
-### 1.3 CQRS 구현 규칙
-*   **Command (쓰기):**
-    *   Repository: `JpaRepository` 상속.
-    *   복잡한 연관관계 매핑 및 생명주기가 같은 애그리거트는 JPA Cascade 활용.
-*   **Query (읽기):**
-    *   Mapper: `MyBatis` Mapper Interface 사용 (`@Mapper`).
-    *   XML 위치: `resources/mapper/**/*.xml`.
-    *   쿼리 결과는 Entity가 아닌 **조회 전용 DTO**로 즉시 매핑.
-
-### 1.4 공통 필드 및 응답
-*   **BaseEntity:** `created_at`, `updated_at` 등 공통 감사(Audit) 필드는 `@MappedSuperclass`로 관리.
-*   **API Response:** 성공/실패 여부를 포함한 공통 래퍼(Wrapper) 클래스 사용 (프로젝트 내 정의된 포맷 준수).
-
-### 1.5 Security & JWT
-*   **Authentication:** `Bearer` Token 방식 사용. Header의 `Authorization` 필드 파싱.
-*   **SecurityUtil 사용:** 현재 인증된 사용자 정보를 가져올 때는 `SecurityUtil` 유틸리티 클래스를 사용한다.
-    ```java
-    // 현재 로그인한 사용자 ID 조회
-    Long userId = SecurityUtil.getCurrentUserId();
-    
-    // 현재 로그인한 사용자 이메일 조회
-    String email = SecurityUtil.getCurrentUserEmail();
-    
-    // 현재 로그인한 사용자 닉네임 조회
-    String nickname = SecurityUtil.getCurrentUserNickname();
-    
-    // 인증 여부 확인
-    boolean isLoggedIn = SecurityUtil.isAuthenticated();
-    ```
-*   **주의사항:** 하드코딩된 사용자 ID(`1L` 등)를 절대 사용하지 않는다. 반드시 `SecurityUtil`을 통해 동적으로 조회.
-
-<br>
-
-
-## 2. 🤝 협업 컨벤션 (Collaboration)
-
-### 🌳 Branch Strategy
-*   `main`: 배포 가능한 안정 버전
-*   `develop`: 개발 중인 최신 버전
-*   `feature/{domain}/{function}`: 기능 단위 개발 브랜치
-    *   Ex) `feature/member/login`, `feature/book/create`
-
-<br>
-
-## 3. 🛠️ 라이브러리 및 도구 활용
-*   **Lombok:** `@Getter`, `@RequiredArgsConstructor`, `@Slf4j` 적극 활용. `@ToString`은 순환 참조 주의(exclude 설정).
-*   **Validation:** `jakarta.validation` 어노테이션(`@NotNull`, `@Size`, `@Email`)으로 입력값 검증 수행.
-*   **Data Type:** 상태값 등은 String 대신 **Enum 사용 권장** (`@Enumerated(EnumType.STRING)`).
-*   **Soft Delete:** `@SQLDelete` 및 `@SQLRestriction` 어노테이션을 사용하여 자동화. (Java 코드는 `delete()` 호출하지만 DB는 `UPDATE` 실행).
+### 1.3 Security & Utils
+*   `SecurityUtil.getCurrentUserId()`를 통해 언제든 안전하게 현재 사용자 ID를 획득할 수 있습니다.
+*   하드코딩된 ID 대신 반드시 동적 ID를 사용하세요.
 
 ---
 Copyright © 2026 **Team Next Page**. All rights reserved.

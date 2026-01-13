@@ -70,12 +70,24 @@ public class Book extends BaseEntity {
      * @throws BusinessException 규칙 위반 시
      */
     public void validateWritingPossible(Long writerId) {
+        validateWritingPossible(writerId, false);
+    }
+
+    /**
+     * 문장을 작성하기 전에 도메인 규칙을 검증합니다. (관리자 모드 지원)
+     * 1. 소설이 WRITING 상태인지
+     * 2. 직전 작성자가 본인이 아닌지 (연속 작성 금지) - 관리자는 예외
+     *
+     * @param writerId 작성 시도하는 사용자 ID
+     * @param isAdmin  관리자 여부 (true: 연속 작성 제한 우회)
+     * @throws BusinessException 규칙 위반 시
+     */
+    public void validateWritingPossible(Long writerId, boolean isAdmin) {
         if (this.status != BookStatus.WRITING) {
             throw new BusinessException(ErrorCode.ALREADY_COMPLETED);
         }
-        if (writerId.equals(this.lastWriterUserId)) {
-            // 1인 소설 모드(나홀로 소설)가 아니라면 연속 작성 불가
-            // 여기서는 기본 규칙인 연속 작성 금지만 적용
+        // 관리자가 아닌 경우에만 연속 작성 제한 적용
+        if (!isAdmin && writerId.equals(this.lastWriterUserId)) {
             throw new BusinessException(ErrorCode.CONSECUTIVE_WRITING_NOT_ALLOWED);
         }
     }

@@ -8,11 +8,13 @@
             c.comment_id,
             c.content,
             u.user_nicknm AS writerNicknm,
-            c.created_at
+            c.created_at,
+            c.parent_id AS parentId
         FROM comments c
                  JOIN users u ON c.writer_id = u.user_id
         WHERE c.book_id = #{bookId}
-        ORDER BY c.created_at DESC
+          AND c.deleted_at IS NULL
+        ORDER BY c.created_at ASC, c.comment_id ASC
     </select>
 
 </mapper>

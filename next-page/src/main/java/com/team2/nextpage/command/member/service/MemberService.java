@@ -90,7 +90,7 @@ public class MemberService {
    * @param email 검증할 이메일
    * @throws BusinessException 이미 존재하는 이메일일 경우
    */
-  private void validateDuplicateEmail(String email) {
+  public void validateDuplicateEmail(String email) {
     if (memberRepository.findByUserEmail(email).isPresent()) {
       throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
     }
@@ -102,9 +102,29 @@ public class MemberService {
    * @param nicknm 검증할 닉네임
    * @throws BusinessException 이미 존재하는 닉네임일 경우
    */
-  private void validateDuplicateNicknm(String nicknm) {
-    if (memberRepository.existsByUserNicknm(nicknm)){
+  public void validateDuplicateNicknm(String nicknm) {
+    if (memberRepository.existsByUserNicknm(nicknm)) {
       throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
     }
+  }
+
+  /**
+   * 관리자에 의한 회원 탈퇴 (Soft Delete)
+   * 관리자가 특정 회원을 강제 탈퇴 처리합니다.
+   * 
+   * @param userId 탈퇴시킬 회원의 ID
+   * @throws BusinessException 회원 정보를 찾을 수 없거나 관리자가 아닌 경우
+   */
+  public void withdrawByAdmin(Long userId) {
+    // 관리자 권한 체크
+    if (!SecurityUtil.isAdmin()) {
+      throw new BusinessException(ErrorCode.ACCESS_DENIED);
+    }
+
+    Member member = memberRepository.findById(userId)
+        .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+
+    // Soft Delete 수행
+    memberRepository.delete(member);
   }
 }

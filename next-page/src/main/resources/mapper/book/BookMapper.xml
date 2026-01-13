@@ -103,7 +103,9 @@
             s.content,
             s.writer_id,
             u.user_nicknm AS writerNicknm,
-            s.created_at
+            s.created_at,
+            (SELECT COUNT(*) FROM sentence_votes sv WHERE sv.sentence_id = s.sentence_id AND sv.vote_type = 'LIKE') AS likeCount,
+            (SELECT COUNT(*) FROM sentence_votes sv WHERE sv.sentence_id = s.sentence_id AND sv.vote_type = 'DISLIKE') AS dislikeCount
         FROM sentences s
         LEFT JOIN users u ON s.writer_id = u.user_id
         WHERE s.book_id = #{bookId}

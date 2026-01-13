@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout}">
+
+<head>
+    <title>Next Page - 책 읽기</title>
+</head>
+
+<body>
+
+    <div layout:fragment="content">
+        <div class="container" style="max-width: 700px;">
+            <div class="text-center mb-4">
+                <h2 id="book-title" style="margin-bottom: 20px;"></h2>
+                <button class="btn btn-outline" onclick="history.back()">목록으로 돌아가기</button>
+            </div>
+
+            <div class="card fade-in"
+                style="min-height: 60vh; padding: 40px; font-family: 'KoPub Batang', serif; line-height: 2;">
+                <!-- Book Content -->
+                <div id="book-content" style="font-size: 1.1rem; color: #e2e8f0;">
+                    <!-- Sentences concatenated here -->
+                </div>
+
+                <div class="text-center mt-4">
+                    <span class="badge badge-completed" style="font-size: 0.9rem;">The End</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="script">
+        <script>
+            const bookId = window.location.pathname.split('/')[2]; // /books/{id}/view
+
+            $(document).ready(function () {
+                $.ajax({
+                    url: '/api/books/' + bookId + '/view',
+                    method: 'GET',
+                    success: function (response) {
+                        const book = response.data;
+                        const info = book.info || book;
+
+                        $('#book-title').text(info.title);
+
+                        const sentences = book.sentences || [];
+                        let fullText = '';
+                        sentences.forEach(sent => {
+                            fullText += sent.content + ' ';
+                        });
+
+                        $('#book-content').text(fullText);
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 401) return;
+                        showToast('책 내용을 불러올 수 없습니다.', 'error');
+                    }
+                });
+            });
+        </script>
+    </th:block>
+
+</body>
+
+</html>

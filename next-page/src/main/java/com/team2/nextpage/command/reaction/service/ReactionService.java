@@ -41,10 +41,22 @@ public class ReactionService {
   public Long addComment(CreateCommentRequest request) {
     Long writerId = SecurityUtil.getCurrentUserId();
 
+    Comment parent = null;
+    if (request.getParentId() != null) {
+      parent = commentRepository.findById(request.getParentId())
+          .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_NOT_FOUND));
+
+      // 부모 댓글과 같은 소설인지 검증
+      if (!parent.getBookId().equals(request.getBookId())) {
+        throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE); // 혹은 적절한 에러
+      }
+    }
+
     Comment newComment = Comment.builder()
         .bookId(request.getBookId())
         .writerId(writerId)
         .content(request.getContent())
+        .parent(parent)
         .build();
 
     Comment saveComment = commentRepository.save(newComment);
@@ -71,16 +83,17 @@ public class ReactionService {
 
   /**
    * 댓글 삭제
+   * 관리자는 모든 댓글을 삭제할 수 있습니다.
    *
    * @param commentId 삭제할 댓글 ID
-   * @throws BusinessException 댓글이 존재하지 않거나 작성자가 아닌 경우
+   * @throws BusinessException 댓글이 존재하지 않거나 권한이 없는 경우
    */
   public void removeComment(Long commentId) {
     Comment comment = commentRepository.findById(commentId)
         .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_NOT_FOUND));
 
-    // 권한 체크 (타인 댓글 수정/삭제 불가 예외 처리)
-    validateWriter(comment, SecurityUtil.getCurrentUserId());
+    // 권한 체크 (관리자는 모든 댓글 삭제 가능)
+    validateWriterOrAdmin(comment, SecurityUtil.getCurrentUserId());
 
     commentRepository.delete(comment);
   }
@@ -161,14 +174,34 @@ public class ReactionService {
   }
 
   /**
-   * 작성자 권한 검증(내부 헬퍼 메서드)
+   * 작성자 권한 검증 (수정 전용)
    * 요청한 사용자(userId)가 댓글 작성자(writerId)와 일치하는지 확인합니다.
+   * 수정은 작성자 본인만 가능합니다.
    *
    * @param comment 검증할 댓글 엔티티
    * @param userId  요청을 보낸 사용자의 ID
    * @throws BusinessException 작성자가 아닐 경우 예외 발생
    */
   private void validateWriter(Comment comment, Long userId) {
+    if (!comment.getWriterId().equals(userId)) {
+      throw new BusinessException(ErrorCode.NOT_COMMENT_OWNER);
+    }
+  }
+
+  /**
+   * 작성자 또는 관리자 권한 검증 (삭제 전용)
+   * 관리자는 모든 댓글을 삭제할 수 있습니다.
+   *
+   * @param comment 검증할 댓글 엔티티
+   * @param userId  요청을 보낸 사용자의 ID
+   * @throws BusinessException 작성자도 아니고 관리자도 아닐 경우 예외 발생
+   */
+  private void validateWriterOrAdmin(Comment comment, Long userId) {
+    // 관리자는 모든 댓글 삭제 가능
+    if (SecurityUtil.isAdmin()) {
+      return;
+    }
+    // 일반 사용자는 본인 댓글만 삭제 가능
     if (!comment.getWriterId().equals(userId)) {
       throw new BusinessException(ErrorCode.NOT_COMMENT_OWNER);
     }

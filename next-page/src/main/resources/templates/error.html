@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout}">
+
+<head>
+    <title>에러 발생 - Next Page</title>
+</head>
+<div layout:fragment="content">
+    <div class="text-center fade-in"
+        style="padding: 80px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50vh;">
+
+        <!-- Cute Animated Icon -->
+        <div style="font-size: 6rem; margin-bottom: 20px; animation: bounce 2s infinite ease-in-out;">
+            🥨
+        </div>
+
+        <h1 class="hero-title" style="font-size: 2.5rem; margin-bottom: 15px; color: var(--text-color);">
+            <span style="color: var(--primary-color);">Oops!</span> 문제가 발생했어요
+        </h1>
+
+        <p
+            style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px; line-height: 1.6; max-width: 500px;">
+            요청하신 페이지를 찾을 수 없거나 일시적인 오류가 발생했습니다.<br>
+            입력하신 주소가 정확한지 다시 한 번 확인해주세요.
+        </p>
+
+        <!-- Status Code Badge (If available) -->
+        <div th:if="${status}" style="margin-bottom: 40px;">
+            <span class="badge badge-writing"
+                style="font-size: 1.2rem; padding: 10px 25px; border-radius: 50px; background: var(--accent-color); color: var(--text-color); border: 2px solid var(--border-color);"
+                th:text="${status} + ' ERROR'">
+                ERROR
+            </span>
+        </div>
+
+        <div style="display: flex; justify-content: center; gap: 15px;">
+            <a href="/" class="btn btn-primary" style="padding: 12px 30px; font-size: 1rem;">
+                홈으로 돌아가기
+            </a>
+            <a href="javascript:history.back()" class="btn btn-outline" style="padding: 12px 30px; font-size: 1rem;">
+                이전 페이지
+            </a>
+        </div>
+    </div>
+</div>
+
+</html>

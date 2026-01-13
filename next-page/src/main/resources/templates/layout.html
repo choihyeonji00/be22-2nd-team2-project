@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next Page - 릴레이 소설 플랫폼</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/js/realtime-updates.js"></script>
+</head>
+
+<body>
+
+    <header>
+        <div class="container">
+            <nav>
+                <a href="/" class="logo">
+                    <img src="/images/logo.png" alt="Next Page Icon">
+                    <span>Next Page</span>
+                </a>
+                <ul class="nav-links">
+                    <!-- 홈 버튼 삭제 (로고 클릭으로 대체) -->
+                    <!-- 로그인 상태에 따라 다르게 표시 -->
+                    <li id="guest-menu" style="display: none; gap: 10px;">
+                        <button onclick="openModal('login-modal')" class="btn btn-outline"
+                            style="padding: 5px 15px; font-size: 0.9rem; cursor: pointer;">로그인</button>
+                        <button onclick="openModal('signup-modal')" class="btn btn-submit"
+                            style="padding: 5px 15px; font-size: 0.9rem; cursor: pointer;">회원가입</button>
+                    </li>
+                    <li id="user-menu" style="display: none; gap: 15px;">
+                        <a href="/books/new">소설 쓰기</a>
+                        <a href="/mypage">마이페이지</a>
+                        <a href="#" id="logout-btn">로그아웃</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container fade-in" style="padding: 40px 20px; min-height: 80vh;">
+        <!-- Content injected here -->
+        <div layout:fragment="content"></div>
+    </main>
+
+    <footer>
+        <div class="container text-center" style="padding: 40px 0; color: var(--text-muted); font-size: 0.9rem;">
+            &copy; 2026 Team Next Page. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Duplicate script removed -->
+
+    <script>
+        // Modal Functions & Auth Logic ... (Content remains same as above view)
+        // ...
+    </script>
+
+    <!-- Page specific scripts (Moved after common scripts) -->
+
+
+    <div id="login-modal" class="modal-overlay">
+        <div class="modal text-center">
+            <a href="/" class="logo" style="display: block; margin-bottom: 20px; text-decoration: none;">
+                <img src="/images/logo.png" alt="Next Page" style="height: 80px;">
+            </a>
+            <button class="btn-close" onclick="closeModal('login-modal')">&times;</button>
+            <h2 class="mb-4">로그인</h2>
+            <form id="modal-login-form">
+                <div class="form-group">
+                    <label class="form-label" for="login-email">이메일</label>
+                    <input type="email" id="login-email" class="form-control" placeholder="user@example.com" required>
+                    <span id="login-email-msg" class="validation-message"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="login-password">비밀번호</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="비밀번호" required>
+                </div>
+                <div class="form-group" style="text-align: left; margin-top: 15px;">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="auto-login-check">
+                        <span class="checkmark"></span>
+                        <span style="margin-left: 8px; color: var(--text-color); font-size: 0.9rem;">자동 로그인</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">로그인</button>
+            </form>
+            <div class="text-center mt-4" style="font-size: 0.9rem;">
+                <span style="color: var(--text-muted);">계정이 없으신가요?</span>
+                <a href="#" onclick="switchModal('login-modal', 'signup-modal')"
+                    style="color: var(--primary-color); margin-left: 5px;">회원가입</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="signup-modal" class="modal-overlay">
+        <div class="modal text-center">
+            <a href="/" class="logo" style="display: block; margin-bottom: 20px; text-decoration: none;">
+                <img src="/images/logo.png" alt="Next Page" style="height: 80px;">
+            </a>
+            <button class="btn-close" onclick="closeModal('signup-modal')">&times;</button>
+            <h2 class="mb-4">회원가입</h2>
+            <form id="modal-signup-form">
+                <div class="form-group">
+                    <label class="form-label" for="signup-email">이메일</label>
+                    <input type="email" id="signup-email" class="form-control" placeholder="user@example.com" required>
+                    <span id="signup-email-msg" class="validation-message"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="signup-nickname">닉네임</label>
+                    <input type="text" id="signup-nickname" class="form-control" placeholder="작가명 (2~10자)" required>
+                    <span id="signup-nickname-msg" class="validation-message"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="signup-password">비밀번호</label>
+                    <input type="password" id="signup-password" class="form-control" placeholder="영문/숫자/특수문자 포함 8자 이상"
+                        required>
+                    <span id="signup-password-msg" class="validation-message"></span>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">가입하고 바로
+                    시작하기</button>
+            </form>
+            <div class="text-center mt-4" style="font-size: 0.9rem;">
+                <span style="color: var(--text-muted);">이미 계정이 있으신가요?</span>
+                <a href="#" onclick="switchModal('signup-modal', 'login-modal')"
+                    style="color: var(--primary-color); margin-left: 5px;">로그인</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <script>
+        // --- Toast Notification Logic ---
+        function showToast(message, type = 'info') {
+            const $container = $('#toast-container');
+            const $toast = $(`<div class="toast toast-${type}">${message}</div>`);
+
+            $container.append($toast);
+
+            // Auto remove after 3s
+            setTimeout(() => {
+                $toast.css('animation', 'fadeOut 0.4s forwards');
+                setTimeout(() => $toast.remove(), 400);
+            }, 3000);
+        }
+
+        // --- Modal Logic ---
+        function openModal(modalId, force = false) {
+            const $modal = $(`#${modalId}`);
+            $modal.addClass('active');
+            if (force) {
+                $modal.data('force', true);
+                $modal.find('.btn-close').hide(); // Hide close button
+            } else {
+                $modal.data('force', false);
+                $modal.find('.btn-close').show();
+            }
+        }
+
+        function closeModal(modalId) {
+            const $modal = $(`#${modalId}`);
+            if ($modal.data('force')) return; // Prevent closing if forced
+
+            $modal.removeClass('active');
+            // Reset forms on close
+            const $form = $modal.find('form');
+            if ($form.length > 0) $form[0].reset();
+            $('.validation-message').text('');
+        }
+
+        function switchModal(fromId, toId) {
+            // Check if the current modal is forced
+            const isForced = $(`#${fromId}`).data('force');
+
+            // Open new modal first to prevent background blink
+            openModal(toId, isForced);
+
+            // Then close old modal
+            $(`#${fromId}`).removeClass('active');
+        }
+
+        // Close on outside click (Fixed Logic)
+        $(window).on('click', function (event) {
+            if ($(event.target).hasClass('modal-overlay')) {
+                const modalId = $(event.target).attr('id');
+                // Check if forced
+                if ($(`#${modalId}`).data('force')) return;
+
+                closeModal(modalId);
+            }
+        });
+
+        // --- Auth UI Logic ---
+        function updateAuthUI() {
+            const token = localStorage.getItem('accessToken');
+            if (token) {
+                $('.guest-only').hide();
+                $('.user-only').css('display', 'flex');
+                $('#guest-menu').hide();
+                $('#user-menu').css('display', 'flex').css('gap', '15px');
+            } else {
+                $('.guest-only').show();
+                $('.user-only').hide();
+                $('#guest-menu').css('display', 'flex');
+                $('#user-menu').hide();
+            }
+        }
+
+        // --- Real-time Validation Logic ---
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Configure Global AJAX Settings (Token Injection)
+        $.ajaxSetup({
+            beforeSend: function (xhr) {
+                const token = localStorage.getItem('accessToken');
+                if (token) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                }
+            }
+        });
+
+        // Initialize Auth UI immediately to prevent flicker
+        updateAuthUI();
+
+        $(document).ready(function () {
+            // Global Ajax Error Handler for 401 (Unauthorized)
+            let isLoginToastShown = false;
+            $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
+                if (jqxhr.status === 401) {
+                    if (isLoginToastShown) return;
+                    isLoginToastShown = true;
+                    setTimeout(() => isLoginToastShown = false, 3000);
+
+                    // Token expired or invalid
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                    updateAuthUI();
+
+                    showToast('로그인이 필요한 서비스입니다.', 'error');
+                    openModal('login-modal');
+                }
+            });
+
+            // Initialize & Validate Session
+            const currentToken = localStorage.getItem('accessToken');
+            if (currentToken) {
+                // Validate token serverside
+                $.ajax({
+                    url: '/api/members/me',
+                    method: 'GET',
+                    headers: { 'Authorization': 'Bearer ' + currentToken },
+                    success: function () {
+                        // Valid session, waiting for UI to update via updateAuthUI() call below or already updated
+                        updateAuthUI();
+                    },
+                    error: function () {
+                        // Invalid session (401 or 404) - User not found or token stale
+                        console.log('Session invalid, clearing storage.');
+                        localStorage.removeItem('accessToken');
+                        localStorage.removeItem('refreshToken');
+                        updateAuthUI();
+                    }
+                });
+            } else {
+                updateAuthUI();
+            }
+
+            // Real-time Email Validation (Login)
+            $('#login-email').on('input', function () {
+                const email = $(this).val();
+                const $msg = $('#login-email-msg');
+                if (!email) {
+                    $msg.text('');
+                } else if (validateEmail(email)) {
+                    $msg.text('올바른 이메일 형식입니다.').removeClass('invalid').addClass('valid');
+                } else {
+                    $msg.text('이메일 형식이 올바르지 않습니다.').removeClass('valid').addClass('invalid');
+                }
+            });
+
+            // Real-time Email Validation (Signup)
+            $('#signup-email').on('focusout', function () { // API call on focusout to reduce load
+                const email = $(this).val();
+                const $msg = $('#signup-email-msg');
+
+                if (!email) {
+                    $msg.text('');
+                    return;
+                }
+
+                if (!validateEmail(email)) {
+                    $msg.text('이메일 형식이 올바르지 않습니다.').removeClass('valid').addClass('invalid');
+                    return;
+                }
+
+                // Server-side Check
+                $.ajax({
+                    url: '/api/auth/check-email',
+                    method: 'GET',
+                    data: { email: email },
+                    success: function () {
+                        $msg.text('사용 가능한 이메일입니다.').removeClass('invalid').addClass('valid');
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 0 || xhr.statusText === 'abort') return; // Ignore cancelled requests
+
+                        if (xhr.status === 409) { // Conflict
+                            $msg.text('이미 사용 중인 이메일입니다.').removeClass('valid').addClass('invalid');
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            $msg.text(xhr.responseJSON.message).removeClass('valid').addClass('invalid');
+                        } else {
+                            $msg.text('일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.').removeClass('valid').addClass('invalid');
+                        }
+                    }
+                });
+            });
+
+            // Real-time Nickname Validation (Signup) - NEW
+            $('#signup-nickname').on('focusout', function () {
+                const nick = $(this).val();
+                const $msg = $('#signup-nickname-msg'); // Need to add this span in HTML if not exists
+
+                if (!nick) return;
+
+                $.ajax({
+                    url: '/api/auth/check-nickname',
+                    method: 'GET',
+                    data: { nickname: nick },
+                    success: function () {
+                        $msg.text('사용 가능한 닉네임입니다.').removeClass('invalid').addClass('valid');
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 0 || xhr.statusText === 'abort') return;
+
+                        if (xhr.status === 409) {
+                            $msg.text('이미 사용 중인 닉네임입니다.').removeClass('valid').addClass('invalid');
+                            $('#signup-nickname').addClass('is-invalid');
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            $msg.text(xhr.responseJSON.message).removeClass('valid').addClass('invalid');
+                        } else {
+                            $msg.text('닉네임 확인 중 일시적인 오류가 발생했습니다.').removeClass('valid').addClass('invalid');
+                        }
+                    }
+                });
+            });
+
+            // Real-time Password Validation
+            $('#signup-password').on('input', function () {
+                const pw = $(this).val();
+                const $msg = $('#signup-password-msg');
+                if (!pw) {
+                    $msg.text('');
+                } else if (pw.length >= 8) {
+                    $msg.text('사용 가능한 비밀번호입니다.').removeClass('invalid').addClass('valid');
+                } else {
+                    $msg.text('8자 이상 입력해주세요.').removeClass('valid').addClass('invalid');
+                }
+            });
+
+            $('#logout-btn').click(function (e) {
+                e.preventDefault();
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('autoLoginEnabled'); // Clear auto-login preference
+                showToast('로그아웃 되었습니다.', 'info');
+                updateAuthUI();
+                window.location.href = '/';
+            });
+
+            // Auto-login: Check if auto-login was enabled and refresh token exists
+            const autoLoginEnabled = localStorage.getItem('autoLoginEnabled') === 'true';
+            const refreshToken = localStorage.getItem('refreshToken');
+
+            if (autoLoginEnabled && refreshToken) {
+                // Attempt silent login using refresh token
+                $.ajax({
+                    url: '/api/auth/refresh',
+                    method: 'POST',
+                    headers: { 'Cookie': 'refreshToken=' + refreshToken },
+                    success: function (response) {
+                        localStorage.setItem('accessToken', response.data.accessToken);
+                        localStorage.setItem('refreshToken', response.data.refreshToken);
+                        updateAuthUI();
+                        console.log('Auto-login successful via refresh token');
+                    },
+                    error: function () {
+                        // Refresh token expired or invalid, clear auto-login
+                        localStorage.removeItem('autoLoginEnabled');
+                        localStorage.removeItem('refreshToken');
+                        console.log('Auto-login failed: refresh token expired');
+                    }
+                });
+            }
+
+            // Login Submit
+            $('#modal-login-form').submit(function (e) {
+                e.preventDefault();
+                const $btn = $(this).find('button[type="submit"]');
+                if ($btn.prop('disabled')) return;
+                $btn.prop('disabled', true).text('로그인 중...');
+
+                const email = $('#login-email').val();
+                const password = $('#login-password').val();
+                const autoLogin = $('#auto-login-check').is(':checked');
+
+                $.ajax({
+                    url: '/api/auth/login',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ userEmail: email, userPw: password }),
+                    success: function (response) {
+                        localStorage.setItem('accessToken', response.data.accessToken);
+                        localStorage.setItem('refreshToken', response.data.refreshToken);
+
+                        // Save auto-login preference (not the password!)
+                        if (autoLogin) {
+                            localStorage.setItem('autoLoginEnabled', 'true');
+                        } else {
+                            localStorage.removeItem('autoLoginEnabled');
+                        }
+
+                        // Remove force flag before closing
+                        $('#login-modal').data('force', false);
+                        closeModal('login-modal');
+
+                        showToast('로그인 성공! 환영합니다.', 'success');
+                        updateAuthUI();
+                        setTimeout(() => location.reload(), 1000);
+                    },
+                    error: function (xhr) {
+                        // Ignore aborted requests (happens during page reload)
+                        if (xhr.statusText === 'abort' || xhr.status === 0) return;
+
+                        $btn.prop('disabled', false).text('로그인');
+                        const msg = xhr.responseJSON ? xhr.responseJSON.message : '이메일 또는 비밀번호를 확인해주세요.';
+                        showToast(msg, 'error');
+                    }
+                });
+            });
+
+            // Signup Submit
+            $('#modal-signup-form').submit(function (e) {
+                e.preventDefault();
+                const $btn = $(this).find('button[type="submit"]');
+                if ($btn.prop('disabled')) return;
+                $btn.prop('disabled', true).text('가입 중...');
+
+                const email = $('#signup-email').val();
+                const nickname = $('#signup-nickname').val();
+                const password = $('#signup-password').val();
+
+                // Final Validation Check
+                if (!validateEmail(email) || password.length < 8) {
+                    showToast('입력 정보를 다시 확인해주세요.', 'error');
+                    $btn.prop('disabled', false).text('가입하고 바로 시작하기');
+                    return;
+                }
+
+                const data = {
+                    userEmail: email,
+                    userNicknm: nickname,
+                    userPw: password
+                };
+
+                $.ajax({
+                    url: '/api/auth/signup',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        // Auto Login after signup
+                        $.ajax({
+                            url: '/api/auth/login',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({ userEmail: data.userEmail, userPw: data.userPw }),
+                            success: function (loginResponse) {
+                                localStorage.setItem('accessToken', loginResponse.data.accessToken);
+                                localStorage.setItem('refreshToken', loginResponse.data.refreshToken);
+
+                                // Remove force flag before closing
+                                $('#signup-modal').data('force', false);
+                                closeModal('signup-modal');
+
+                                showToast('가입 완료! 환영합니다.', 'success');
+                                updateAuthUI();
+                                setTimeout(() => location.reload(), 1500);
+                            },
+                            error: function (xhr) {
+                                // Ignore aborted requests
+                                if (xhr.statusText === 'abort' || xhr.status === 0) return;
+
+                                $btn.prop('disabled', false).text('가입하고 바로 시작하기');
+                                showToast('자동 로그인 실패. 다시 로그인해주세요.', 'error');
+                            }
+                        });
+                    },
+                    error: function (xhr) {
+                        // Ignore aborted requests
+                        if (xhr.statusText === 'abort' || xhr.status === 0) return;
+
+                        $btn.prop('disabled', false).text('가입하고 바로 시작하기');
+                        const msg = xhr.responseJSON ? xhr.responseJSON.message : '가입 처리 중 오류가 발생했습니다.';
+                        showToast(msg, 'error');
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- Page specific scripts -->
+    <th:block layout:fragment="script"></th:block>
+
+</body>
+
+</html>

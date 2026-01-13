@@ -65,34 +65,50 @@ public class SecurityConfig {
 
         // 엔드포인트별 인증/인가 규칙
         .authorizeHttpRequests(auth -> auth
-            // 1. 인증 관련 API - 누구나 접근 가능
-            .requestMatchers("/api/auth/**").permitAll()
+            // 1. 관리자 전용 API - ADMIN 역할 필수 (가장 먼저 체크)
+            .requestMatchers("/api/auth/admin/users/**").hasRole("ADMIN")
+            .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-            // 2. 소설 조회 API - GET 요청만 누구나 접근 가능
+            // 2. 인증 관련 API - 누구나 접근 가능
+            .requestMatchers("/api/auth/signup", "/api/auth/admin", "/api/auth/login", "/api/auth/check-email",
+                "/api/auth/check-nickname")
+            .permitAll()
+            .requestMatchers("/api/auth/refresh", "/api/auth/logout").permitAll()
+
+            // View Pages
+            .requestMatchers("/", "/mypage", "/books/**", "/websocket-test").permitAll()
+
+            // WebSocket endpoints - MUST be permitAll
+            .requestMatchers("/ws/**").permitAll()
+
+            // 3. 소설 조회 API - GET 요청만 누구나 접근 가능
             .requestMatchers(HttpMethod.GET, "/api/books").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/books/{bookId}").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/books/{bookId}/view").permitAll()
 
-            // 3. 댓글 조회 API - GET 요청만 누구나 접근 가능
+            // 4. 카테고리 조회 API - GET 요청만 누구나 접근 가능
+            .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+
+            // 5. 댓글 조회 API - GET 요청만 누구나 접근 가능
             .requestMatchers(HttpMethod.GET, "/api/reactions/comments/{bookId}").permitAll()
 
-            // 4. 에러 및 정적 리소스
-            .requestMatchers("/error", "/favicon.ico").permitAll()
+            // 6. 에러 및 정적 리소스
+            .requestMatchers("/error", "/favicon.ico", "/css/**", "/js/**", "/images/**", "/static/**").permitAll()
 
-            // 5. Swagger/OpenAPI 문서 접근 허용
+            // 7. Swagger/OpenAPI 문서 접근 허용
             .requestMatchers(
                 "/swagger-ui/**",
                 "/v3/api-docs/**",
                 "/swagger-resources/**")
             .permitAll()
 
-            // 6. 개발 도구 (H2 Console, Actuator 등)
+            // 8. 개발 도구 (H2 Console, Actuator 등)
             .requestMatchers(
                 "/h2-console/**",
                 "/actuator/**")
             .permitAll()
 
-            // 7. 나머지 모든 요청(POST, PUT, PATCH, DELETE 등)은 인증 필요
+            // 9. 나머지 모든 요청(POST, PUT, PATCH, DELETE 등)은 인증 필요
             .anyRequest().authenticated())
 
         // Form Login / HTTP Basic 비활성화

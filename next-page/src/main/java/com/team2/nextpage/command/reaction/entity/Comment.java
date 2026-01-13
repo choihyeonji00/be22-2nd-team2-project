@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 /**
  * 댓글 엔티티
@@ -18,6 +20,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "comments")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE comments SET deleted_at = NOW() WHERE comment_id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class Comment extends BaseEntity {
 
   @Id
@@ -34,11 +38,22 @@ public class Comment extends BaseEntity {
   private String content;
 
   @Builder
-  public Comment(Long bookId, Long writerId, String content) {
+  public Comment(Long bookId, Long writerId, String content, Comment parent) {
     this.bookId = bookId;
     this.writerId = writerId;
     this.content = content;
+    this.parent = parent;
   }
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "parent_id")
+  private Comment parent;
+
+  @OneToMany(mappedBy = "parent")
+  private java.util.List<Comment> children = new java.util.ArrayList<>();
+
+  @Column(name = "deleted_at")
+  private java.time.LocalDateTime deletedAt;
 
   /**
    * 댓글 내용 수정

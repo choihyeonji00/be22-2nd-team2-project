@@ -20,4 +20,6 @@ public class SentenceDto {
     private Long writerId; // 작성자 ID
     private String writerNicknm; // 작성자 닉네임
     private LocalDateTime createdAt; // 작성 시간
+    private Integer likeCount; // 좋아요 수
+    private Integer dislikeCount; // 싫어요 수
 }

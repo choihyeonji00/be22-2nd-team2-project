@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout}">
+
+<head>
+    <title>Next Page - 마이페이지</title>
+</head>
+
+<body>
+
+    <div layout:fragment="content">
+        <div class="card fade-in" style="max-width: 800px; margin: 0 auto;">
+            <h2 class="text-center mb-4">내 서재</h2>
+
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px;">
+                <div class="card text-center" style="flex: 1; min-width: 150px; background: rgba(139, 92, 246, 0.1);">
+                    <h4 style="color: var(--text-muted);">내가 만든 소설</h4>
+                    <div id="my-book-count" style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color);">0
+                    </div>
+                </div>
+                <div class="card text-center" style="flex: 1; min-width: 150px; background: rgba(236, 72, 153, 0.1);">
+                    <h4 style="color: var(--text-muted);">내가 쓴 문장</h4>
+                    <div id="my-sentence-count"
+                        style="font-size: 2.5rem; font-weight: 700; color: var(--secondary-color);">0</div>
+                </div>
+                <div class="card text-center" style="flex: 1; min-width: 150px; background: rgba(6, 182, 212, 0.1);">
+                    <h4 style="color: var(--text-muted);">내가 쓴 댓글</h4>
+                    <div id="my-comment-count" style="font-size: 2.5rem; font-weight: 700; color: var(--accent-color);">
+                        0</div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <h3>프로필 정보</h3>
+                <div id="profile-info" style="margin-top: 20px; color: var(--text-muted);">
+                    Loading...
+                </div>
+                <button class="btn btn-outline" style="margin-top: 30px; border-color: #ef4444; color: #ef4444;"
+                    onclick="withdraw()">회원 탈퇴</button>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="script">
+        <script>
+            $(document).ready(function () {
+                if (!localStorage.getItem('accessToken')) {
+                    // Prevent duplicate toasts
+                    if (!window.isLoginToastShown) {
+                        showToast('로그인이 필요합니다.', 'error');
+                        window.isLoginToastShown = true;
+                        setTimeout(() => window.isLoginToastShown = false, 3000);
+                    }
+
+                    // Open Modal Forcefully (cannot be closed by clicking outside)
+                    openModal('login-modal', true);
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/members/me',
+                    method: 'GET',
+                    success: function (response) {
+                        const data = response.data;
+                        $('#my-book-count').text(data.createdBookCount || 0);
+                        $('#my-sentence-count').text(data.writtenSentenceCount || 0);
+                        $('#my-comment-count').text(data.writtenCommentCount || 0);
+
+                        $('#profile-info').html(`
+                <p><strong>이메일:</strong> ${data.userEmail}</p>
+                <p><strong>닉네임:</strong> ${data.userNicknm}</p>
+                <p><strong>권한:</strong> ${data.userRole}</p>
+                `);
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 401) return; // Handled by global handler
+                        showToast('정보를 불러오는데 실패했습니다.', 'error');
+                    }
+                });
+            });
+
+            function withdraw() {
+                if (confirm('정말로 탈퇴하시겠습니까? 탈퇴 후에도 작성한 소설과 문장은 유지됩니다.')) {
+                    $.ajax({
+                        url: '/api/auth/withdraw',
+                        method: 'DELETE',
+                        success: function () {
+                            showToast('탈퇴 처리되었습니다. 이용해 주셔서 감사합니다.', 'info');
+                            localStorage.clear();
+                            updateAuthUI(); // Update UI immediately
+                            setTimeout(() => {
+                                window.location.href = '/';
+                            }, 1500);
+                        },
+                        error: function (xhr) {
+                            if (xhr.status === 401) return;
+                            showToast('탈퇴 처리에 실패했습니다.', 'error');
+                        }
+                    });
+                }
+            }
+        </script>
+    </th:block>
+
+</body>
+
+</html>

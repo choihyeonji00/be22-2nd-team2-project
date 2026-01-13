@@ -8,7 +8,11 @@ import com.team2.nextpage.command.book.repository.BookRepository;
 import com.team2.nextpage.command.book.repository.SentenceRepository;
 import com.team2.nextpage.common.error.BusinessException;
 import com.team2.nextpage.common.error.ErrorCode;
+import com.team2.nextpage.common.util.SecurityUtil;
+import com.team2.nextpage.websocket.dto.BookCreatedEvent;
+import com.team2.nextpage.websocket.dto.SentenceCreatedEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,65 +26,92 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BookService {
 
-    private final BookRepository bookRepository;
-    private final SentenceRepository sentenceRepository;
+        private final BookRepository bookRepository;
+        private final SentenceRepository sentenceRepository;
+        private final SimpMessagingTemplate messagingTemplate;
+        private final com.team2.nextpage.command.member.repository.MemberRepository memberRepository;
+        private final com.team2.nextpage.category.repository.CategoryRepository categoryRepository;
 
-    /**
-     * 소설 방 생성
-     */
-    public Long createBook(Long writerId, CreateBookRequest request) {
-        // 1. Book 생성
-        Book book = Book.builder()
-                .writerId(writerId)
-                .categoryId(request.getCategoryId())
-                .title(request.getTitle())
-                .maxSequence(request.getMaxSequence())
-                .status(com.team2.nextpage.command.book.entity.BookStatus.WRITING)
-                .currentSequence(1) // 1번 문장부터 시작
-                .build();
+        /**
+         * 소설 방 생성
+         */
+        public Long createBook(Long writerId, CreateBookRequest request) {
+                // 1. Book 생성
+                Book book = Book.builder()
+                                .writerId(writerId)
+                                .categoryId(request.getCategoryId())
+                                .title(request.getTitle())
+                                .maxSequence(request.getMaxSequence())
+                                .status(com.team2.nextpage.command.book.entity.BookStatus.WRITING)
+                                .currentSequence(1) // 1번 문장부터 시작
+                                .build();
 
-        Book savedBook = bookRepository.save(book);
+                Book savedBook = bookRepository.save(book);
 
-        // 2. 첫 문장 자동 등록
-        Sentence firstSentence = Sentence.builder()
-                .book(savedBook)
-                .writerId(writerId)
-                .content(request.getFirstSentence())
-                .sequenceNo(1)
-                .build();
+                // 2. 첫 문장 자동 등록
+                Sentence firstSentence = Sentence.builder()
+                                .book(savedBook)
+                                .writerId(writerId)
+                                .content(request.getFirstSentence())
+                                .sequenceNo(1)
+                                .build();
 
-        sentenceRepository.save(firstSentence);
+                sentenceRepository.save(firstSentence);
 
-        // 3. 상태 업데이트 (1번 문장 작성 완료 처리 -> 다음은 2번)
-        savedBook.updateStateAfterWriting(writerId);
+                // 3. 상태 업데이트 (1번 문장 작성 완료 처리 -> 다음은 2번)
+                savedBook.updateStateAfterWriting(writerId);
 
-        return savedBook.getBookId();
-    }
+                // 4. WebSocket 이벤트 발행 (새 소설 생성)
+                String writerNickname = memberRepository.findById(writerId)
+                                .map(m -> m.getUserNicknm()).orElse("작성자");
+                String categoryName = categoryRepository.findById(savedBook.getCategoryId())
+                                .map(c -> c.getCategoryName()).orElse("카테고리");
+                messagingTemplate.convertAndSend("/topic/books/new",
+                                new BookCreatedEvent(
+                                                savedBook.getBookId(),
+                                                savedBook.getTitle(),
+                                                categoryName,
+                                                writerNickname));
 
-    /**
-     * 문장 이어 쓰기
-     */
-    public Long appendSentence(Long bookId, Long writerId, SentenceAppendRequest request) {
-        // 1. 소설 조회
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.ENTITY_NOT_FOUND));
+                return savedBook.getBookId();
+        }
 
-        // 2. 작성 가능 여부 검증 (도메인 로직)
-        book.validateWritingPossible(writerId);
+        /**
+         * 문장 이어 쓰기
+         * 관리자는 연속 작성 제한이 적용되지 않습니다.
+         */
+        public Long appendSentence(Long bookId, Long writerId, SentenceAppendRequest request) {
+                // 1. 소설 조회 (비관적 락 적용)
+                Book book = bookRepository.findByIdForUpdate(bookId)
+                                .orElseThrow(() -> new BusinessException(ErrorCode.ENTITY_NOT_FOUND));
 
-        // 3. 문장 생성
-        Sentence sentence = Sentence.builder()
-                .book(book)
-                .writerId(writerId)
-                .content(request.getContent())
-                .sequenceNo(book.getCurrentSequence())
-                .build();
+                // 2. 작성 가능 여부 검증 (도메인 로직) - 관리자는 연속 작성 허용
+                book.validateWritingPossible(writerId, SecurityUtil.isAdmin());
 
-        sentenceRepository.save(sentence);
+                // 3. 문장 생성
+                Sentence sentence = Sentence.builder()
+                                .book(book)
+                                .writerId(writerId)
+                                .content(request.getContent())
+                                .sequenceNo(book.getCurrentSequence())
+                                .build();
 
-        // 4. 소설 상태 업데이트 (순서 증가, 마지막 작성자 갱신, 완결 체크)
-        book.updateStateAfterWriting(writerId);
+                sentenceRepository.save(sentence);
 
-        return sentence.getSentenceId();
-    }
+                // 4. 소설 상태 업데이트 (순서 증가, 마지막 작성자 갱신, 완결 체크)
+                book.updateStateAfterWriting(writerId);
+
+                // 5. WebSocket 이벤트 발행 (새 문장 작성)
+                String writerNickname = memberRepository.findById(writerId)
+                                .map(m -> m.getUserNicknm()).orElse("작성자");
+                messagingTemplate.convertAndSend("/topic/sentences/" + bookId,
+                                new SentenceCreatedEvent(
+                                                bookId,
+                                                sentence.getSentenceId(),
+                                                sentence.getContent(),
+                                                sentence.getSequenceNo(),
+                                                writerNickname));
+
+                return sentence.getSentenceId();
+        }
 }

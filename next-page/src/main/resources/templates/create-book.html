@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout}">
+
+<head>
+    <title>Next Page - 소설 생성</title>
+</head>
+
+<body>
+
+    <div layout:fragment="content" style="max-width: 600px; margin: 0 auto;">
+        <div class="card fade-in">
+            <h2 class="text-center mb-4">새로운 이야기 시작하기</h2>
+            <form id="create-book-form">
+                <div class="form-group">
+                    <label class="form-label">제목</label>
+                    <input type="text" id="title" class="form-control" placeholder="소설 제목을 입력하세요 (최대 50자)" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">장르 (카테고리)</label>
+                    <select id="categoryId" class="form-control">
+                        <!-- Dynamic Loading -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">최대 문장 수 (완결 기준)</label>
+                    <input type="number" id="maxSequence" class="form-control" value="20" min="10" max="100">
+                    <small style="color: var(--text-muted);">10 ~ 100 사이의 문장 수로 설정 가능합니다.</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">첫 문장</label>
+                    <textarea id="firstSentence" class="form-control" rows="4" placeholder="이야기의 시작을 열어주세요... (최대 200자)"
+                        required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">이야기 생성하기</button>
+            </form>
+        </div>
+    </div>
+
+    <th:block layout:fragment="script">
+        <script>
+            $(document).ready(function () {
+                // Load categories
+                $.ajax({
+                    url: '/api/categories',
+                    method: 'GET',
+                    success: function (response) {
+                        const categories = response.data;
+                        const $select = $('#categoryId');
+                        $select.empty();
+                        categories.forEach(cat => {
+                            $select.append(`<option value="${cat.categoryId}">${cat.categoryName} (${cat.categoryId})</option>`);
+                        });
+                    }
+                });
+            });
+
+            $('#create-book-form').submit(function (e) {
+                e.preventDefault();
+
+                const $btn = $(this).find('button[type="submit"]');
+
+                // Prevent duplicate submission
+                if ($btn.prop('disabled')) return;
+
+                // Token Check
+                if (!localStorage.getItem('accessToken')) {
+                    showToast('로그인이 필요합니다.', 'error');
+                    openModal('login-modal');
+                    return;
+                }
+
+                // Disable button to prevent double-click
+                $btn.prop('disabled', true).text('생성 중...');
+
+                const data = {
+                    title: $('#title').val(),
+                    categoryId: $('#categoryId').val(),
+                    maxSequence: parseInt($('#maxSequence').val()),
+                    firstSentence: $('#firstSentence').val()
+                };
+
+                $.ajax({
+                    url: '/api/books',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        showToast('새로운 이야기가 시작되었습니다!', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/books/' + response.data; // 생성된 책 ID로 이동
+                        }, 1000);
+                    },
+                    error: function (xhr) {
+                        // Ignore aborted requests (happens during page redirect)
+                        if (xhr.statusText === 'abort' || xhr.status === 0) return;
+
+                        if (xhr.status === 401) {
+                            $btn.prop('disabled', false).text('이야기 생성하기');
+                            return;
+                        }
+
+                        $btn.prop('disabled', false).text('이야기 생성하기');
+                        showToast('생성 실패: ' + (xhr.responseJSON ? xhr.responseJSON.message : '오류가 발생했습니다.'), 'error');
+                    }
+                });
+            });
+        </script>
+    </th:block>
+
+</body>
+
+</html>

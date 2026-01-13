@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout}">
+
+<head>
+    <title>Next Page - 소설 상세</title>
+    <style>
+        .typing-dot {
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            margin-right: 2px;
+            animation: typing-blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes typing-blink {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div layout:fragment="content">
+        <div id="book-header" class="text-center mb-4 fade-in">
+            <!-- JS injected -->
+            <h1 id="book-title" style="margin-bottom: 10px;">Loading...</h1>
+            <p id="book-info" style="color: var(--text-muted);"></p>
+            <div style="margin-top: 15px;">
+                <button class="btn btn-outline" id="upvote-book-btn">👍 개추 <span
+                        id="book-upvote-count">0</span></button>
+                <button class="btn btn-outline" id="downvote-book-btn" style="margin-left: 5px;">👎 비추 <span
+                        id="book-downvote-count">0</span></button>
+                <a href="#" id="view-mode-btn" class="btn btn-primary" style="margin-left: 10px;">📖 책으로 읽기</a>
+            </div>
+        </div>
+
+        <div class="container" style="max-width: 800px;">
+            <!-- Sentence List -->
+            <div id="sentence-list" style="margin-bottom: 40px;">
+                <!-- JS populated -->
+            </div>
+
+            <!-- Writing Area -->
+            <div id="writing-area" class="card fade-in" style="padding: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                    <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">다음 문장 이어쓰기</h3>
+                    <!-- Typing Indicator (Minimal) -->
+                    <div id="typing-indicator"
+                        style="display: none; font-size: 0.8rem; color: var(--primary-color); align-items: center; gap: 4px;">
+                        <span style="display: flex; gap: 2px;">
+                            <span class="typing-dot" style="animation-delay: 0s;"></span>
+                            <span class="typing-dot" style="animation-delay: 0.2s;"></span>
+                            <span class="typing-dot" style="animation-delay: 0.4s;"></span>
+                        </span>
+                        <span id="typing-user" style="font-weight: 600; margin-left: 4px;"></span>님이 입력 중...
+                    </div>
+                </div>
+
+                <!-- Guest Only: Slim Premium Design -->
+                <div class="guest-only"
+                    style="display: none; text-align: center; padding: 25px 15px; background: rgba(0,0,0,0.02); border-radius: 12px; border: 1px dashed rgba(0,0,0,0.1);">
+                    <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.9rem;">
+                        이야기에 참여하려면 로그인이 필요합니다.
+                    </p>
+                    <button onclick="openModal('login-modal')" class="btn btn-primary"
+                        style="padding: 8px 20px; font-size: 0.85rem; border-radius: 20px;">
+                        로그인하고 이어쓰기
+                    </button>
+                </div>
+
+                <!-- User Only: Compact Form -->
+                <div class="user-only" style="display: none;">
+                    <textarea id="sentence-input" class="form-control" rows="2"
+                        placeholder="당신의 상상력을 펼쳐보세요... (최대 200자)"
+                        style="border-radius: 10px; font-size: 0.95rem; resize: none;"></textarea>
+                    <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                        <button class="btn btn-primary" onclick="submitSentence()"
+                            style="padding: 8px 25px; font-size: 0.9rem; border-radius: 20px;">문장 등록</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments Area -->
+            <div class="card fade-in" style="margin-top: 40px; padding: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">감상평</h3>
+                    <!-- Comment Typing Indicator -->
+                    <div id="comment-typing-indicator"
+                        style="display: none; font-size: 0.75rem; color: var(--secondary-color);">
+                        💬 <span id="comment-typing-user" style="font-weight: 600;"></span>님이 작성 중...
+                    </div>
+                </div>
+
+                <!-- Guest Only: Slim Design -->
+                <div class="guest-only"
+                    style="display: none; text-align: center; padding: 20px; background: rgba(0,0,0,0.02); border-radius: 12px; margin-bottom: 20px;">
+                    <button onclick="openModal('login-modal')" class="btn btn-outline"
+                        style="padding: 6px 20px; font-size: 0.8rem; border-radius: 20px;">
+                        로그인하고 감상평 남기기
+                    </button>
+                </div>
+
+                <!-- User Only: Slim Form -->
+                <div class="user-only" style="display: none;">
+                    <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+                        <input type="text" id="comment-input" class="form-control" placeholder="감상평을 남겨주세요..."
+                            style="border-radius: 20px; font-size: 0.9rem; padding: 8px 15px;">
+                        <button class="btn btn-primary" onclick="submitComment()"
+                            style="padding: 0 20px; font-size: 0.85rem; border-radius: 20px; white-space: nowrap;">등록</button>
+                    </div>
+                </div>
+
+                <div id="comment-list">
+                    <!-- Comments populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="script">
+        <script>
+            // URL에서 bookId 추출 (더 안전한 방식)
+            const pathParts = window.location.pathname.split('/');
+            const bookId = pathParts.includes('books') ? pathParts[pathParts.indexOf('books') + 1] : pathParts.pop();
+
+            let stompClient = null;
+            let currentUserNickname = null;
+            let typingTimeout = null;
+
+            $(document).ready(function () {
+                loadBookDetail();
+                loadComments();
+                connectWebSocket();
+            });
+
+            // WebSocket 연결
+            function connectWebSocket() {
+                // 로그인 여부와 상관없이 WebSocket 연결 (타이핑 상태 보기 위해)
+                const token = localStorage.getItem('accessToken');
+
+                // WebSocket 연결 시작
+                const socket = new SockJS('/ws');
+                stompClient = Stomp.over(socket);
+                stompClient.debug = null;
+
+                stompClient.connect({}, function (frame) {
+
+                    // 타이핑 상태 구독 (문장 작성) - 모든 사용자가 구독
+                    stompClient.subscribe('/topic/typing', function (message) {
+                        const status = JSON.parse(message.body);
+                        handleTypingStatus(status);
+                    });
+
+                    // 댓글 타이핑 상태 구독 - 모든 사용자가 구독
+                    stompClient.subscribe('/topic/comment-typing', function (message) {
+                        const status = JSON.parse(message.body);
+                        handleCommentTypingStatus(status);
+                    });
+
+                    // 새 문장 실시간 구독
+                    stompClient.subscribe('/topic/sentences/' + bookId, function (message) {
+                        const sentenceEvent = JSON.parse(message.body);
+                        handleNewSentence(sentenceEvent);
+                    });
+                }, function (error) {
+                });
+
+                // 로그인한 사용자만 닉네임 가져오고 이벤트 리스너 등록
+                if (token) {
+                    $.ajax({
+                        url: '/api/members/me',
+                        method: 'GET',
+                        success: function (response) {
+                            currentUserNickname = response.data.userNicknm;
+
+                            // 로그인한 사용자만 입력 이벤트 리스너 등록
+                            setupTypingEventListeners();
+                        }
+                    });
+                }
+            }
+
+            // 타이핑 이벤트 리스너 설정 (로그인한 사용자만)
+            function setupTypingEventListeners() {
+
+                // 입력 필드에 이벤트 리스너 추가
+                $('#sentence-input').on('input', function () {
+                    if (!stompClient || !currentUserNickname) return;
+
+                    const payload = {
+                        bookId: parseInt(bookId),
+                        userNickname: currentUserNickname,
+                        isTyping: true
+                    };
+
+                    // 타이핑 시작 알림
+                    stompClient.send("/app/typing/start", {}, JSON.stringify(payload));
+
+                    // 3초 동안 추가 입력이 없으면 타이핑 종료
+                    clearTimeout(typingTimeout);
+                    typingTimeout = setTimeout(function () {
+                        if (stompClient) {
+                            const stopPayload = {
+                                bookId: parseInt(bookId),
+                                userNickname: currentUserNickname,
+                                isTyping: false
+                            };
+                            stompClient.send("/app/typing/stop", {}, JSON.stringify(stopPayload));
+                        }
+                    }, 3000);
+                });
+
+                // 입력 필드가 포커스를 잃으면 타이핑 종료
+                $('#sentence-input').on('blur', function () {
+                    if (!stompClient || !currentUserNickname) return;
+
+                    clearTimeout(typingTimeout);
+                    stompClient.send("/app/typing/stop", {}, JSON.stringify({
+                        bookId: parseInt(bookId),
+                        userNickname: currentUserNickname,
+                        isTyping: false
+                    }));
+                });
+
+                // 댓글 입력 필드에 이벤트 리스너 추가
+                let commentTypingTimeout = null;
+                $('#comment-input').on('input', function () {
+                    if (!stompClient || !currentUserNickname) return;
+
+                    // 댓글 타이핑 시작 알림
+                    stompClient.send("/app/comment-typing/start", {}, JSON.stringify({
+                        bookId: parseInt(bookId),
+                        userNickname: currentUserNickname,
+                        isTyping: true
+                    }));
+
+                    // 3초 동안 추가 입력이 없으면 타이핑 종료
+                    clearTimeout(commentTypingTimeout);
+                    commentTypingTimeout = setTimeout(function () {
+                        if (stompClient) {
+                            stompClient.send("/app/comment-typing/stop", {}, JSON.stringify({
+                                bookId: parseInt(bookId),
+                                userNickname: currentUserNickname,
+                                isTyping: false
+                            }));
+                        }
+                    }, 3000);
+                });
+
+                // 댓글 입력 필드가 포커스를 잃으면 타이핑 종료
+                $('#comment-input').on('blur', function () {
+                    if (!stompClient || !currentUserNickname) return;
+
+                    clearTimeout(commentTypingTimeout);
+                    stompClient.send("/app/comment-typing/stop", {}, JSON.stringify({
+                        bookId: parseInt(bookId),
+                        userNickname: currentUserNickname,
+                        isTyping: false
+                    }));
+                });
+            }
+
+            // 타이핑 상태 처리
+            function handleTypingStatus(status) {
+                // status.typing 또는 status.isTyping 둘 다 대응
+                const isTyping = status.typing !== undefined ? status.typing : status.isTyping;
+
+                if (status.bookId !== parseInt(bookId)) return;
+                if (status.userNickname === currentUserNickname) return;
+
+                const $indicator = $('#typing-indicator');
+                const $input = $('#sentence-input');
+                const $button = $('#writing-area .user-only button');
+
+                if (isTyping) {
+                    $('#typing-user').text(status.userNickname);
+                    $indicator.fadeIn(200);
+                    $input.prop('disabled', true).css('opacity', '0.6');
+                    $button.prop('disabled', true).css('opacity', '0.6');
+                } else {
+                    $indicator.fadeOut(200);
+                    $input.prop('disabled', false).css('opacity', '1');
+                    $button.prop('disabled', false).css('opacity', '1');
+                }
+            }
+
+            // 댓글 타이핑 상태 처리
+            function handleCommentTypingStatus(status) {
+                const isTyping = status.typing !== undefined ? status.typing : status.isTyping;
+
+                if (status.bookId !== parseInt(bookId)) return;
+                if (status.userNickname === currentUserNickname) return;
+
+                const $indicator = $('#comment-typing-indicator');
+
+                if (isTyping) {
+                    $('#comment-typing-user').text(status.userNickname);
+                    $indicator.fadeIn(200);
+                } else {
+                    $indicator.fadeOut(200);
+                }
+            }
+
+            // 새 문장 실시간 추가
+            function handleNewSentence(event) {
+                const html = `
+                    <div class="card new-sentence" style="padding: 15px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); animation: slideInFromBottom 0.5s ease-out;">
+                        <p style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 10px;">${event.content}</p>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between;">
+                            <span>No.${event.sequenceNo} by ${event.writerNickname}</span>
+                            <span>❤️ 0</span>
+                        </div>
+                    </div>
+                `;
+
+                const $newSentence = $(html);
+                $('#sentence-list').append($newSentence);
+
+                // 부드럽게 스크롤
+                $('html, body').animate({
+                    scrollTop: $newSentence.offset().top - 100
+                }, 500);
+            }
+
+            function loadBookDetail() {
+                $.ajax({
+                    url: '/api/books/' + bookId + '/view', // Using view mode API to get all sentences
+                    method: 'GET',
+                    success: function (response) {
+                        const book = response.data;
+                        const info = book.info || book;
+
+                        $('#book-title').text(info.title || book.title);
+
+                        // Fix categoryName - it might be categoryId or need to be fetched from categoryMap
+                        const categoryDisplay = info.categoryName || window.categoryMap?.[info.categoryId] || info.categoryId || '미분류';
+                        const statusDisplay = info.status || book.status || 'WRITING';
+                        const participantCount = info.participantCount || book.participantCount || 1;
+
+                        $('#book-info').html(`<span>${categoryDisplay}</span> | <span>${statusDisplay}</span> | 작가 ${participantCount}명`);
+                        $('#view-mode-btn').attr('href', '/books/' + bookId + '/viewer');
+
+                        // Update Book Vote Counts
+                        $('#book-upvote-count').text(book.likeCount || 0);
+                        $('#book-downvote-count').text(book.dislikeCount || 0);
+
+                        const $list = $('#sentence-list');
+                        $list.empty();
+
+                        // Assuming data.sentences is the list
+                        const sentences = book.sentences || info.sentences || [];
+                        sentences.forEach(sent => {
+                            const html = `
+                        <div class="card" style="padding: 15px; margin-bottom: 15px; border-left: 3px solid var(--primary-color);">
+                            <p style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 10px;">${sent.content}</p>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between;">
+                                <span>No.${sent.sequenceNo} by ${sent.writerNicknm}</span>
+                                <div>
+                                    <span style="margin-right: 8px;">👍 ${sent.likeCount || 0}</span>
+                                    <span>👎 ${sent.dislikeCount || 0}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                            $list.append(html);
+                        });
+
+                        if (statusDisplay === 'COMPLETED') {
+                            $('#writing-area').hide();
+                            $('#book-info').append(' <span class="badge badge-completed">완결됨</span>');
+                        }
+                    },
+                    error: function (xhr) {
+                        showToast('소설 정보를 불러올 수 없습니다.', 'error');
+                    }
+                });
+            }
+
+            function submitSentence() {
+                const content = $('#sentence-input').val();
+                if (!content) {
+                    showToast('내용을 입력해주세요.', 'warning');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/books/' + bookId + '/sentences',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ content: content }),
+                    success: function () {
+                        showToast('문장이 등록되었습니다!', 'success');
+                        $('#sentence-input').val('');
+                        loadBookDetail(); // Reload to see new sentence
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 401) return;
+                        showToast('등록 실패: ' + (xhr.responseJSON ? xhr.responseJSON.message : '오류가 발생했습니다.'), 'error');
+                    }
+                });
+            }
+
+            function loadComments() {
+                $.ajax({
+                    url: '/api/reactions/comments/' + bookId,
+                    method: 'GET',
+                    success: function (response) {
+                        const comments = response.data; // Tree structure
+                        $('#comment-list').empty();
+                        renderComments(comments, $('#comment-list'));
+                    }
+                });
+            }
+
+            function renderComments(comments, $container) {
+                if (!comments || comments.length === 0) return;
+
+                comments.forEach(comment => {
+                    const $node = $(`
+                <div class="comment-node" id="comment-${comment.commentId}">
+                    <div style="margin-bottom: 5px;">
+                        <span style="font-weight: 600; font-size: 0.9rem; color: var(--primary-color);">${comment.writerNicknm}</span>
+                        <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 10px;">${new Date(comment.createdAt).toLocaleString()}</span>
+                    </div>
+                    <div class="comment-content">${comment.content}</div>
+                    <div class="comment-actions">
+                        <button class="btn-reply" onclick="toggleReplyForm(${comment.commentId})">답글 달기</button>
+                    </div>
+                    <!-- Reply Form (Hidden) -->
+                    <div id="reply-form-${comment.commentId}" style="display: none; margin-top: 10px; gap: 10px;">
+                        <input type="text" class="form-control" style="font-size: 0.9rem;" placeholder="답글 입력...">
+                        <button class="btn btn-primary" style="padding: 5px 10px; font-size: 0.8rem;" onclick="submitReply(${comment.commentId})">등록</button>
+                    </div>
+                    <!-- Children Container -->
+                    <div class="comment-children"></div>
+                </div>
+            `);
+
+                    $container.append($node);
+
+                    // Recursive render for children
+                    if (comment.children && comment.children.length > 0) {
+                        renderComments(comment.children, $node.find('.comment-children'));
+                    }
+                });
+            }
+
+            function toggleReplyForm(commentId) {
+                const $form = $(`#reply-form-${commentId}`);
+                if ($form.css('display') === 'none') {
+                    $form.css('display', 'flex');
+                } else {
+                    $form.hide();
+                }
+            }
+
+            function submitComment() {
+                const content = $('#comment-input').val();
+                if (!content) return;
+
+                postComment(content, null);
+            }
+
+            function submitReply(parentId) {
+                const $input = $(`#reply-form-${parentId} input`);
+                const content = $input.val();
+                if (!content) return;
+
+                postComment(content, parentId);
+            }
+
+            function postComment(content, parentId) {
+                // 토큰 체크
+                if (!localStorage.getItem('accessToken')) {
+                    showToast('로그인이 필요합니다.', 'error');
+                    openModal('login-modal');
+                    return;
+                }
+
+                const data = {
+                    bookId: bookId,
+                    content: content,
+                    parentId: parentId
+                };
+
+                $.ajax({
+                    url: '/api/reactions/comments',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function () {
+                        if (parentId) {
+                            toggleReplyForm(parentId);
+                        } else {
+                            $('#comment-input').val('');
+                        }
+                        loadComments();
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 401) return;
+                        showToast('댓글 등록 실패: ' + (xhr.responseJSON ? xhr.responseJSON.message : '오류가 발생했습니다.'), 'error');
+                    }
+                });
+            }
+        </script>
+    </th:block>
+
+</body>
+
+</html>

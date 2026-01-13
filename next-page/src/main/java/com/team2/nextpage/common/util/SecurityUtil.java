@@ -129,4 +129,14 @@ public class SecurityUtil {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication != null && authentication.isAuthenticated();
     }
+
+    /**
+     * 현재 사용자가 관리자(ADMIN)인지 확인
+     * 
+     * @return 관리자 여부
+     */
+    public static boolean isAdmin() {
+        String role = getCurrentUserRole();
+        return role != null && (role.equals("ROLE_ADMIN") || role.equals("ADMIN"));
+    }
 }
