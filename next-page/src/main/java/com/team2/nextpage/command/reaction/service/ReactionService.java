@@ -1,12 +1,14 @@
 package com.team2.nextpage.command.reaction.service;
 
 import com.team2.nextpage.command.reaction.dto.request.CreateCommentRequest;
+import com.team2.nextpage.command.reaction.dto.request.SentenceVoteRequest;
 import com.team2.nextpage.command.reaction.dto.request.UpdateCommentRequest;
 import com.team2.nextpage.command.reaction.dto.request.VoteRequest;
 import com.team2.nextpage.command.reaction.entity.BookVote;
 import com.team2.nextpage.command.reaction.entity.Comment;
 import com.team2.nextpage.command.reaction.repository.BookVoteRepository;
 import com.team2.nextpage.command.reaction.repository.CommentRepository;
+import com.team2.nextpage.command.reaction.repository.SentenceVoteRepository;
 import com.team2.nextpage.common.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class ReactionService {
 
   private final CommentRepository commentRepository;
   private final BookVoteRepository bookVoteRepository;
+  private final SentenceVoteRepository sentenceVoteRepository;
 
   /**
    * 댓글 작성
@@ -90,6 +93,7 @@ public class ReactionService {
    * @param request 투표 요청 정보 (bookId, voteType)
    * @return 최종 투표 반영 여부 (true: 반영됨 / false: 취소됨)
    */
+  @Transactional
   public Boolean voteBook(VoteRequest request) {
     Long voterId = SecurityUtil.getCurrentUserId();
 
@@ -118,6 +122,8 @@ public class ReactionService {
       return true;
     }
   }
+
+
 
   /**
    * 작성자 권한 검증(내부 헬퍼 메서드)
