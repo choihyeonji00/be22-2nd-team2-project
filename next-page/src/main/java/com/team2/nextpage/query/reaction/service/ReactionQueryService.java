@@ -4,6 +4,7 @@ import com.team2.nextpage.query.reaction.dto.response.CommentDto;
 import com.team2.nextpage.query.reaction.mapper.ReactionMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 /**
@@ -15,16 +16,18 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ReactionQueryService {
 
-    private final ReactionMapper reactionMapper;
+  private final ReactionMapper reactionMapper;
 
-    public ReactionQueryService(ReactionMapper reactionMapper) {
-        this.reactionMapper = reactionMapper;
-    }
+  public ReactionQueryService(ReactionMapper reactionMapper) {
+    this.reactionMapper = reactionMapper;
+  }
 
-    /**
-     * 댓글 목록 조회
-     */
-    public List<CommentDto> getComments(Long bookId) {
-        return null; // impl
-    }
+  /**
+   * 댓글 목록 조회
+   */
+
+  public List<CommentDto> getComments(Long bookId) {
+    // Mapper를 통해 DB에서 댓글 목록을 조회하여 반환
+    return reactionMapper.findCommentsByBookId(bookId);
+  }
 }
