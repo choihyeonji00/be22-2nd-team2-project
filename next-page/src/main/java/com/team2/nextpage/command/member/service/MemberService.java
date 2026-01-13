@@ -34,6 +34,7 @@ public class MemberService {
    */
   public void registUser(SignUpRequest memberCreateRequest) {
     validateDuplicateEmail(memberCreateRequest.getUserEmail());
+    validateDuplicateNicknm(memberCreateRequest.getUserNicknm());
 
     Member member = Member.builder()
         .userEmail(memberCreateRequest.getUserEmail())
@@ -54,6 +55,7 @@ public class MemberService {
    */
   public void registAdmin(SignUpRequest memberCreateRequest) {
     validateDuplicateEmail(memberCreateRequest.getUserEmail());
+    validateDuplicateNicknm(memberCreateRequest.getUserNicknm());
 
     Member member = Member.builder()
         .userEmail(memberCreateRequest.getUserEmail())
@@ -91,6 +93,18 @@ public class MemberService {
   private void validateDuplicateEmail(String email) {
     if (memberRepository.findByUserEmail(email).isPresent()) {
       throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
+    }
+  }
+
+  /**
+   * 닉네임 중복 검증
+   *
+   * @param nicknm 검증할 닉네임
+   * @throws BusinessException 이미 존재하는 닉네임일 경우
+   */
+  private void validateDuplicateNicknm(String nicknm) {
+    if (memberRepository.existsByUserNicknm(nicknm)){
+      throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
     }
   }
 }
