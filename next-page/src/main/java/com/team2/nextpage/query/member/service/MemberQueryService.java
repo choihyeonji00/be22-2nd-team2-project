@@ -1,7 +1,10 @@
 package com.team2.nextpage.query.member.service;
 
+import com.team2.nextpage.common.error.BusinessException;
+import com.team2.nextpage.common.error.ErrorCode;
 import com.team2.nextpage.query.member.dto.response.MemberDto;
 import com.team2.nextpage.query.member.mapper.MemberMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,20 +15,30 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class MemberQueryService {
 
     private final MemberMapper memberMapper;
 
-    public MemberQueryService(MemberMapper memberMapper) {
-        this.memberMapper = memberMapper;
-    }
-
     /**
-     * 마이페이지 정보 조회
+     * 마이페이지 정보 조회 (활동 통계 포함)
+     * 
+     * @param userEmail 사용자 이메일
+     * @return 회원 정보 DTO (활동 통계 포함)
+     * @throws BusinessException 회원을 찾을 수 없는 경우
      */
     public MemberDto getMyPage(String userEmail) {
-        return memberMapper
+        // 1. 기본 회원 정보 조회
+        MemberDto memberDto = memberMapper
                 .findByUserEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+
+        // 2. 활동 통계 조회 및 설정
+        Long userId = memberDto.getUserId();
+        memberDto.setCreatedBookCount(memberMapper.countCreatedBooks(userId));
+        memberDto.setWrittenSentenceCount(memberMapper.countWrittenSentences(userId));
+        memberDto.setWrittenCommentCount(memberMapper.countWrittenComments(userId));
+
+        return memberDto;
     }
 }

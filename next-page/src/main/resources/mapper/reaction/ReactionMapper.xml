@@ -12,7 +12,6 @@
         FROM comments c
                  JOIN users u ON c.writer_id = u.user_id
         WHERE c.book_id = #{bookId}
-          AND c.deleted_at IS NULL
         ORDER BY c.created_at DESC
     </select>
 

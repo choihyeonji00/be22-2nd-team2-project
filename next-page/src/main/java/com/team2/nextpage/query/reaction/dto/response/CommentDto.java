@@ -1,6 +1,8 @@
 package com.team2.nextpage.query.reaction.dto.response;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import java.time.LocalDateTime;
 
 /**
@@ -9,6 +11,8 @@ import java.time.LocalDateTime;
  * @author 정병진
  */
 @Getter
+@Setter
+@NoArgsConstructor
 public class CommentDto {
     private Long commentId;
     private String content;
