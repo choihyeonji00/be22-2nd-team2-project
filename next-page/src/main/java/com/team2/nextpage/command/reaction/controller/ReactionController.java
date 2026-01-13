@@ -5,6 +5,7 @@ import com.team2.nextpage.command.reaction.dto.request.UpdateCommentRequest;
 import com.team2.nextpage.command.reaction.dto.request.VoteRequest;
 import com.team2.nextpage.command.reaction.service.ReactionService;
 import com.team2.nextpage.common.response.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +31,7 @@ public class ReactionController {
    */
   @PostMapping("/comments")
   public ResponseEntity<ApiResponse<Long>> createComment(
-      @RequestBody CreateCommentRequest request) {
-
+      @RequestBody @Valid CreateCommentRequest request) {
     Long commentId = reactionService.addComment(request);
     return ResponseEntity.ok(ApiResponse.success(commentId));
   }
@@ -47,10 +47,9 @@ public class ReactionController {
   @PatchMapping("/comments/{commentId}")
   public ResponseEntity<ApiResponse<Void>> modifyComment(
       @PathVariable Long commentId,
-      @RequestBody UpdateCommentRequest request) {
+      @RequestBody @Valid UpdateCommentRequest request) {
     reactionService.modifyComment(commentId, request);
     return ResponseEntity.ok(ApiResponse.success());
-
   }
 
   /**
@@ -68,12 +67,32 @@ public class ReactionController {
   }
 
   /**
-   * 투표 API
-   * POST /api/reactions/votes
+   * 소설 투표 API
+   * POST /api/reactions/votes/books
+   *
+   * @param request 투표 요청 정보 (bookId, voteType)
+   * @return 투표 반영 여부 (true: 반영됨 / false: 취소됨)
    */
-  @PostMapping("/votes")
-  public ResponseEntity<ApiResponse<Boolean>> vote(@RequestBody VoteRequest request) {
+  @PostMapping("/votes/books")
+  public ResponseEntity<ApiResponse<Boolean>> voteBook(
+      @RequestBody @Valid VoteRequest request) {
     Boolean result = reactionService.voteBook(request);
+    return ResponseEntity.ok(ApiResponse.success(result));
+  }
+
+  /**
+   * 문장 투표 API
+   * POST /api/reactions/votes/sentences/{sentenceId}
+   *
+   * @param sentenceId 투표할 문장 ID
+   * @param request    투표 요청 정보 (voteType)
+   * @return 투표 반영 여부 (true: 반영됨 / false: 취소됨)
+   */
+  @PostMapping("/votes/sentences/{sentenceId}")
+  public ResponseEntity<ApiResponse<Boolean>> voteSentence(
+      @PathVariable Long sentenceId,
+      @RequestBody @Valid VoteRequest request) {
+    Boolean result = reactionService.voteSentence(sentenceId, request);
     return ResponseEntity.ok(ApiResponse.success(result));
   }
 }

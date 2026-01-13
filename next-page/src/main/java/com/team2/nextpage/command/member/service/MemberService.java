@@ -5,10 +5,10 @@ import com.team2.nextpage.command.member.entity.Member;
 import com.team2.nextpage.command.member.entity.UserRole;
 import com.team2.nextpage.command.member.entity.UserStatus;
 import com.team2.nextpage.command.member.repository.MemberRepository;
+import com.team2.nextpage.common.error.BusinessException;
+import com.team2.nextpage.common.error.ErrorCode;
+import com.team2.nextpage.common.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +24,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
   private final MemberRepository memberRepository;
-  private final ModelMapper modelMapper;
   private final PasswordEncoder passwordEncoder;
 
-  /* USER 등록 */
+  /**
+   * 일반 사용자 등록
+   * 
+   * @param memberCreateRequest 회원가입 요청 DTO
+   * @throws BusinessException 이미 존재하는 이메일일 경우
+   */
   public void registUser(SignUpRequest memberCreateRequest) {
-    if (memberRepository.findByUserEmail(memberCreateRequest.getUserEmail()).isPresent()) {
-      throw new RuntimeException("이미 존재하는 아이디(이메일)입니다.");
-    }
+    validateDuplicateEmail(memberCreateRequest.getUserEmail());
 
     Member member = Member.builder()
         .userEmail(memberCreateRequest.getUserEmail())
@@ -44,11 +46,14 @@ public class MemberService {
     memberRepository.save(member);
   }
 
-  /* ADMIN 등록 */
+  /**
+   * 관리자 등록
+   * 
+   * @param memberCreateRequest 회원가입 요청 DTO
+   * @throws BusinessException 이미 존재하는 이메일일 경우
+   */
   public void registAdmin(SignUpRequest memberCreateRequest) {
-    if (memberRepository.findByUserEmail(memberCreateRequest.getUserEmail()).isPresent()) {
-      throw new RuntimeException("이미 존재하는 아이디(이메일)입니다.");
-    }
+    validateDuplicateEmail(memberCreateRequest.getUserEmail());
 
     Member member = Member.builder()
         .userEmail(memberCreateRequest.getUserEmail())
@@ -61,15 +66,31 @@ public class MemberService {
     memberRepository.save(member);
   }
 
-  // 회원 탈퇴
+  /**
+   * 회원 탈퇴 (Soft Delete)
+   * 현재 로그인한 사용자를 탈퇴 처리합니다.
+   * 
+   * @throws BusinessException 회원 정보를 찾을 수 없는 경우
+   */
   public void withdraw() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String userEmail = authentication.getName(); // 인증 시 userEmail을 사용
+    String userEmail = SecurityUtil.getCurrentUserEmail();
 
     Member member = memberRepository.findByUserEmail(userEmail)
-        .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
+        .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
     // Soft Delete 수행
     memberRepository.delete(member);
+  }
+
+  /**
+   * 이메일 중복 검증
+   * 
+   * @param email 검증할 이메일
+   * @throws BusinessException 이미 존재하는 이메일일 경우
+   */
+  private void validateDuplicateEmail(String email) {
+    if (memberRepository.findByUserEmail(email).isPresent()) {
+      throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
+    }
   }
 }

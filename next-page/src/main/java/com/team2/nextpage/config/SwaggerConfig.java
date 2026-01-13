@@ -31,6 +31,9 @@ public class SwaggerConfig {
         @Value("${app.server-url:http://localhost:8080}")
         private String serverUrl;
 
+        @Value("${app.production-url:https://api.nextpage.com}")
+        private String productionUrl;
+
         private static final String SECURITY_SCHEME_NAME = "bearerAuth";
 
         @Bean
@@ -88,7 +91,7 @@ public class SwaggerConfig {
                                 .description("로컬 개발 서버");
 
                 Server productionServer = new Server()
-                                .url("https://api.nextpage.com")
+                                .url(productionUrl)
                                 .description("운영 서버 (배포 후)");
 
                 return List.of(localServer, productionServer);

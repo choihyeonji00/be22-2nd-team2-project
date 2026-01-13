@@ -34,17 +34,18 @@
 ### 📅 개발 기간
 * **2025.12.23 ~ 2026.01.16**
 
-### 📊 프로젝트 진행 현황 (2026.01.12 기준)
+### 📊 프로젝트 진행 현황 (2026.01.13 최종 업데이트)
 
 | 기능 영역 | 상태 | 완료 항목 |
 |:---:|:---:|:---|
-| **🔐 인증/인가** | ✅ 완료 | JWT 기반 로그인/로그아웃, 토큰 갱신, Spring Security 설정 |
-| **👤 회원 관리** | ✅ 완료 | 회원가입, 관리자 가입, SecurityUtil 통한 사용자 정보 조회 |
+| **🔐 인증/인가** | ✅ 완료 | JWT 기반 로그인/로그아웃, 토큰 갱신, Spring Security 설정, Refresh Token 관리 |
+| **👤 회원 관리** | ✅ 완료 | 회원가입, 관리자 가입, 회원 탈퇴, SecurityUtil 통한 사용자 정보 조회 |
 | **📖 소설 생성/집필** | ✅ 완료 | 소설 생성 API, 문장 이어쓰기 API, SecurityUtil 연동 |
-| **📚 소설 조회** | ✅ 완료 | 목록 조회, 상세 조회, 뷰어 모드 조회 |
-| **💬 댓글** | ✅ 완료 | 댓글 CRUD (생성/수정/삭제), SecurityUtil 연동 |
-| **❤️ 투표** | 🚧 진행중 | 투표 API 엔드포인트 구현 (로직 구현 필요) |
-| **🧑‍💼 마이페이지** | 🚧 진행중 | 조회 API 구현 (서비스 로직 구현 필요) |
+| **📚 소설 조회** | ✅ 완료 | 목록 조회(페이징/정렬/필터링), 상세 조회, 뷰어 모드 조회 |
+| **💬 댓글** | ✅ 완료 | 댓글 CRUD (생성/수정/삭제), Soft Delete, SecurityUtil 연동 |
+| **❤️ 투표** | ✅ 완료 | 소설 투표 API, 문장 투표 API, LIKE/DISLIKE 토글 방식 지원 |
+| **🧑‍💼 마이페이지** | ✅ 완료 | 마이페이지 조회 API 구현 |
+| **🧪 HTTP 테스트** | ✅ 완료 | 전체 API 테스트 파일 작성 (`http/api-test.http`) |
 
 <br>
 
@@ -439,21 +440,22 @@ CREATE TABLE `sentence_votes` (
 | POST | `/api/auth/login` | 로그인 (JWT 토큰 발급) | All |
 | POST | `/api/auth/refresh` | Access Token 갱신 | User |
 | POST | `/api/auth/logout` | 로그아웃 (Refresh Token 무효화) | User |
+| DELETE | `/api/auth/withdraw` | 회원 탈퇴 | User |
 
 ### 👤 회원 (Member) API
 
 | Method | URI | 설명 | 권한 |
 |:---:|:---|:---|:---:|
-| GET | `/api/members/me` | 마이페이지 조회 | User |
+| GET | `/api/members/me` | 마이페이지 조회 (활동 통계 포함) | User |
 
 ### 📖 소설 (Book) API
 
 | Method | URI | 설명 | 권한 |
 |:---:|:---|:---|:---:|
 | POST | `/api/books` | 새로운 이야기 시작 (소설 생성) | User |
-| GET | `/api/books` | 소설 목록 조회 (필터링, 검색, 페이징) | All |
-| GET | `/api/books/{bookId}` | 소설 상세 조회 (문장 전체 리스트) | All |
-| GET | `/api/books/{bookId}/view` | 완결 소설 책 뷰어 모드 조회 | All |
+| GET | `/api/books` | 소설 목록 조회 (페이징, 정렬, 필터링, 검색) | All |
+| GET | `/api/books/{bookId}` | 소설 상세 조회 | All |
+| GET | `/api/books/{bookId}/view` | 소설 뷰어 모드 조회 (문장 목록 포함) | All |
 | POST | `/api/books/{bookId}/sentences` | 문장 이어 쓰기 (릴레이 핵심 기능) | User |
 
 ### ❤️ 반응 (Reaction) API
@@ -462,9 +464,14 @@ CREATE TABLE `sentence_votes` (
 |:---:|:---|:---|:---:|
 | POST | `/api/reactions/comments` | 댓글 등록 | User |
 | PATCH | `/api/reactions/comments/{commentId}` | 댓글 수정 | User |
-| DELETE | `/api/reactions/comments/{commentId}` | 댓글 삭제 | User |
+| DELETE | `/api/reactions/comments/{commentId}` | 댓글 삭제 (Soft Delete) | User |
 | GET | `/api/reactions/comments/{bookId}` | 소설별 댓글 목록 조회 | All |
-| POST | `/api/reactions/votes` | 소설/문장 투표 (LIKE/DISLIKE) | User |
+| POST | `/api/reactions/votes/books` | 소설 투표 (LIKE/DISLIKE 토글) | User |
+| POST | `/api/reactions/votes/sentences/{sentenceId}` | 문장 투표 (LIKE/DISLIKE 토글) | User |
+
+### 📁 HTTP 테스트
+
+모든 API에 대한 테스트 파일이 `http/api-test.http`에 작성되어 있습니다. IntelliJ IDEA에서 바로 실행할 수 있습니다.
 
 <br>
 

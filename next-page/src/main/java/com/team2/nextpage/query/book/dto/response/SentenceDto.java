@@ -1,0 +1,23 @@
+package com.team2.nextpage.query.book.dto.response;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.time.LocalDateTime;
+
+/**
+ * 문장(Sentence) 조회용 DTO
+ *
+ * @author 정진호
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+public class SentenceDto {
+    private Long sentenceId;
+    private Integer sequenceNo; // 문장 순서
+    private String content; // 문장 내용
+    private Long writerId; // 작성자 ID
+    private String writerNicknm; // 작성자 닉네임
+    private LocalDateTime createdAt; // 작성 시간
+}

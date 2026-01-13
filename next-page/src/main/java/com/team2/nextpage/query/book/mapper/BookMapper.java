@@ -1,7 +1,11 @@
 package com.team2.nextpage.query.book.mapper;
 
+import com.team2.nextpage.query.book.dto.request.BookSearchRequest;
+import com.team2.nextpage.query.book.dto.response.BookDetailDto;
 import com.team2.nextpage.query.book.dto.response.BookDto;
+import com.team2.nextpage.query.book.dto.response.SentenceDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
@@ -13,12 +17,42 @@ import java.util.List;
 public interface BookMapper {
 
     /**
-     * 소설 목록 조회 (필터링/검색)
+     * 소설 목록 조회 (필터링/검색/페이징)
      */
-    List<BookDto> findAllBooks();
+    List<BookDto> findBooks(@Param("request") BookSearchRequest request);
+
+    /**
+     * 소설 전체 개수 조회 (페이징용)
+     */
+    Long countBooks(@Param("request") BookSearchRequest request);
 
     /**
      * 소설 상세 조회
      */
-    BookDto findBookDetail(Long bookId);
+    BookDto findBookDetail(@Param("bookId") Long bookId);
+
+    /**
+     * 소설 상세 조회 (뷰어용 - 작성자 닉네임 포함)
+     */
+    BookDetailDto findBookForViewer(@Param("bookId") Long bookId);
+
+    /**
+     * 소설의 문장 목록 조회
+     */
+    List<SentenceDto> findSentencesByBookId(@Param("bookId") Long bookId);
+
+    /**
+     * 소설의 좋아요 수 조회
+     */
+    Integer countLikes(@Param("bookId") Long bookId);
+
+    /**
+     * 소설의 싫어요 수 조회
+     */
+    Integer countDislikes(@Param("bookId") Long bookId);
+
+    /**
+     * 기존 메서드 (하위 호환용)
+     */
+    List<BookDto> findAllBooks();
 }

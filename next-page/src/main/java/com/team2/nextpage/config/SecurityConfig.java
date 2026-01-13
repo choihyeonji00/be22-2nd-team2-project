@@ -4,6 +4,7 @@ import com.team2.nextpage.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -64,30 +65,34 @@ public class SecurityConfig {
 
         // 엔드포인트별 인증/인가 규칙
         .authorizeHttpRequests(auth -> auth
-            // 1. 인증 불필요 (Public) - 누구나 접근 가능
-            .requestMatchers(
-                "/api/auth/**", // 회원가입, 로그인
-                "/api/books", // 소설 목록 조회 (GET)
-                "/api/books/{bookId}", // 소설 상세 조회 (GET)
-                "/api/books/{bookId}/view", // 책 뷰어 모드
-                "/error",
-                "/favicon.ico")
-            .permitAll()
+            // 1. 인증 관련 API - 누구나 접근 가능
+            .requestMatchers("/api/auth/**").permitAll()
 
-            // 2. Swagger/OpenAPI 문서 접근 허용
+            // 2. 소설 조회 API - GET 요청만 누구나 접근 가능
+            .requestMatchers(HttpMethod.GET, "/api/books").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/books/{bookId}").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/books/{bookId}/view").permitAll()
+
+            // 3. 댓글 조회 API - GET 요청만 누구나 접근 가능
+            .requestMatchers(HttpMethod.GET, "/api/reactions/comments/{bookId}").permitAll()
+
+            // 4. 에러 및 정적 리소스
+            .requestMatchers("/error", "/favicon.ico").permitAll()
+
+            // 5. Swagger/OpenAPI 문서 접근 허용
             .requestMatchers(
                 "/swagger-ui/**",
                 "/v3/api-docs/**",
                 "/swagger-resources/**")
             .permitAll()
 
-            // 3. 개발 도구 (H2 Console, Actuator 등)
+            // 6. 개발 도구 (H2 Console, Actuator 등)
             .requestMatchers(
                 "/h2-console/**",
                 "/actuator/**")
             .permitAll()
 
-            // 4. 인증 필요 (Private) - 로그인한 사용자만
+            // 7. 나머지 모든 요청(POST, PUT, PATCH, DELETE 등)은 인증 필요
             .anyRequest().authenticated())
 
         // Form Login / HTTP Basic 비활성화

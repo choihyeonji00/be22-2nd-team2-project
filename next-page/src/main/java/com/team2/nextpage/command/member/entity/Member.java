@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 /**
  * 회원(Member) 엔티티 (Soft delete 적용)
+ * 
  * @author 김태형
  */
 @Entity
@@ -48,8 +49,12 @@ public class Member extends BaseEntity {
   @Column(name = "left_at")
   private LocalDateTime leftAt; // 탈퇴 일시
 
-
-  public void setEncodedPassword(String encodedPassword) {
+  /**
+   * 비밀번호 변경
+   * 
+   * @param encodedPassword 암호화된 새 비밀번호
+   */
+  public void changePassword(String encodedPassword) {
     this.userPw = encodedPassword;
   }
 
