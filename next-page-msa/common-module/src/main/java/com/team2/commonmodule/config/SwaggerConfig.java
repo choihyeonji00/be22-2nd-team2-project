@@ -38,7 +38,7 @@ public class SwaggerConfig {
                                                                                 .bearerFormat("JWT")
                                                                                 .description("JWT 토큰을 입력해주세요. (예: eyJhbGci...)")))
                                 .addServersItem(new io.swagger.v3.oas.models.servers.Server()
-                                                .url("http://localhost:8000")
+                                                .url("/")
                                                 .description("API Gateway"));
         }
 }

@@ -8,7 +8,7 @@
         </router-link>
 
         <!-- Mobile Menu Toggle -->
-        <button class="mobile-menu-toggle" @click="toggleMobileMenu" aria-label="메뉴">
+        <button class="mobile-menu-toggle" :class="{ 'active': mobileMenuOpen }" @click="toggleMobileMenu" aria-label="메뉴">
           <span></span>
           <span></span>
           <span></span>
@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 
@@ -57,6 +57,15 @@ const toggleMobileMenu = () => {
 const closeMobileMenu = () => {
   mobileMenuOpen.value = false
 }
+
+// Watch for menu state to lock body scroll
+watch(mobileMenuOpen, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+})
 
 const handleLogin = () => {
   authStore.openLogin()
@@ -120,7 +129,8 @@ nav {
   border: none;
   cursor: pointer;
   padding: 8px;
-  z-index: 1001;
+  z-index: 2000; /* Higher than sidebar (1000) */
+  position: relative; /* Ensure z-index works */
 }
 
 .mobile-menu-toggle span {
@@ -174,6 +184,19 @@ nav {
     display: flex;
     margin-left: auto;
   }
+  
+  /* Hamburger Animation */
+  .mobile-menu-toggle.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  
+  .mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .mobile-menu-toggle.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
 
   .logo span {
     font-size: 1.4rem;
@@ -194,7 +217,7 @@ nav {
     backdrop-filter: blur(20px);
     flex-direction: column;
     justify-content: flex-start;
-    padding: 80px 20px 30px;
+    padding: 120px 20px 30px; /* Increased top padding to avoid overlap */
     gap: 12px;
     box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
     transition: right 0.3s ease;
@@ -204,7 +227,7 @@ nav {
   .nav-links.mobile-open {
     right: 0;
   }
-
+/* ... rest of existing styles ... */
   .nav-item {
     width: 100%;
   }

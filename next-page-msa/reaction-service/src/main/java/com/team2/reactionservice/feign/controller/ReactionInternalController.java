@@ -56,4 +56,14 @@ public class ReactionInternalController {
         BookReactionInfoDto stats = reactionInternalService.getBookReactionStats(bookId, userId);
         return ResponseEntity.ok(ApiResponse.success(stats));
     }
+
+    @PostMapping("/reactions/books/stats")
+    public ResponseEntity<ApiResponse<Map<Long, BookReactionInfoDto>>> getBookReactions(
+            @RequestBody List<Long> bookIds,
+            @RequestParam(required = false) Long userId) {
+
+        Map<Long, BookReactionInfoDto> stats = reactionInternalService
+                .getBookReactions(bookIds, userId);
+        return ResponseEntity.ok(ApiResponse.success(stats));
+    }
 }

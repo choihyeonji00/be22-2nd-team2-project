@@ -3,34 +3,36 @@
     <!-- Login Modal -->
     <div v-if="authStore.showLoginModal" class="modal-overlay active" @mousedown="handleOverlayMousedown" @click="handleOverlayClick(closeLogin, $event)">
       <div class="modal text-center">
-        <a href="/" class="logo" style="display: block; margin-bottom: 20px; text-decoration: none;">
-          <img src="/images/logo.png" alt="Next Page" style="height: 80px;">
-        </a>
         <button class="btn-close" @click="closeLogin">&times;</button>
-        <h2 class="mb-4">로그인</h2>
-        <form @submit.prevent="handleLogin">
-          <div class="form-group">
-            <label class="form-label" for="login-email">이메일</label>
-            <input type="email" id="login-email" class="form-control" placeholder="user@example.com" required v-model="loginForm.email">
+        <div class="modal-scroll-content">
+          <a href="/" class="logo" style="display: block; margin-bottom: 20px; text-decoration: none;">
+            <img src="/images/logo.png" alt="Next Page" style="height: 80px;">
+          </a>
+          <h2 class="mb-4">로그인</h2>
+          <form @submit.prevent="handleLogin">
+            <div class="form-group">
+              <label class="form-label" for="login-email">이메일</label>
+              <input type="email" id="login-email" class="form-control" placeholder="user@example.com" required v-model="loginForm.email">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="login-password">비밀번호</label>
+              <input type="password" id="login-password" class="form-control" placeholder="비밀번호" required v-model="loginForm.password">
+            </div>
+            <div class="form-group" style="text-align: left; margin-top: 15px;">
+              <label class="checkbox-container">
+                <input type="checkbox" v-model="loginForm.autoLogin">
+                <span class="checkmark"></span>
+                <span style="margin-left: 8px; color: var(--text-color); font-size: 0.9rem;">자동 로그인</span>
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;" :disabled="loading">
+              {{ loading ? '로그인 중...' : '로그인' }}
+            </button>
+          </form>
+          <div class="text-center mt-4" style="font-size: 0.9rem;">
+            <span style="color: var(--text-muted);">계정이 없으신가요?</span>
+            <a href="#" @click.prevent="switchToSignup" style="color: var(--primary-color); margin-left: 5px;">회원가입</a>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="login-password">비밀번호</label>
-            <input type="password" id="login-password" class="form-control" placeholder="비밀번호" required v-model="loginForm.password">
-          </div>
-          <div class="form-group" style="text-align: left; margin-top: 15px;">
-            <label class="checkbox-container">
-              <input type="checkbox" v-model="loginForm.autoLogin">
-              <span class="checkmark"></span>
-              <span style="margin-left: 8px; color: var(--text-color); font-size: 0.9rem;">자동 로그인</span>
-            </label>
-          </div>
-          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;" :disabled="loading">
-            {{ loading ? '로그인 중...' : '로그인' }}
-          </button>
-        </form>
-        <div class="text-center mt-4" style="font-size: 0.9rem;">
-          <span style="color: var(--text-muted);">계정이 없으신가요?</span>
-          <a href="#" @click.prevent="switchToSignup" style="color: var(--primary-color); margin-left: 5px;">회원가입</a>
         </div>
       </div>
     </div>
@@ -38,34 +40,36 @@
     <!-- Signup Modal -->
     <div v-if="authStore.showSignupModal" class="modal-overlay active" @mousedown="handleOverlayMousedown" @click="handleOverlayClick(closeSignup, $event)">
       <div class="modal text-center">
-        <a href="/" class="logo" style="display: block; margin-bottom: 20px; text-decoration: none;">
-          <img src="/images/logo.png" alt="Next Page" style="height: 80px;">
-        </a>
         <button class="btn-close" @click="closeSignup">&times;</button>
-        <h2 class="mb-4">회원가입</h2>
-        <form @submit.prevent="handleSignup">
-          <div class="form-group">
-            <label class="form-label" for="signup-email">이메일</label>
-            <input type="email" id="signup-email" class="form-control" placeholder="user@example.com" required v-model="signupForm.email" @input="debouncedEmailCheck">
-            <span class="validation-message" :class="emailMsgClass">{{ emailMsg }}</span>
+        <div class="modal-scroll-content">
+          <a href="/" class="logo" style="display: block; margin-bottom: 20px; text-decoration: none;">
+            <img src="/images/logo.png" alt="Next Page" style="height: 80px;">
+          </a>
+          <h2 class="mb-4">회원가입</h2>
+          <form @submit.prevent="handleSignup">
+            <div class="form-group">
+              <label class="form-label" for="signup-email">이메일</label>
+              <input type="email" id="signup-email" class="form-control" placeholder="user@example.com" required v-model="signupForm.email" @input="debouncedEmailCheck">
+              <span class="validation-message" :class="emailMsgClass">{{ emailMsg }}</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="signup-nickname">닉네임</label>
+              <input type="text" id="signup-nickname" class="form-control" placeholder="작가명 (2~10자)" required v-model="signupForm.nickname" @input="debouncedNickCheck">
+              <span class="validation-message" :class="nickMsgClass">{{ nickMsg }}</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="signup-password">비밀번호</label>
+              <input type="password" id="signup-password" class="form-control" placeholder="영문/숫자/특수문자 포함 8자 이상" required v-model="signupForm.password">
+              <span class="validation-message" :class="pwMsgClass">{{ pwMsg }}</span>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;" :disabled="signupLoading || !isSignupValid">
+              {{ signupLoading ? '가입 중...' : '가입하고 바로 시작하기' }}
+            </button>
+          </form>
+          <div class="text-center mt-4" style="font-size: 0.9rem;">
+              <span style="color: var(--text-muted);">이미 계정이 있으신가요?</span>
+              <a href="#" @click.prevent="switchToLogin" style="color: var(--primary-color); margin-left: 5px;">로그인</a>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="signup-nickname">닉네임</label>
-            <input type="text" id="signup-nickname" class="form-control" placeholder="작가명 (2~10자)" required v-model="signupForm.nickname" @input="debouncedNickCheck">
-            <span class="validation-message" :class="nickMsgClass">{{ nickMsg }}</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="signup-password">비밀번호</label>
-            <input type="password" id="signup-password" class="form-control" placeholder="영문/숫자/특수문자 포함 8자 이상" required v-model="signupForm.password">
-            <span class="validation-message" :class="pwMsgClass">{{ pwMsg }}</span>
-          </div>
-          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;" :disabled="signupLoading || !isSignupValid">
-            {{ signupLoading ? '가입 중...' : '가입하고 바로 시작하기' }}
-          </button>
-        </form>
-        <div class="text-center mt-4" style="font-size: 0.9rem;">
-            <span style="color: var(--text-muted);">이미 계정이 있으신가요?</span>
-            <a href="#" @click.prevent="switchToLogin" style="color: var(--primary-color); margin-left: 5px;">로그인</a>
         </div>
       </div>
     </div>
@@ -100,6 +104,15 @@ const pwValid = ref(false)
 const emailMsgClass = computed(() => emailValid.value ? 'valid' : 'invalid')
 const nickMsgClass = computed(() => nickValid.value ? 'valid' : 'invalid')
 const pwMsgClass = computed(() => pwValid.value ? 'valid' : 'invalid')
+
+// Body Scroll Locking
+watch(() => [authStore.showLoginModal, authStore.showSignupModal], ([loginOpen, signupOpen]) => {
+    if (loginOpen || signupOpen) {
+        document.body.style.overflow = 'hidden'
+    } else {
+        document.body.style.overflow = ''
+    }
+})
 
 // Modal Actions
 const closeLogin = () => authStore.closeLogin()

@@ -73,12 +73,22 @@
           <span style="color: var(--primary-color);">Make by.</span> {{ book.writerNicknm || '작가님' }}
         </p>
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-          <span style="font-size: 0.85rem; color: var(--text-muted);">
-            👥 {{ book.participantCount || 1 }}명 참여
-          </span>
-          <span style="font-size: 0.85rem; color: var(--text-muted);">
-            📝 {{ book.currentSequence }} 문장
-          </span>
+          <div style="display: flex; gap: 10px;">
+            <span style="font-size: 0.85rem; color: var(--text-muted);">
+              👥 {{ book.participantCount || 1 }}명
+            </span>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">
+              📝 {{ book.currentSequence }}
+            </span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <span style="font-size: 0.85rem; color: var(--primary-color);">
+              👍 {{ book.likeCount || 0 }}
+            </span>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">
+              👎 {{ book.dislikeCount || 0 }}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -270,16 +280,15 @@ onUnmounted(() => {
 /* Mobile Layout Adjustment */
 @media (max-width: 768px) {
   .search-card {
-    flex-direction: column;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
+    align-items: stretch;
+    padding: 15px; /* Add some padding container */
   }
 
   .filter-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 50% 50% Split */
-    gap: 10px;
-    width: 100%;
+    display: contents; /* Unwrap to let children participate in grid */
   }
 
   .filter-select {
@@ -288,8 +297,21 @@ onUnmounted(() => {
   }
 
   .search-group {
+    grid-column: 1 / -1; /* Span full width */
+    display: flex;
+    gap: 8px;
     width: 100%;
-    min-width: 0;
+  }
+
+  .search-input {
+    flex: 1;
+    min-width: 0; /* Prevent overflow */
+  }
+  
+  .search-btn {
+    flex-shrink: 0;
+    width: auto;
+    padding: 0 20px; /* Ensure button isn't too wide or narrow */
   }
 }
 </style>

@@ -47,4 +47,14 @@ public interface BookVoteRepository extends JpaRepository<BookVote, Long> {
      * @param voterId 투표자 ID
      */
     void deleteByBookIdAndVoterId(Long bookId, Long voterId);
+
+    // Batch queries for multiple books
+    @org.springframework.data.jpa.repository.Query("SELECT v.bookId, v.voteType, COUNT(v) FROM BookVote v WHERE v.bookId IN :bookIds GROUP BY v.bookId, v.voteType")
+    java.util.List<Object[]> countVotesByBookIds(
+            @org.springframework.web.bind.annotation.RequestParam("bookIds") java.util.List<Long> bookIds);
+
+    @org.springframework.data.jpa.repository.Query("SELECT v.bookId, v.voteType FROM BookVote v WHERE v.bookId IN :bookIds AND v.voterId = :userId")
+    java.util.List<Object[]> findMyVotesByBookIds(
+            @org.springframework.web.bind.annotation.RequestParam("bookIds") java.util.List<Long> bookIds,
+            @org.springframework.web.bind.annotation.RequestParam("userId") Long userId);
 }

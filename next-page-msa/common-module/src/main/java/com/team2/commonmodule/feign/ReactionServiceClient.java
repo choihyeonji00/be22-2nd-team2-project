@@ -35,4 +35,9 @@ public interface ReactionServiceClient {
         @GetMapping("/internal/members/{userId}/stats")
         ApiResponse<MemberReactionStatsDto> getMemberReactionStats(
                         @PathVariable("userId") Long userId);
+
+        @PostMapping("/internal/reactions/books/stats")
+        ApiResponse<Map<Long, BookReactionInfoDto>> getBookReactions(
+                        @RequestBody List<Long> bookIds,
+                        @RequestParam(value = "userId", required = false) Long userId);
 }
