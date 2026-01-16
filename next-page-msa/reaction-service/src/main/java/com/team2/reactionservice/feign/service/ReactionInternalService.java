@@ -104,4 +104,54 @@ public class ReactionInternalService {
 
         return statsMap;
     }
+
+    public Map<Long, BookReactionInfoDto> getBookReactions(List<Long> bookIds, Long userId) {
+        Map<Long, BookReactionInfoDto> statsMap = new HashMap<>();
+
+        if (bookIds == null || bookIds.isEmpty()) {
+            return statsMap;
+        }
+
+        // 1. Initialize map
+        for (Long id : bookIds) {
+            statsMap.put(id, BookReactionInfoDto.builder()
+                    .bookId(id)
+                    .likeCount(0L)
+                    .dislikeCount(0L)
+                    .myVote(null)
+                    .build());
+        }
+
+        // 2. Count Votes
+        List<Object[]> counts = bookVoteRepository.countVotesByBookIds(bookIds);
+        for (Object[] row : counts) {
+            Long bookId = (Long) row[0];
+            VoteType type = (VoteType) row[1];
+            Long count = (Long) row[2];
+
+            BookReactionInfoDto dto = statsMap.get(bookId);
+            if (dto != null) {
+                if (type == VoteType.LIKE)
+                    dto.setLikeCount(count);
+                else if (type == VoteType.DISLIKE)
+                    dto.setDislikeCount(count);
+            }
+        }
+
+        // 3. User Vote Status
+        if (userId != null) {
+            List<Object[]> myVotes = bookVoteRepository.findMyVotesByBookIds(bookIds, userId);
+            for (Object[] row : myVotes) {
+                Long bookId = (Long) row[0];
+                VoteType type = (VoteType) row[1];
+
+                BookReactionInfoDto dto = statsMap.get(bookId);
+                if (dto != null) {
+                    dto.setMyVote(type.name());
+                }
+            }
+        }
+
+        return statsMap;
+    }
 }

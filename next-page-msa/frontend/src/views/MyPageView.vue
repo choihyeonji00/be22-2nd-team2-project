@@ -16,18 +16,28 @@
       <div v-else>Loading...</div>
     </div>
 
-    <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px;">
-      <div class="stats-card" style="flex: 1; min-width: 160px;">
-        <span class="stat-number">{{ user?.createdBookCount || 0 }}</span>
-        <span class="stat-label">내가 만든 소설</span>
+    <!-- Stats Section -->
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-icon">📚</div>
+        <div class="stat-content">
+          <span class="stat-value">{{ user?.createdBookCount || 0 }}</span>
+          <span class="stat-label">만든 소설</span>
+        </div>
       </div>
-      <div class="stats-card" style="flex: 1; min-width: 160px;">
-        <span class="stat-number">{{ user?.writtenSentenceCount || 0 }}</span>
-        <span class="stat-label">내가 쓴 문장</span>
+      <div class="stat-item">
+        <div class="stat-icon">✍️</div>
+        <div class="stat-content">
+          <span class="stat-value">{{ user?.writtenSentenceCount || 0 }}</span>
+          <span class="stat-label">작성한 문장</span>
+        </div>
       </div>
-      <div class="stats-card" style="flex: 1; min-width: 160px;">
-        <span class="stat-number">{{ user?.writtenCommentCount || 0 }}</span>
-        <span class="stat-label">내가 쓴 댓글</span>
+      <div class="stat-item">
+        <div class="stat-icon">💬</div>
+        <div class="stat-content">
+          <span class="stat-value">{{ user?.writtenCommentCount || 0 }}</span>
+          <span class="stat-label">작성한 댓글</span>
+        </div>
       </div>
     </div>
 
@@ -196,5 +206,84 @@ const withdraw = async () => {
 <style scoped>
 .tabs .btn.active {
     border-bottom: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-item {
+    background: #fff;
+    border: 2px solid rgba(0,0,0,0.05);
+    border-radius: 20px;
+    padding: 25px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    box-shadow: 0 10px 25px rgba(232, 93, 117, 0.15);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+    background: #FFF5F8;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-color);
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    /* Make the last item span full width on small screens if 3 items */
+    .stat-item:last-child {
+        grid-column: span 2; 
+    }
+    .stat-item:last-child:nth-child(3n) {
+         grid-column: span 1; /* Reset if grid logic changes */
+    }
+    /* Actually for 3 items on 2 col grid: 1, 2 on first row, 3 spans full on second row */
+    .stats-grid > .stat-item:nth-child(3) {
+         grid-column: 1 / -1;
+    }
 }
 </style>

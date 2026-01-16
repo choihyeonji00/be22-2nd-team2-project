@@ -14,6 +14,7 @@
             b.status,
             b.current_sequence,
             b.max_sequence,
+            (SELECT COUNT(DISTINCT s.writer_id) FROM sentences s WHERE s.book_id = b.book_id) AS participantCount,
             b.created_at
         FROM books b
         <where>
@@ -127,6 +128,7 @@
             b.status,
             b.current_sequence,
             b.max_sequence,
+            (SELECT COUNT(DISTINCT s.writer_id) FROM sentences s WHERE s.book_id = b.book_id) AS participantCount,
             b.created_at
         FROM books b
         ORDER BY b.created_at DESC

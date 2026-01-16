@@ -76,6 +76,41 @@ public class BookQueryService {
             }
         }
 
+        // MSA: 소설 반응(투표) 정보 조회 (Feign Client - Bulk)
+        if (!books.isEmpty()) {
+            List<Long> bookIds = books.stream().map(BookDto::getBookId).collect(Collectors.toList());
+            Long userId = null;
+            try {
+                userId = SecurityUtil.getCurrentUserId();
+            } catch (Exception e) {
+            }
+
+            try {
+                ApiResponse<Map<Long, com.team2.commonmodule.feign.dto.BookReactionInfoDto>> response = reactionServiceClient
+                        .getBookReactions(bookIds, userId);
+
+                if (response != null && response.getData() != null) {
+                    Map<Long, com.team2.commonmodule.feign.dto.BookReactionInfoDto> statsMap = response.getData();
+                    books.forEach(book -> {
+                        var stats = statsMap.get(book.getBookId());
+                        if (stats != null) {
+                            book.setLikeCount((int) stats.getLikeCount());
+                            book.setDislikeCount((int) stats.getDislikeCount());
+                        } else {
+                            book.setLikeCount(0);
+                            book.setDislikeCount(0);
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                log.warn("Failed to fetch book reaction stats: {}", e.getMessage());
+                books.forEach(book -> {
+                    book.setLikeCount(0);
+                    book.setDislikeCount(0);
+                });
+            }
+        }
+
         // 전체 개수 조회 (페이징 정보용)
         Long totalElements = bookMapper.countBooks(request);
 
