@@ -16,8 +16,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TypingStatus {
 
+    @com.fasterxml.jackson.annotation.JsonProperty("bookId")
     private Long bookId;
+    @com.fasterxml.jackson.annotation.JsonProperty("userNickname")
     private String userNickname;
+    @com.fasterxml.jackson.annotation.JsonProperty("isTyping")
     private boolean isTyping;
 
     public static TypingStatus startTyping(Long bookId, String userNickname) {

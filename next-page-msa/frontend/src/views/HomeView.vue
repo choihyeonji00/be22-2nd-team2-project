@@ -28,25 +28,31 @@
     </div>
 
     <!-- Filter & Search -->
-    <div class="card"
-      style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center; z-index: 10; position: relative; margin-bottom: 30px;">
-      <select v-model="filters.categoryId" class="form-control" style="width: auto;">
-        <option value="">전체 카테고리</option>
-        <option v-for="cat in categories" :key="cat.categoryId" :value="cat.categoryId">
-          {{ cat.categoryName }}
-        </option>
-      </select>
-      <select v-model="filters.status" class="form-control" style="width: auto;">
-        <option value="">모든 상태</option>
-        <option value="WRITING">연재중</option>
-        <option value="COMPLETED">완결</option>
-      </select>
-      <input type="text" v-model="filters.keyword" class="form-control" placeholder="제목/작가 검색..." style="flex: 1;"
-        @input="debouncedSearch">
+    <div class="card search-card" ref="searchContainer">
+      <div class="filter-group">
+        <select v-model="filters.categoryId" class="form-control filter-select">
+          <option value="">전체 카테고리</option>
+          <option v-for="cat in categories" :key="cat.categoryId" :value="cat.categoryId">
+            {{ cat.categoryName }}
+          </option>
+        </select>
+        <select v-model="filters.status" class="form-control filter-select">
+          <option value="">모든 상태</option>
+          <option value="WRITING">연재중</option>
+          <option value="COMPLETED">완결</option>
+        </select>
+      </div>
+      <div class="search-group">
+        <input type="text" v-model="filters.keyword" class="form-control search-input" placeholder="제목/작가 검색..." 
+          @input="debouncedSearch" @keyup.enter="searchBooks">
+        <button class="btn btn-primary search-btn" @click="searchBooks">
+          검색
+        </button>
+      </div>
     </div>
 
     <!-- Book Grid -->
-    <div class="grid" id="book-list">
+    <div class="grid" id="book-list" ref="resultsContainer">
       <div v-for="book in books" :key="book.bookId" class="card" @click="goDetail(book.bookId)"
         style="cursor: pointer; animation: slideInFromBottom 0.5s ease-out;">
         <div class="book-cover-placeholder">
@@ -115,6 +121,7 @@ const size = 20
 const loading = ref(false)
 const hasNext = ref(true)
 const sentinel = ref(null)
+const searchContainer = ref(null)
 
 // Category Fetch
 const fetchCategories = async () => {
@@ -177,6 +184,16 @@ const debouncedSearch = () => {
   searchTimeout = setTimeout(resetAndLoad, 500)
 }
 
+const searchBooks = () => {
+  clearTimeout(searchTimeout)
+  resetAndLoad().then(() => {
+    // Scroll to Search Container
+    if (searchContainer.value) {
+      searchContainer.value.scrollIntoView({ block: 'start', behavior: 'smooth' })
+    }
+  })
+}
+
 // Navigation
 const goDetail = (bookId) => {
   router.push(`/books/${bookId}`)
@@ -214,3 +231,65 @@ onUnmounted(() => {
   if (observer) observer.disconnect()
 })
 </script>
+
+<style scoped>
+/* Search Card Layout */
+.search-card {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  z-index: 10;
+  position: relative;
+  margin-bottom: 30px;
+  scroll-margin-top: 20px; /* Ensures scroll stops with padding at top */
+}
+
+.filter-group {
+  display: flex;
+  gap: 15px;
+}
+
+.filter-select {
+  width: auto;
+  min-width: 120px;
+}
+
+.search-group {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  min-width: 250px;
+}
+
+.search-btn {
+  padding: 12px 20px;
+  border-radius: 15px;
+  white-space: nowrap;
+}
+
+/* Mobile Layout Adjustment */
+@media (max-width: 768px) {
+  .search-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .filter-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 50% 50% Split */
+    gap: 10px;
+    width: 100%;
+  }
+
+  .filter-select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .search-group {
+    width: 100%;
+    min-width: 0;
+  }
+}
+</style>

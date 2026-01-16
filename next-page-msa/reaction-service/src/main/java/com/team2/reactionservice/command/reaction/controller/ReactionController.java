@@ -57,6 +57,7 @@ public class ReactionController {
         .commentId(commentId)
         .bookId(request.getBookId())
         .content(request.getContent())
+        .parentId(request.getParentId())
         .nickname(nickname)
         .createdAt(LocalDateTime.now())
         .build();

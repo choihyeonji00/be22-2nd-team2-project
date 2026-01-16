@@ -5,25 +5,25 @@
         <span style="font-weight: 700; font-size: 0.95rem; color: var(--primary-color);">{{ comment.writerNicknm || '익명' }}</span>
         <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 8px;">{{ new Date(comment.createdAt).toLocaleString() }}</span>
       </div>
-      <div style="display: flex; gap: 5px;">
-        <button v-if="!isEditing && canEdit" class="btn btn-ghost btn-sm" @click="startEdit" style="padding: 2px 5px; font-size: 0.8rem;">✏️</button>
-        <button v-if="canEdit" class="btn btn-ghost btn-sm" @click="deleteSelf" style="padding: 2px 5px; font-size: 0.8rem; color: red;">🗑️</button>
-        <button class="btn btn-ghost btn-sm" @click="toggleReply" style="padding: 2px 8px; font-size: 0.8rem;">💬 답글</button>
+      <div style="display: flex; gap: 5px; flex-shrink: 0;">
+        <button v-if="!isEditing && canEdit" class="btn btn-ghost btn-sm" @click="startEdit" style="padding: 2px 5px; font-size: 0.8rem; width: auto !important;">✏️</button>
+        <button v-if="canEdit" class="btn btn-ghost btn-sm" @click="deleteSelf" style="padding: 2px 5px; font-size: 0.8rem; color: red; width: auto !important;">🗑️</button>
+        <button class="btn btn-ghost btn-sm" @click="toggleReply" style="padding: 2px 8px; font-size: 0.8rem; width: auto !important;">💬 답글</button>
       </div>
     </div>
 
-    <div v-if="!isEditing" class="comment-content" style="font-size: 1rem; color: var(--text-color); line-height: 1.5; margin-bottom: 5px;">{{ comment.content }}</div>
+    <div v-if="!isEditing" class="comment-content" style="font-size: 1rem; color: var(--text-color); line-height: 1.5; margin-bottom: 5px; white-space: pre-wrap; word-break: break-all;">{{ comment.content }}</div>
     <div v-else style="margin-bottom: 10px;">
-      <textarea v-model="editContent" class="form-control" rows="2"></textarea>
+      <textarea v-model="editContent" class="form-control" rows="2" :placeholder="isMobile ? '내용을 입력하세요' : '내용을 입력하세요 (Shift+Enter 줄바꿈, Enter 저장)'" @keydown.enter="handleEnter($event, saveEdit)" @keydown.esc="cancelEdit"></textarea>
       <div style="margin-top: 5px; text-align: right;">
-        <button @click="saveEdit" class="btn btn-primary btn-sm" style="padding: 2px 10px;">저장</button>
-        <button @click="cancelEdit" class="btn btn-outline btn-sm" style="padding: 2px 10px;">취소</button>
+        <button @click="saveEdit" class="btn btn-primary btn-sm" style="padding: 2px 10px; width: auto;">저장</button>
+        <button @click="cancelEdit" class="btn btn-outline btn-sm" style="padding: 2px 10px; width: auto;">취소</button>
       </div>
     </div>
 
     <div v-if="showReplyForm" style="margin-top: 15px; align-items: flex-start; gap: 10px; animation: fadeIn 0.3s ease; display: flex;">
-      <textarea v-model="replyContent" class="form-control" rows="2" style="font-size: 0.9rem; border-radius: 12px; resize: none; padding: 10px;" placeholder="답글을 남겨주세요..."></textarea>
-      <button class="btn btn-primary" style="padding: 0 20px; font-size: 0.85rem; border-radius: 20px; height: 50px; white-space: nowrap;" @click="submitReply">등록</button>
+      <textarea v-model="replyContent" class="form-control" rows="2" style="font-size: 0.9rem; border-radius: 12px; resize: none; padding: 10px;" :placeholder="isMobile ? '답글을 남겨주세요...' : '답글을 남겨주세요... (Shift+Enter 줄바꿈, Enter 등록)'" @keydown.enter="handleEnter($event, submitReply)" @keydown.esc="showReplyForm = false"></textarea>
+      <button class="btn btn-primary" style="padding: 0 20px; font-size: 0.85rem; border-radius: 20px; height: 50px; white-space: nowrap; width: auto !important;" @click="submitReply">등록</button>
     </div>
 
     <div v-if="comment.children && comment.children.length > 0" class="comment-children" style="margin-left: 20px; border-left: 2px solid rgba(255,255,255,0.1); padding-left: 15px; margin-top: 15px;">
@@ -41,7 +41,26 @@ export default {
 </script>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+
+const isMobile = ref(false)
+const checkMobile = () => { isMobile.value = window.innerWidth <= 768 }
+
+onMounted(() => {
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('resize', checkMobile)
+})
+
+const handleEnter = (e, callback) => {
+    if (isMobile.value) return 
+    if (e.shiftKey) return
+    e.preventDefault()
+    callback()
+}
 
 const props = defineProps(['comment', 'currentUserId', 'userRole'])
 const emit = defineEmits(['reply', 'edit', 'delete'])

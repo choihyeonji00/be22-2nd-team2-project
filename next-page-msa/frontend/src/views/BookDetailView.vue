@@ -1,5 +1,14 @@
 <template>
-  <div class="book-detail-page">
+  <div class="book-detail-page" 
+       @touchstart="handleTouchStart" 
+       @touchmove="handleTouchMove" 
+       @touchend="handleTouchEnd"
+       ref="pageContainer">
+    
+    <!-- Pull to Refresh Spinner -->
+    <div class="pull-refresh-container" :style="{ height: pullHeight + 'px', opacity: pullOpacity }">
+      <div class="loading-spinner-refresh" :class="{ spinning: isRefreshing }"></div>
+    </div>
     <!-- Loading State -->
     <div v-if="loading" class="loading-state">
       <div class="loading-spinner"></div>
@@ -18,10 +27,11 @@
           </div>
         </div>
         <div v-else class="title-edit-section">
-          <input v-model="editTitleContent" class="form-control title-input" placeholder="제목을 입력하세요">
+          <input v-model="editTitleContent" class="form-control title-input" placeholder="제목을 입력하세요" @keyup.enter="saveTitle" @keydown.esc="cancelEditTitle">
           <div class="title-edit-actions">
-            <button @click="saveTitle" class="btn btn-primary btn-sm">저장</button>
-            <button @click="cancelEditTitle" class="btn btn-outline btn-sm">취소</button>
+            <!-- Mobile Layout Fix: width auto -->
+            <button @click="saveTitle" class="btn btn-primary btn-sm" style="width: auto;">저장</button>
+            <button @click="cancelEditTitle" class="btn btn-outline btn-sm" style="width: auto;">취소</button>
           </div>
         </div>
 
@@ -69,17 +79,17 @@
             <!-- Sentence Content -->
             <div class="sentence-body">
               <div v-if="editingSentenceId !== sent.sentenceId" class="sentence-text-wrap">
-                <p class="sentence-text">{{ sent.content }}</p>
+                <p class="sentence-text" style="white-space: pre-wrap;">{{ sent.content }}</p>
                 <div v-if="canEditSentence(sent)" class="sentence-actions">
                   <button @click="startEditSentence(sent)" class="icon-btn small" title="수정">✏️</button>
                   <button @click="deleteSentence(sent)" class="icon-btn small danger" title="삭제">🗑️</button>
                 </div>
               </div>
               <div v-else class="sentence-edit">
-                <textarea v-model="editSentenceContent" class="form-control" rows="3"></textarea>
+                <textarea v-model="editSentenceContent" class="form-control" rows="3" :placeholder="isMobile ? '내용을 입력하세요' : '내용을 입력하세요 (Shift+Enter 줄바꿈, Enter 저장)'" @keydown.enter="handleEnter($event, () => saveSentence(sent))" @keydown.esc="cancelEditSentence"></textarea>
                 <div class="sentence-edit-buttons">
-                  <button @click="saveSentence(sent)" class="btn btn-primary btn-sm">저장</button>
-                  <button @click="cancelEditSentence" class="btn btn-outline btn-sm">취소</button>
+                  <button @click="saveSentence(sent)" class="btn btn-primary btn-sm" style="width: auto;">저장</button>
+                  <button @click="cancelEditSentence" class="btn btn-outline btn-sm" style="width: auto;">취소</button>
                 </div>
               </div>
             </div>
@@ -126,6 +136,7 @@
               v-model="newSentence" 
               @input="handleInput" 
               @blur="handleBlur" 
+              @keydown.enter="handleEnter($event, submitSentence)"
               class="form-control writing-textarea"
               :placeholder="inputPlaceholder"
               :disabled="isInputDisabled"
@@ -178,8 +189,9 @@
               v-model="newComment" 
               @input="handleCommentInput" 
               @blur="handleCommentBlur" 
+              @keydown.enter="handleEnter($event, submitComment)"
               class="form-control"
-              placeholder="이 소설에 대한 감상평을 남겨주세요..."
+              :placeholder="isMobile ? '이 소설에 대한 감상평을 남겨주세요...' : '이 소설에 대한 감상평을 남겨주세요... (Shift+Enter 줄바꿈, Enter 등록)'"
             ></textarea>
             <div class="comment-form-footer">
               <button class="btn btn-primary" @click="submitComment" :disabled="!newComment.trim()">등록</button>
@@ -230,7 +242,67 @@ let typingTimeout = null
 let commentTypingTimeout = null
 
 // User focus tracking (for smart auto-scroll)
+// User focus tracking (for smart auto-scroll)
 const isUserFocused = ref(false)
+
+// Mobile Detection
+const isMobile = ref(false)
+const checkMobile = () => { isMobile.value = window.innerWidth <= 768 }
+
+// Pull to Refresh State
+const startY = ref(0)
+const currentY = ref(0)
+const pullHeight = ref(0)
+const isRefreshing = ref(false)
+const isPulling = ref(false)
+const pullOpacity = ref(0)
+const pageContainer = ref(null)
+
+const handleTouchStart = (e) => {
+  if (window.scrollY === 0 && !isRefreshing.value) {
+    startY.value = e.touches[0].clientY
+    isPulling.value = true
+  }
+}
+
+const handleTouchMove = (e) => {
+  if (!isPulling.value) return
+  const y = e.touches[0].clientY
+  const diff = y - startY.value
+  
+  if (diff > 0 && window.scrollY === 0) {
+    if (e.cancelable) e.preventDefault() // Prevent native scroll if meaningful pull
+    pullHeight.value = Math.min(diff * 0.4, 100) // Damping
+    pullOpacity.value = Math.min(diff / 100, 1)
+  } else {
+    pullHeight.value = 0
+  }
+}
+
+const handleTouchEnd = async () => {
+  if (!isPulling.value) return
+  isPulling.value = false
+  
+  if (pullHeight.value > 60) {
+    isRefreshing.value = true
+    pullHeight.value = 60 // Keep spinner visible
+    try {
+      await Promise.all([fetchBookDetail(), fetchComments()])
+      toast.success('새로고침 완료!')
+    } catch (e) {
+      // ignore
+    } finally {
+      setTimeout(() => {
+        isRefreshing.value = false
+        pullHeight.value = 0
+        pullOpacity.value = 0
+      }, 500)
+    }
+  } else {
+    pullHeight.value = 0
+    pullOpacity.value = 0
+  }
+}
 
 // Category Map
 const categoryMap = { 'THRILLER': '스릴러', 'ROMANCE': '로맨스', 'FANTASY': '판타지', 'MYSTERY': '미스터리', 'SF': 'SF', 'DAILY': '일상' }
@@ -263,7 +335,9 @@ const inputPlaceholder = computed(() => {
   if (book.value.status === 'COMPLETED') return "소설이 완결되었습니다."
   if (authStore.user && book.value.lastWriterUserId === authStore.user.userId) return "연속으로 작성할 수 없습니다. 다른 분이 이어서 써주시기를 기다려주세요! ⏳"
   if (activeTypers.value.length > 0) { const typer = activeTypers.value[0]; return `${typer}님이 작성 중입니다... ✍️` }
-  return "당신의 상상력을 펼쳐보세요... (최대 200자)"
+  return isMobile.value 
+    ? "당신의 상상력을 펼쳐보세요... (최대 200자)"
+    : "당신의 상상력을 펼쳐보세요... (최대 200자, Shift+Enter 줄바꿈, Enter 등록)"
 })
 
 // Methods
@@ -272,11 +346,32 @@ onMounted(async () => {
   fetchBookDetail()
   fetchComments()
   connectWebSocket()
+  window.addEventListener('keydown', handleGlobalKeydown)
+  // Mobile check
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
 })
 
 onUnmounted(() => {
   if (stompClient) stompClient.deactivate()
+  window.removeEventListener('keydown', handleGlobalKeydown)
+  window.removeEventListener('resize', checkMobile)
 })
+
+const handleEnter = (e, callback) => {
+    if (isMobile.value) return // Allow default newline
+    if (e.shiftKey) return // Allow default newline (Shift+Enter)
+    e.preventDefault()
+    callback()
+}
+
+const handleGlobalKeydown = (e) => {
+  if (e.key === 'Escape') {
+    if (isEditingTitle.value) cancelEditTitle()
+    if (editingSentenceId.value) cancelEditSentence()
+    // Comments handle their own ESC logic locally or via CommentNode
+  }
+}
 
 const fetchBookDetail = async () => {
   try {
@@ -336,6 +431,9 @@ const connectWebSocket = () => {
 // Handlers
 const handleTypingStatus = (data) => {
   const nick = data.userNickname || data.nickname
+  // Ignore self
+  if (authStore.user && nick === authStore.user.userNicknm) return 
+
   if (data.isTyping) {
      if (nick && !activeTypers.value.includes(nick)) activeTypers.value.push(nick)
   } else {
@@ -345,6 +443,9 @@ const handleTypingStatus = (data) => {
 
 const handleCommentTypingStatus = (data) => {
   const nick = data.userNickname || data.nickname
+  // Ignore self
+  if (authStore.user && nick === authStore.user.userNicknm) return 
+  
   if (data.isTyping) {
      if (nick && !activeCommentTypers.value.includes(nick)) activeCommentTypers.value.push(nick)
   } else {
@@ -382,7 +483,28 @@ const handleNewComment = (comment) => {
   if (comment.nickname && !comment.writerNicknm) {
     comment.writerNicknm = comment.nickname
   }
+
+  if (comment.parentId) {
+    const parent = findCommentById(comments.value, comment.parentId)
+    if (parent) {
+      if (!parent.children) parent.children = []
+      parent.children.push(comment)
+      return
+    }
+  }
+  
   comments.value.push(comment)
+}
+
+const findCommentById = (list, id) => {
+  for (const c of list) {
+    if (c.commentId === id) return c
+    if (c.children && c.children.length > 0) {
+      const found = findCommentById(c.children, id)
+      if (found) return found
+    }
+  }
+  return null
 }
 
 const handleBookStatusUpdate = (update) => {
@@ -1199,5 +1321,32 @@ const saveTitle = async () => {
     padding: 5px 10px;
     font-size: 0.8rem;
   }
+}
+
+/* Pull to Refresh */
+.pull-refresh-container {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: height 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
+  width: 100%;
+}
+
+.loading-spinner-refresh {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(232, 93, 117, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  transform: rotate(0deg);
+}
+
+.loading-spinner-refresh.spinning {
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 </style>

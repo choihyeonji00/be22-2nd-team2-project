@@ -28,6 +28,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final com.team2.commonmodule.security.CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+  private final com.team2.commonmodule.security.CustomAccessDeniedHandler customAccessDeniedHandler;
 
   /**
    * 비밀번호 암호화를 위한 Encoder
@@ -113,6 +115,11 @@ public class SecurityConfig {
 
             // 10. 나머지 모든 요청(POST, PUT, PATCH, DELETE 등)은 인증 필요
             .anyRequest().authenticated())
+
+        // 401, 403 예외 처리 핸들러 등록
+        .exceptionHandling(exception -> exception
+            .authenticationEntryPoint(customAuthenticationEntryPoint)
+            .accessDeniedHandler(customAccessDeniedHandler))
 
         // Form Login / HTTP Basic 비활성화
         .formLogin(AbstractHttpConfigurer::disable)

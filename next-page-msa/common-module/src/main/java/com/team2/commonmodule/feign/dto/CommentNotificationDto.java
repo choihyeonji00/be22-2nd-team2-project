@@ -15,6 +15,7 @@ public class CommentNotificationDto {
     private Long commentId;
     private Long bookId;
     private String content;
+    private Long parentId;
     private String nickname;
     private LocalDateTime createdAt;
 }
