@@ -2,7 +2,6 @@ package com.team2.commonmodule.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.team2.commonmodule.error.ErrorCode;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,10 +11,10 @@ import lombok.NoArgsConstructor;
  *
  * 형태:
  * {
- *   "success": true,
- *   "code": "SUCCESS",
- *   "message": "요청이 성공했습니다.",
- *   "data": { ... }
+ * "success": true,
+ * "code": "SUCCESS",
+ * "message": "요청이 성공했습니다.",
+ * "data": { ... }
  * }
  *
  * MSA 환경: 모든 서비스에서 공통으로 사용합니다.
@@ -24,7 +23,7 @@ import lombok.NoArgsConstructor;
  * @param <T> 응답 데이터의 타입
  */
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL) // Null인 필드는 응답에서 제외
 public class ApiResponse<T> {
 

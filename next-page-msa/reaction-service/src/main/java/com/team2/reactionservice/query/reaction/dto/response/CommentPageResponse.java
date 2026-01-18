@@ -1,10 +1,11 @@
 package com.team2.reactionservice.query.reaction.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
-
 
 /**
  * CommentPageResponse
@@ -14,6 +15,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CommentPageResponse {
     private List<CommentDto> content;
     private Integer page;

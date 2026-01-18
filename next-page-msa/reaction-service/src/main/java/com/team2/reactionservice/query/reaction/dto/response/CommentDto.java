@@ -1,5 +1,7 @@
 package com.team2.reactionservice.query.reaction.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +17,8 @@ import org.springframework.hateoas.RepresentationModel;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CommentDto extends RepresentationModel<CommentDto> {
     private Long commentId;
     private String content;
@@ -24,6 +28,7 @@ public class CommentDto extends RepresentationModel<CommentDto> {
 
     // 대댓글 지원
     private Long parentId;
+    @Builder.Default
     private java.util.List<CommentDto> children = new java.util.ArrayList<>();
 
     // 마이페이지용 추가 정보

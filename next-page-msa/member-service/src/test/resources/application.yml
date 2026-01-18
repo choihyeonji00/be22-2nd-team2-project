@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: member-service-test
+  cloud:
+    config:
+      enabled: false
+      discovery:
+        enabled: false
+    discovery:
+      enabled: false
+    consul:
+      enabled: false
+    zookeeper:
+      enabled: false
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+
+# JSON Web Token keys (dummy for test context if ever needed)
+jwt:
+  secret: "test_secret_key_for_unit_tests_only_must_be_long_enough_to_satisfy_requirements"
+
+server:
+  port: -1 # Random port

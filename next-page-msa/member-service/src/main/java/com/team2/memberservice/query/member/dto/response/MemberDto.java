@@ -1,5 +1,7 @@
 package com.team2.memberservice.query.member.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +16,8 @@ import org.springframework.hateoas.RepresentationModel;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class MemberDto extends RepresentationModel<MemberDto> {
     // 기본 정보
     private Long userId;
