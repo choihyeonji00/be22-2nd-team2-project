@@ -1,12 +1,10 @@
 package com.team2.reactionservice.command.reaction.dto.request;
 
 import com.team2.reactionservice.command.reaction.entity.VoteType;
+
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 
 /**
  * 투표 요청 DTO

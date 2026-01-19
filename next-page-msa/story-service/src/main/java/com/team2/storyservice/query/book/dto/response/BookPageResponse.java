@@ -1,9 +1,8 @@
 package com.team2.storyservice.query.book.dto.response;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import java.util.List;
+
+import lombok.*;
 
 /**
  * 소설 목록 페이지 응답 DTO

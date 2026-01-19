@@ -1,16 +1,16 @@
 package com.team2.commonmodule.feign;
 
-import com.team2.commonmodule.feign.dto.BookBatchInfoDto;
-import com.team2.commonmodule.feign.dto.BookInfoDto;
-import com.team2.commonmodule.feign.dto.MemberStoryStatsDto;
+import com.team2.commonmodule.feign.dto.*;
 import com.team2.commonmodule.response.ApiResponse;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import com.team2.commonmodule.feign.dto.CommentNotificationDto;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * Story Service Feign Client
@@ -87,7 +87,7 @@ public interface StoryServiceClient {
      * @param notificationDto 댓글 알림 정보
      * @return 성공 여부
      */
-    @org.springframework.web.bind.annotation.PostMapping("/internal/notify/comments")
+    @PostMapping("/internal/notify/comments")
     ApiResponse<Void> notifyCommentCreated(
-            @org.springframework.web.bind.annotation.RequestBody com.team2.commonmodule.feign.dto.CommentNotificationDto notificationDto);
+            @RequestBody CommentNotificationDto notificationDto);
 }

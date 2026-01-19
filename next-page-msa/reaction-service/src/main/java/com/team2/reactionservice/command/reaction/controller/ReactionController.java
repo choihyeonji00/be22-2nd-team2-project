@@ -16,6 +16,7 @@ import com.team2.commonmodule.feign.dto.MemberInfoDto;
 import java.time.LocalDateTime;
 import com.team2.commonmodule.feign.StoryServiceClient;
 import lombok.RequiredArgsConstructor;
+import com.team2.commonmodule.feign.dto.CommentNotificationDto;
 
 @Tag(name = "Reaction Commands", description = "반응(댓글/투표) 관리(Command) API")
 @RestController
@@ -52,7 +53,7 @@ public class ReactionController {
       // Fallback or log error
     }
 
-    com.team2.commonmodule.feign.dto.CommentNotificationDto notificationDto = com.team2.commonmodule.feign.dto.CommentNotificationDto
+    CommentNotificationDto notificationDto = CommentNotificationDto
         .builder()
         .commentId(commentId)
         .bookId(request.getBookId())

@@ -1,8 +1,6 @@
 package com.team2.reactionservice.websocket.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * WebSocket 투표 업데이트 DTO

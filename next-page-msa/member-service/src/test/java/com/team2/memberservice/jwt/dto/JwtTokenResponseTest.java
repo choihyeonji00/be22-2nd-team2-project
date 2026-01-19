@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.assertj.core.api.Assertions;
 
 @DisplayName("JwtTokenResponse DTO 테스트")
 class JwtTokenResponseTest {

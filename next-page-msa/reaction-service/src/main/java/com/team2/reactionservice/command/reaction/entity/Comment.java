@@ -10,6 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 댓글 엔티티
@@ -50,10 +53,10 @@ public class Comment extends BaseEntity {
   private Comment parent;
 
   @OneToMany(mappedBy = "parent")
-  private java.util.List<Comment> children = new java.util.ArrayList<>();
+  private List<Comment> children = new ArrayList<>();
 
   @Column(name = "deleted_at")
-  private java.time.LocalDateTime deletedAt;
+  private LocalDateTime deletedAt;
 
   /**
    * 댓글 내용 수정

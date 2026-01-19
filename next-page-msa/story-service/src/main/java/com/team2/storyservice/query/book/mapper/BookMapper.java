@@ -1,12 +1,12 @@
 package com.team2.storyservice.query.book.mapper;
 
 import com.team2.storyservice.query.book.dto.request.BookSearchRequest;
-import com.team2.storyservice.query.book.dto.response.BookDetailDto;
-import com.team2.storyservice.query.book.dto.response.BookDto;
-import com.team2.storyservice.query.book.dto.response.SentenceDto;
+import com.team2.storyservice.query.book.dto.response.*;
+
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import java.util.List;
 
 /**
  * 소설 Query Mapper (검색 필터링/페이징 최적화)

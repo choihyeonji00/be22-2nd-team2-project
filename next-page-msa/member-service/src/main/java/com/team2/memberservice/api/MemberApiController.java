@@ -2,11 +2,10 @@ package com.team2.memberservice.api;
 
 import com.team2.memberservice.command.member.entity.Member;
 import com.team2.memberservice.command.member.repository.MemberRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Member API Controller (For Inter-Service Communication)

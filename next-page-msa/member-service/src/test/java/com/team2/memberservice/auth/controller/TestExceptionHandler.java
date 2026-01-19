@@ -3,6 +3,7 @@ package com.team2.memberservice.auth.controller;
 import com.team2.commonmodule.error.BusinessException;
 import com.team2.commonmodule.error.ErrorCode;
 import com.team2.commonmodule.response.ApiResponse;
+
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
@@ -11,9 +12,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 테스트용 예외 핸들러 설정

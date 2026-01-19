@@ -1,23 +1,24 @@
 package com.team2.storyservice.command.book.service;
 
-import com.team2.storyservice.command.book.dto.request.CreateBookRequest;
-import com.team2.storyservice.command.book.dto.request.SentenceAppendRequest;
-import com.team2.storyservice.command.book.entity.Book;
-import com.team2.storyservice.command.book.entity.Sentence;
-import com.team2.storyservice.command.book.repository.BookRepository;
-import com.team2.storyservice.command.book.repository.SentenceRepository;
 import com.team2.commonmodule.error.BusinessException;
 import com.team2.commonmodule.error.ErrorCode;
 import com.team2.commonmodule.util.SecurityUtil;
+import com.team2.storyservice.category.repository.CategoryRepository;
+import com.team2.storyservice.command.book.dto.request.CreateBookRequest;
+import com.team2.storyservice.command.book.dto.request.SentenceAppendRequest;
+import com.team2.storyservice.command.book.entity.*;
+import com.team2.storyservice.command.book.repository.BookRepository;
+import com.team2.storyservice.command.book.repository.SentenceRepository;
 import com.team2.storyservice.websocket.dto.BookCreatedEvent;
 import com.team2.storyservice.websocket.dto.SentenceCreatedEvent;
-import lombok.extern.slf4j.Slf4j;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.team2.storyservice.command.book.entity.BookStatus;
-import com.team2.storyservice.category.repository.CategoryRepository;
+import java.util.Map;
 
 /**
  * 소설 Command 서비스 (생성, 문장 작성)
@@ -134,7 +135,7 @@ public class BookService {
 
                 // WebSocket 이벤트 발행 (완결 상태 브로드캐스트)
                 messagingTemplate.convertAndSend("/topic/books/" + bookId + "/status",
-                                java.util.Map.of(
+                                Map.of(
                                                 "bookId", bookId,
                                                 "status", "COMPLETED"));
         }

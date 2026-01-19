@@ -1,8 +1,6 @@
 package com.team2.memberservice.jwt.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 /**
  * JWT 토큰 응답 DTO

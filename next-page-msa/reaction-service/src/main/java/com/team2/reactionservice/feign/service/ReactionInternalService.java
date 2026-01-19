@@ -1,21 +1,16 @@
 package com.team2.reactionservice.feign.service;
 
-import com.team2.commonmodule.feign.dto.BookReactionInfoDto;
-import com.team2.commonmodule.feign.dto.MemberReactionStatsDto;
-import com.team2.commonmodule.feign.dto.SentenceReactionInfoDto;
+import com.team2.commonmodule.feign.dto.*;
 import com.team2.reactionservice.command.reaction.entity.BookVote;
 import com.team2.reactionservice.command.reaction.entity.VoteType;
-import com.team2.reactionservice.command.reaction.repository.BookVoteRepository;
-import com.team2.reactionservice.command.reaction.repository.CommentRepository;
-import com.team2.reactionservice.command.reaction.repository.SentenceVoteRepository;
+import com.team2.reactionservice.command.reaction.repository.*;
+
+import java.util.*;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * ReactionInternalService

@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.team2.commonmodule.security.CustomAccessDeniedHandler;
+import com.team2.commonmodule.security.CustomAuthenticationEntryPoint;
 
 /**
  * Reaction Service의 Spring Security 설정
@@ -26,8 +28,8 @@ public class SecurityConfig {
 
         private final JwtToHeaderFilter jwtToHeaderFilter;
         private final GatewayAuthenticationFilter gatewayAuthenticationFilter;
-        private final com.team2.commonmodule.security.CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-        private final com.team2.commonmodule.security.CustomAccessDeniedHandler customAccessDeniedHandler;
+        private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+        private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

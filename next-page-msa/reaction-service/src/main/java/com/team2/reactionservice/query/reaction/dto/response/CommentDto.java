@@ -1,13 +1,12 @@
 package com.team2.reactionservice.query.reaction.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import java.time.LocalDateTime;
 
+import lombok.*;
+
 import org.springframework.hateoas.RepresentationModel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 댓글 조회용 DTO
@@ -29,7 +28,7 @@ public class CommentDto extends RepresentationModel<CommentDto> {
     // 대댓글 지원
     private Long parentId;
     @Builder.Default
-    private java.util.List<CommentDto> children = new java.util.ArrayList<>();
+    private List<CommentDto> children = new ArrayList<>();
 
     // 마이페이지용 추가 정보
     private Long bookId;

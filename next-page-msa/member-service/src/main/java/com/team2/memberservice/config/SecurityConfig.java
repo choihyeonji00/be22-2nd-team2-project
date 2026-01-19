@@ -15,6 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.team2.commonmodule.security.CustomAccessDeniedHandler;
+import com.team2.commonmodule.security.CustomAuthenticationEntryPoint;
 
 /**
  * Spring Security 설정
@@ -28,8 +30,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
-  private final com.team2.commonmodule.security.CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-  private final com.team2.commonmodule.security.CustomAccessDeniedHandler customAccessDeniedHandler;
+  private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+  private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
   /**
    * 비밀번호 암호화를 위한 Encoder

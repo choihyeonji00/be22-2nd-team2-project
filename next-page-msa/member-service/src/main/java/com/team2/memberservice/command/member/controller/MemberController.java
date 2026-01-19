@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 /**
  * 회원 Command 컨트롤러
@@ -60,7 +61,7 @@ public class MemberController {
       - 비밀번호는 BCrypt로 암호화되어 저장됨
       """, security = {} // 인증 불필요
   )
-  @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
+  @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
           {
             "success": true,
@@ -118,7 +119,7 @@ public class MemberController {
       - 일반 사용자와 동일한 검증 규칙 적용
       """, security = {} // 인증 불필요
   )
-  @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
+  @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "관리자 계정 생성 신청 성공", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
           {
             "success": true,
@@ -160,7 +161,7 @@ public class MemberController {
       - 대상 계정의 상태를 `PENDING` -> `ACTIVE`로 변경
       - 승인 즉시 대상 계정으로 로그인 가능
       """, security = @SecurityRequirement(name = "bearerAuth"))
-  @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
+  @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "관리자 승인 완료", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
           {
             "success": true,
@@ -218,7 +219,7 @@ public class MemberController {
       - 탈퇴 전 사용자에게 확인 절차 필요
       - 탈퇴 후 로그인 페이지로 리다이렉트
       """, security = @SecurityRequirement(name = "bearerAuth"))
-  @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
+  @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "회원 탈퇴 성공", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
           {
             "success": true,
@@ -270,7 +271,7 @@ public class MemberController {
       - 탈퇴 후 복구 불가능
       - 감사 로그 기록 권장
       """, security = @SecurityRequirement(name = "bearerAuth"))
-  @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
+  @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "회원 강제 탈퇴 성공", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
           {
             "success": true,
@@ -328,7 +329,7 @@ public class MemberController {
       - Debounce 적용하여 불필요한 요청 방지
       """, security = {} // 인증 불필요
   )
-  @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
+  @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "사용 가능한 이메일", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
           {
             "success": true,
@@ -377,7 +378,7 @@ public class MemberController {
       - 2-20자 길이 제한 클라이언트에서 먼저 검증
       """, security = {} // 인증 불필요
   )
-  @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
+  @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "사용 가능한 닉네임", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
           {
             "success": true,

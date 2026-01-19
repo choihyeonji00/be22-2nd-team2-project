@@ -22,6 +22,10 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
+import com.team2.commonmodule.util.SecurityUtil;
+import org.assertj.core.api.Assertions;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
 
 /**
  * MemberService 단위 테스트
@@ -172,10 +176,10 @@ class MemberServiceTest {
         given(memberRepository.findById(2L))
                 .willReturn(Optional.of(pendingAdmin));
 
-        try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil =
-                     mockStatic(com.team2.commonmodule.util.SecurityUtil.class)) {
+        try (MockedStatic<SecurityUtil> securityUtil =
+                     mockStatic(SecurityUtil.class)) {
 
-            securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+            securityUtil.when(SecurityUtil::isAdmin)
                     .thenReturn(true);
 
             // When
@@ -191,10 +195,10 @@ class MemberServiceTest {
     @DisplayName("관리자 승인 실패 - 관리자 권한 없음")
     void approveAdminFail_AccessDenied() {
         // Given
-        try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil =
-                     mockStatic(com.team2.commonmodule.util.SecurityUtil.class)) {
+        try (MockedStatic<SecurityUtil> securityUtil =
+                     mockStatic(SecurityUtil.class)) {
 
-            securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+            securityUtil.when(SecurityUtil::isAdmin)
                     .thenReturn(false);
 
             // When & Then
@@ -214,10 +218,10 @@ class MemberServiceTest {
         given(memberRepository.findById(999L))
                 .willReturn(Optional.empty());
 
-        try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil =
-                     mockStatic(com.team2.commonmodule.util.SecurityUtil.class)) {
+        try (MockedStatic<SecurityUtil> securityUtil =
+                     mockStatic(SecurityUtil.class)) {
 
-            securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+            securityUtil.when(SecurityUtil::isAdmin)
                     .thenReturn(true);
 
             // When & Then
@@ -236,10 +240,10 @@ class MemberServiceTest {
         given(memberRepository.findByUserEmail(currentUserEmail))
                 .willReturn(Optional.of(testMember));
 
-        try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil =
-                     mockStatic(com.team2.commonmodule.util.SecurityUtil.class)) {
+        try (MockedStatic<SecurityUtil> securityUtil =
+                     mockStatic(SecurityUtil.class)) {
 
-            securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserEmail)
+            securityUtil.when(SecurityUtil::getCurrentUserEmail)
                     .thenReturn(currentUserEmail);
 
             // When
@@ -260,10 +264,10 @@ class MemberServiceTest {
         given(memberRepository.findByUserEmail(currentUserEmail))
                 .willReturn(Optional.empty());
 
-        try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil =
-                     mockStatic(com.team2.commonmodule.util.SecurityUtil.class)) {
+        try (MockedStatic<SecurityUtil> securityUtil =
+                     mockStatic(SecurityUtil.class)) {
 
-            securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserEmail)
+            securityUtil.when(SecurityUtil::getCurrentUserEmail)
                     .thenReturn(currentUserEmail);
 
             // When & Then
@@ -339,10 +343,10 @@ class MemberServiceTest {
         given(memberRepository.findById(targetUserId))
                 .willReturn(Optional.of(testMember));
 
-        try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil =
-                     mockStatic(com.team2.commonmodule.util.SecurityUtil.class)) {
+        try (MockedStatic<SecurityUtil> securityUtil =
+                     mockStatic(SecurityUtil.class)) {
 
-            securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+            securityUtil.when(SecurityUtil::isAdmin)
                     .thenReturn(true);
 
             // When
@@ -358,10 +362,10 @@ class MemberServiceTest {
     @DisplayName("관리자에 의한 회원 탈퇴 실패 - 관리자 권한 없음")
     void withdrawByAdminFail_AccessDenied() {
         // Given
-        try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil =
-                     mockStatic(com.team2.commonmodule.util.SecurityUtil.class)) {
+        try (MockedStatic<SecurityUtil> securityUtil =
+                     mockStatic(SecurityUtil.class)) {
 
-            securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+            securityUtil.when(SecurityUtil::isAdmin)
                     .thenReturn(false);
 
             // When & Then
@@ -384,10 +388,10 @@ class MemberServiceTest {
         given(memberRepository.findById(nonExistentUserId))
                 .willReturn(Optional.empty());
 
-        try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil =
-                     mockStatic(com.team2.commonmodule.util.SecurityUtil.class)) {
+        try (MockedStatic<SecurityUtil> securityUtil =
+                     mockStatic(SecurityUtil.class)) {
 
-            securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+            securityUtil.when(SecurityUtil::isAdmin)
                     .thenReturn(true);
 
             // When & Then

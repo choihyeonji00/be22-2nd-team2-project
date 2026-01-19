@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import com.team2.memberservice.config.security.CustomUserDetails;
 
 /**
  * 인증(Auth) 서비스
@@ -156,7 +157,7 @@ public class AuthService {
    * 중요: Principal로 CustomUserDetails를 사용해야 JwtTokenProvider에서 사용자 ID를 추출할 수 있음
    */
   private Authentication createAuthentication(Member member) {
-    com.team2.memberservice.config.security.CustomUserDetails customUserDetails = new com.team2.memberservice.config.security.CustomUserDetails(
+    CustomUserDetails customUserDetails = new CustomUserDetails(
         member);
 
     return new UsernamePasswordAuthenticationToken(

@@ -2,13 +2,12 @@ package com.team2.storyservice.websocket.controller;
 
 import com.team2.commonmodule.feign.dto.CommentNotificationDto;
 import com.team2.commonmodule.response.ApiResponse;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 내부 서비스 간 알림 처리를 위한 컨트롤러

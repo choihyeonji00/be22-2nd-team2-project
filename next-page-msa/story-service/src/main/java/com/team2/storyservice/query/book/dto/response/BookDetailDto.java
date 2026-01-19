@@ -1,10 +1,9 @@
 package com.team2.storyservice.query.book.dto.response;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import lombok.*;
 
 import org.springframework.hateoas.RepresentationModel;
 

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import io.swagger.v3.oas.models.servers.Server;
 
 /**
  * Global Swagger Configuration
@@ -37,7 +38,7 @@ public class SwaggerConfig {
                                                                                 .scheme("bearer")
                                                                                 .bearerFormat("JWT")
                                                                                 .description("JWT 토큰을 입력해주세요. (예: eyJhbGci...)")))
-                                .addServersItem(new io.swagger.v3.oas.models.servers.Server()
+                                .addServersItem(new Server()
                                                 .url("/")
                                                 .description("API Gateway"));
         }

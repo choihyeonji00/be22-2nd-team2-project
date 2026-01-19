@@ -1,22 +1,24 @@
 package com.team2.memberservice.query.member.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import com.team2.commonmodule.error.BusinessException;
 import com.team2.commonmodule.error.ErrorCode;
 import com.team2.commonmodule.response.ApiResponse;
 import com.team2.commonmodule.util.SecurityUtil;
+import com.team2.memberservice.command.member.controller.MemberController;
 import com.team2.memberservice.query.member.dto.response.MemberDto;
 import com.team2.memberservice.query.member.service.MemberQueryService;
-import com.team2.memberservice.command.member.controller.MemberController;
-import lombok.RequiredArgsConstructor;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 /**
  * 회원 Query 컨트롤러

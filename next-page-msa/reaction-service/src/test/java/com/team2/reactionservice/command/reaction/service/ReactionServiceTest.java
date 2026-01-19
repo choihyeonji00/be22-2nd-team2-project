@@ -28,6 +28,11 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
+import com.team2.commonmodule.util.SecurityUtil;
+import java.lang.reflect.Field;
+import org.assertj.core.api.Assertions;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
 
 /**
  * ReactionService 단위 테스트
@@ -71,7 +76,7 @@ class ReactionServiceTest {
                                 .parent(null)
                                 .build();
                 // Reflection을 사용하여 commentId 설정
-                java.lang.reflect.Field parentCommentIdField = Comment.class.getDeclaredField("commentId");
+                Field parentCommentIdField = Comment.class.getDeclaredField("commentId");
                 parentCommentIdField.setAccessible(true);
                 parentCommentIdField.set(parentComment, 1L);
 
@@ -83,7 +88,7 @@ class ReactionServiceTest {
                                 .parent(null)
                                 .build();
                 // Reflection을 사용하여 commentId 설정
-                java.lang.reflect.Field testCommentIdField = Comment.class.getDeclaredField("commentId");
+                Field testCommentIdField = Comment.class.getDeclaredField("commentId");
                 testCommentIdField.setAccessible(true);
                 testCommentIdField.set(testComment, 2L);
 
@@ -119,17 +124,17 @@ class ReactionServiceTest {
                                 .parent(null)
                                 .build();
                 // Reflection을 사용하여 commentId 설정
-                java.lang.reflect.Field savedCommentIdField = Comment.class.getDeclaredField("commentId");
+                Field savedCommentIdField = Comment.class.getDeclaredField("commentId");
                 savedCommentIdField.setAccessible(true);
                 savedCommentIdField.set(savedComment, 3L);
 
                 given(commentRepository.save(any(Comment.class)))
                                 .willReturn(savedComment);
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(currentUserId);
 
                         // When
@@ -157,10 +162,10 @@ class ReactionServiceTest {
                 given(commentRepository.save(any(Comment.class)))
                                 .willAnswer(invocation -> invocation.getArgument(0));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(currentUserId);
 
                         // When
@@ -187,10 +192,10 @@ class ReactionServiceTest {
                 given(commentRepository.findById(999L))
                                 .willReturn(Optional.empty());
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(currentUserId);
 
                         // When & Then
@@ -214,10 +219,10 @@ class ReactionServiceTest {
                 given(commentRepository.findById(1L))
                                 .willReturn(Optional.of(parentComment));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(currentUserId);
 
                         // When & Then
@@ -237,10 +242,10 @@ class ReactionServiceTest {
                 given(commentRepository.findById(commentId))
                                 .willReturn(Optional.of(testComment));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(currentUserId);
 
                         // When
@@ -261,10 +266,10 @@ class ReactionServiceTest {
                 given(commentRepository.findById(commentId))
                                 .willReturn(Optional.of(testComment));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(notOwnerId);
 
                         // When & Then
@@ -284,12 +289,12 @@ class ReactionServiceTest {
                 given(commentRepository.findById(commentId))
                                 .willReturn(Optional.of(testComment));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(currentUserId);
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(false);
 
                         // When
@@ -310,12 +315,12 @@ class ReactionServiceTest {
                 given(commentRepository.findById(commentId))
                                 .willReturn(Optional.of(testComment));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(adminId);
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(true);
 
                         // When
@@ -336,12 +341,12 @@ class ReactionServiceTest {
                 given(commentRepository.findById(commentId))
                                 .willReturn(Optional.of(testComment));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(notOwnerId);
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(false);
 
                         // When & Then
@@ -367,10 +372,10 @@ class ReactionServiceTest {
                 given(bookVoteRepository.countByBookIdAndVoteType(voteRequest.getBookId(), VoteType.DISLIKE))
                                 .willReturn(0L);
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(voterId);
 
                         // When
@@ -400,10 +405,10 @@ class ReactionServiceTest {
                 given(bookVoteRepository.countByBookIdAndVoteType(voteRequest.getBookId(), VoteType.DISLIKE))
                                 .willReturn(0L);
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(voterId);
 
                         // When
@@ -438,10 +443,10 @@ class ReactionServiceTest {
                 given(bookVoteRepository.countByBookIdAndVoteType(likeRequest.getBookId(), VoteType.DISLIKE))
                                 .willReturn(0L);
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(voterId);
 
                         // When
@@ -475,10 +480,10 @@ class ReactionServiceTest {
                 given(storyServiceClient.getBookIdBySentenceId(sentenceId))
                                 .willReturn(bookId);
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(voterId);
 
                         // When
@@ -517,10 +522,10 @@ class ReactionServiceTest {
                 given(storyServiceClient.getBookIdBySentenceId(sentenceId))
                                 .willReturn(bookId);
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(voterId);
 
                         // When
@@ -559,10 +564,10 @@ class ReactionServiceTest {
                 given(storyServiceClient.getBookIdBySentenceId(sentenceId))
                                 .willReturn(bookId);
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::getCurrentUserId)
+                        securityUtil.when(SecurityUtil::getCurrentUserId)
                                         .thenReturn(voterId);
 
                         // When

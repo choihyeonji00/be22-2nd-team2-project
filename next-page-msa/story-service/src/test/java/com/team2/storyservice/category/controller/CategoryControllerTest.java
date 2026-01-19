@@ -1,20 +1,21 @@
 package com.team2.storyservice.category.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+
 import com.team2.storyservice.category.entity.Category;
 import com.team2.storyservice.category.repository.CategoryRepository;
+
+import java.util.*;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
+import org.assertj.core.api.Assertions;
+import org.mockito.BDDMockito;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryControllerTest {

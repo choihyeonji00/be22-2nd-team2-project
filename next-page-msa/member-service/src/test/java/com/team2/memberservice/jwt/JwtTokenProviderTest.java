@@ -1,14 +1,22 @@
 package com.team2.memberservice.jwt;
 
-import com.team2.memberservice.command.member.entity.Member;
-import com.team2.memberservice.command.member.entity.UserRole;
-import com.team2.memberservice.command.member.entity.UserStatus;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+
+import com.team2.memberservice.command.member.entity.*;
 import com.team2.memberservice.config.security.CustomUserDetails;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Date;
+
+import javax.crypto.SecretKey;
+
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,15 +26,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Date;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
+import org.assertj.core.api.Assertions;
+import org.mockito.BDDMockito;
 
 @ExtendWith(MockitoExtension.class)
 class JwtTokenProviderTest {

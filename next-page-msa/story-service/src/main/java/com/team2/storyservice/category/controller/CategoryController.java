@@ -1,16 +1,17 @@
 package com.team2.storyservice.category.controller;
 
+import com.team2.commonmodule.response.ApiResponse;
 import com.team2.storyservice.category.entity.Category;
 import com.team2.storyservice.category.repository.CategoryRepository;
-import com.team2.commonmodule.response.ApiResponse;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 카테고리 조회 컨트롤러

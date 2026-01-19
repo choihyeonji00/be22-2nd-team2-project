@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     /**
-     * javax.validation.Valid or @Validated 으로 binding error 발생시 발생합니다.
+     * Valid or @Validated 으로 binding error 발생시 발생합니다.
      * 주로 @RequestBody, @RequestPart 어노테이션에서 발생합니다.
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)

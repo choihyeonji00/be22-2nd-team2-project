@@ -2,12 +2,11 @@ package com.team2.storyservice.command.book.repository;
 
 import com.team2.storyservice.command.book.entity.Book;
 import com.team2.storyservice.command.book.entity.Sentence;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
+
+import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 
 /**
  * 문장(Sentence) Command Repository

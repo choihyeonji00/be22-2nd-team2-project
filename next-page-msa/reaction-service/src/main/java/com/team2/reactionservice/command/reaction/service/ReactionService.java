@@ -1,27 +1,22 @@
 package com.team2.reactionservice.command.reaction.service;
 
-import com.team2.reactionservice.command.reaction.dto.request.CreateCommentRequest;
-import com.team2.reactionservice.command.reaction.dto.request.UpdateCommentRequest;
-import com.team2.reactionservice.command.reaction.dto.request.VoteRequest;
-import com.team2.reactionservice.command.reaction.entity.BookVote;
-import com.team2.reactionservice.command.reaction.entity.Comment;
-import com.team2.reactionservice.command.reaction.entity.SentenceVote;
-import com.team2.reactionservice.command.reaction.entity.VoteType;
-import com.team2.reactionservice.command.reaction.repository.BookVoteRepository;
-import com.team2.reactionservice.command.reaction.repository.CommentRepository;
-import com.team2.reactionservice.command.reaction.repository.SentenceVoteRepository;
-import com.team2.reactionservice.feign.StoryServiceClient;
-import com.team2.reactionservice.websocket.dto.VoteUpdateDto;
 import com.team2.commonmodule.error.BusinessException;
 import com.team2.commonmodule.error.ErrorCode;
 import com.team2.commonmodule.util.SecurityUtil;
+import com.team2.reactionservice.command.reaction.dto.request.*;
+import com.team2.reactionservice.command.reaction.entity.*;
+import com.team2.reactionservice.command.reaction.repository.*;
+import com.team2.reactionservice.feign.StoryServiceClient;
+import com.team2.reactionservice.websocket.dto.VoteUpdateDto;
+
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * 반응(댓글/투표) Command 서비스

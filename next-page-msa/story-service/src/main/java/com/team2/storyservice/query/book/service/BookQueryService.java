@@ -1,29 +1,26 @@
 package com.team2.storyservice.query.book.service;
 
+import com.team2.commonmodule.error.BusinessException;
+import com.team2.commonmodule.error.ErrorCode;
 import com.team2.commonmodule.feign.MemberServiceClient;
 import com.team2.commonmodule.feign.ReactionServiceClient;
-import com.team2.commonmodule.feign.dto.MemberBatchInfoDto;
-import com.team2.commonmodule.feign.dto.MemberInfoDto;
-import com.team2.commonmodule.feign.dto.SentenceReactionInfoDto;
+import com.team2.commonmodule.feign.dto.*;
 import com.team2.commonmodule.response.ApiResponse;
 import com.team2.commonmodule.util.SecurityUtil;
 import com.team2.storyservice.query.book.dto.request.BookSearchRequest;
-import com.team2.storyservice.query.book.dto.response.BookDetailDto;
-import com.team2.storyservice.query.book.dto.response.BookDto;
-import com.team2.storyservice.query.book.dto.response.BookPageResponse;
-import com.team2.storyservice.query.book.dto.response.SentenceDto;
-import com.team2.storyservice.query.book.dto.response.SentencePageResponse;
+import com.team2.storyservice.query.book.dto.response.*;
 import com.team2.storyservice.query.book.mapper.BookMapper;
-import com.team2.commonmodule.error.BusinessException;
-import com.team2.commonmodule.error.ErrorCode;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.team2.commonmodule.feign.dto.BookReactionInfoDto;
 
 /**
  * 소설 Query 서비스 (조회 전용)
@@ -86,11 +83,11 @@ public class BookQueryService {
             }
 
             try {
-                ApiResponse<Map<Long, com.team2.commonmodule.feign.dto.BookReactionInfoDto>> response = reactionServiceClient
+                ApiResponse<Map<Long, BookReactionInfoDto>> response = reactionServiceClient
                         .getBookReactions(bookIds, userId);
 
                 if (response != null && response.getData() != null) {
-                    Map<Long, com.team2.commonmodule.feign.dto.BookReactionInfoDto> statsMap = response.getData();
+                    Map<Long, BookReactionInfoDto> statsMap = response.getData();
                     books.forEach(book -> {
                         var stats = statsMap.get(book.getBookId());
                         if (stats != null) {
@@ -182,7 +179,7 @@ public class BookQueryService {
 
         // 3. MSA: 소설 투표 정보 조회 (Feign Client)
         try {
-            ApiResponse<com.team2.commonmodule.feign.dto.BookReactionInfoDto> bookReactionResponse = reactionServiceClient
+            ApiResponse<BookReactionInfoDto> bookReactionResponse = reactionServiceClient
                     .getBookReactionStats(bookId, userId);
             if (bookReactionResponse != null && bookReactionResponse.getData() != null) {
                 var bookStats = bookReactionResponse.getData();

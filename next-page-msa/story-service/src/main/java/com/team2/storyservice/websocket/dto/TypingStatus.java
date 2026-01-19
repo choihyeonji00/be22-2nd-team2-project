@@ -1,9 +1,7 @@
 package com.team2.storyservice.websocket.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 입력 상태 메시지 DTO
@@ -16,11 +14,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TypingStatus {
 
-    @com.fasterxml.jackson.annotation.JsonProperty("bookId")
+    @JsonProperty("bookId")
     private Long bookId;
-    @com.fasterxml.jackson.annotation.JsonProperty("userNickname")
+    @JsonProperty("userNickname")
     private String userNickname;
-    @com.fasterxml.jackson.annotation.JsonProperty("isTyping")
+    @JsonProperty("isTyping")
     private boolean isTyping;
 
     public static TypingStatus startTyping(Long bookId, String userNickname) {

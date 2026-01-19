@@ -1,8 +1,6 @@
 package com.team2.storyservice.websocket.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * 새 소설 생성 이벤트 DTO

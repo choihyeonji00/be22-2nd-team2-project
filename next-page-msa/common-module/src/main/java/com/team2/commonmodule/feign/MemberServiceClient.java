@@ -3,12 +3,11 @@ package com.team2.commonmodule.feign;
 import com.team2.commonmodule.feign.dto.MemberBatchInfoDto;
 import com.team2.commonmodule.feign.dto.MemberInfoDto;
 import com.team2.commonmodule.response.ApiResponse;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Member Service Feign Client

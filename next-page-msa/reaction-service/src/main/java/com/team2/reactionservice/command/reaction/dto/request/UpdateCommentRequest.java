@@ -2,10 +2,8 @@ package com.team2.reactionservice.command.reaction.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 
 /**
  * 댓글 수정 요청 DTO

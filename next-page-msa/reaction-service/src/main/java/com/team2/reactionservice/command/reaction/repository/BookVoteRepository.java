@@ -5,6 +5,9 @@ import com.team2.reactionservice.command.reaction.entity.VoteType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.List;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 소설 투표(BookVote) Command Repository
@@ -49,12 +52,12 @@ public interface BookVoteRepository extends JpaRepository<BookVote, Long> {
     void deleteByBookIdAndVoterId(Long bookId, Long voterId);
 
     // Batch queries for multiple books
-    @org.springframework.data.jpa.repository.Query("SELECT v.bookId, v.voteType, COUNT(v) FROM BookVote v WHERE v.bookId IN :bookIds GROUP BY v.bookId, v.voteType")
-    java.util.List<Object[]> countVotesByBookIds(
-            @org.springframework.web.bind.annotation.RequestParam("bookIds") java.util.List<Long> bookIds);
+    @Query("SELECT v.bookId, v.voteType, COUNT(v) FROM BookVote v WHERE v.bookId IN :bookIds GROUP BY v.bookId, v.voteType")
+    List<Object[]> countVotesByBookIds(
+            @RequestParam("bookIds") List<Long> bookIds);
 
-    @org.springframework.data.jpa.repository.Query("SELECT v.bookId, v.voteType FROM BookVote v WHERE v.bookId IN :bookIds AND v.voterId = :userId")
-    java.util.List<Object[]> findMyVotesByBookIds(
-            @org.springframework.web.bind.annotation.RequestParam("bookIds") java.util.List<Long> bookIds,
-            @org.springframework.web.bind.annotation.RequestParam("userId") Long userId);
+    @Query("SELECT v.bookId, v.voteType FROM BookVote v WHERE v.bookId IN :bookIds AND v.voterId = :userId")
+    List<Object[]> findMyVotesByBookIds(
+            @RequestParam("bookIds") List<Long> bookIds,
+            @RequestParam("userId") Long userId);
 }

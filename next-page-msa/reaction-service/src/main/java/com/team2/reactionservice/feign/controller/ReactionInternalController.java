@@ -1,23 +1,18 @@
 package com.team2.reactionservice.feign.controller;
 
-import com.team2.commonmodule.feign.dto.BookReactionInfoDto;
-import com.team2.commonmodule.feign.dto.MemberReactionStatsDto;
-import com.team2.commonmodule.feign.dto.SentenceReactionInfoDto;
+import com.team2.commonmodule.feign.dto.*;
 import com.team2.commonmodule.response.ApiResponse;
 import com.team2.reactionservice.feign.service.ReactionInternalService;
+
 import io.swagger.v3.oas.annotations.Hidden;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * ReactionInternalController

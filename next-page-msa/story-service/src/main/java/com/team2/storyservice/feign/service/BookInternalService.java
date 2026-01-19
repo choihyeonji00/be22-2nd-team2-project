@@ -2,18 +2,18 @@ package com.team2.storyservice.feign.service;
 
 import com.team2.commonmodule.error.BusinessException;
 import com.team2.commonmodule.error.ErrorCode;
-import com.team2.commonmodule.feign.dto.BookBatchInfoDto;
-import com.team2.commonmodule.feign.dto.BookInfoDto;
-import com.team2.commonmodule.feign.dto.MemberStoryStatsDto;
+import com.team2.commonmodule.feign.dto.*;
 import com.team2.storyservice.command.book.entity.Book;
 import com.team2.storyservice.command.book.repository.BookRepository;
 import com.team2.storyservice.command.book.repository.SentenceRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 내부 MSA 서비스 간 통신용 서비스 (소설)

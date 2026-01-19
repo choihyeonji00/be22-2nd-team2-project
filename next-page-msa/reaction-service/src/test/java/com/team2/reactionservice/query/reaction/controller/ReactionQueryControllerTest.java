@@ -1,26 +1,5 @@
 package com.team2.reactionservice.query.reaction.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.team2.commonmodule.util.SecurityUtil;
-import com.team2.reactionservice.command.reaction.controller.TestExceptionHandler;
-import com.team2.reactionservice.query.reaction.dto.response.CommentDto;
-import com.team2.reactionservice.query.reaction.dto.response.CommentPageResponse;
-import com.team2.reactionservice.query.reaction.service.ReactionQueryService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.Collections;
-import java.util.List;
-
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -29,6 +8,29 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.team2.commonmodule.util.SecurityUtil;
+import com.team2.reactionservice.command.reaction.controller.TestExceptionHandler;
+import com.team2.reactionservice.query.reaction.dto.response.CommentDto;
+import com.team2.reactionservice.query.reaction.dto.response.CommentPageResponse;
+import com.team2.reactionservice.query.reaction.service.ReactionQueryService;
+
+import java.util.Collections;
+import java.util.List;
+
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
+import org.mockito.Mockito;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 /**
  * ReactionQueryController 단위 테스트

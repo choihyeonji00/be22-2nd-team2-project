@@ -1,25 +1,25 @@
 package com.team2.reactionservice.query.reaction.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+import com.team2.commonmodule.error.BusinessException;
+import com.team2.commonmodule.error.ErrorCode;
 import com.team2.commonmodule.response.ApiResponse;
+import com.team2.commonmodule.util.SecurityUtil;
+import com.team2.reactionservice.command.reaction.controller.ReactionController;
 import com.team2.reactionservice.query.reaction.dto.response.CommentDto;
 import com.team2.reactionservice.query.reaction.dto.response.CommentPageResponse;
 import com.team2.reactionservice.query.reaction.service.ReactionQueryService;
-import com.team2.reactionservice.command.reaction.controller.ReactionController;
-import com.team2.commonmodule.util.SecurityUtil;
-import com.team2.commonmodule.error.BusinessException;
-import com.team2.commonmodule.error.ErrorCode;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 /**
  * 반응 Query 컨트롤러

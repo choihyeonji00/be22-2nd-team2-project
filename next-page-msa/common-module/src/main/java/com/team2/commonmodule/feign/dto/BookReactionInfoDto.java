@@ -1,9 +1,6 @@
 package com.team2.commonmodule.feign.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Book 투표 정보 DTO (Feign Client용)

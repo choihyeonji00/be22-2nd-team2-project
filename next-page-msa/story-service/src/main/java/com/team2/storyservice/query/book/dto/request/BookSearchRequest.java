@@ -1,10 +1,6 @@
 package com.team2.storyservice.query.book.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * 소설 검색 요청 DTO (페이지, 정렬, 필터링)

@@ -2,22 +2,22 @@ package com.team2.reactionservice.query.reaction.service;
 
 import com.team2.commonmodule.feign.MemberServiceClient;
 import com.team2.commonmodule.feign.StoryServiceClient;
-import com.team2.commonmodule.feign.dto.BookBatchInfoDto;
-import com.team2.commonmodule.feign.dto.BookInfoDto;
-import com.team2.commonmodule.feign.dto.MemberBatchInfoDto;
-import com.team2.commonmodule.feign.dto.MemberInfoDto;
+import com.team2.commonmodule.feign.dto.*;
 import com.team2.commonmodule.response.ApiResponse;
 import com.team2.reactionservice.query.reaction.dto.response.CommentDto;
 import com.team2.reactionservice.query.reaction.dto.response.CommentPageResponse;
 import com.team2.reactionservice.query.reaction.mapper.ReactionMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
 
 /**
  * 반응 Query 서비스 (댓글 목록 조회 등)
@@ -72,7 +72,7 @@ public class ReactionQueryService {
         .collect(Collectors.toMap(CommentDto::getCommentId, dto -> dto));
 
     // 4. 트리 구조 조립
-    List<CommentDto> roots = new java.util.ArrayList<>();
+    List<CommentDto> roots = new ArrayList<>();
 
     for (CommentDto dto : allComments) {
       if (dto.getParentId() == null) {

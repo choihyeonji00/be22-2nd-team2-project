@@ -1,14 +1,14 @@
 package com.team2.memberservice.command.member.service;
 
-import com.team2.memberservice.command.member.dto.request.SignUpRequest;
-import com.team2.memberservice.command.member.entity.Member;
-import com.team2.memberservice.command.member.entity.UserRole;
-import com.team2.memberservice.command.member.entity.UserStatus;
-import com.team2.memberservice.command.member.repository.MemberRepository;
 import com.team2.commonmodule.error.BusinessException;
 import com.team2.commonmodule.error.ErrorCode;
 import com.team2.commonmodule.util.SecurityUtil;
+import com.team2.memberservice.command.member.dto.request.SignUpRequest;
+import com.team2.memberservice.command.member.entity.*;
+import com.team2.memberservice.command.member.repository.MemberRepository;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

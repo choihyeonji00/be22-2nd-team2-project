@@ -26,6 +26,12 @@ import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import jakarta.servlet.http.Cookie;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 /**
  * AuthController 단위 테스트
@@ -161,7 +167,7 @@ class AuthControllerTest {
 
                         // When & Then
                         mockMvc.perform(post("/api/auth/refresh")
-                                        .cookie(new jakarta.servlet.http.Cookie("refreshToken", "valid-refresh-token")))
+                                        .cookie(new Cookie("refreshToken", "valid-refresh-token")))
                                         .andDo(print())
                                         .andExpect(status().isOk())
                                         .andExpect(jsonPath("$.success").value(true))
@@ -186,7 +192,7 @@ class AuthControllerTest {
 
                         // When & Then
                         mockMvc.perform(post("/api/auth/refresh")
-                                        .cookie(new jakarta.servlet.http.Cookie("refreshToken", "invalid-token")))
+                                        .cookie(new Cookie("refreshToken", "invalid-token")))
                                         .andDo(print())
                                         .andExpect(status().isUnauthorized())
                                         .andExpect(jsonPath("$.code").value("A004"));
@@ -205,7 +211,7 @@ class AuthControllerTest {
 
                         // When & Then
                         mockMvc.perform(post("/api/auth/logout")
-                                        .cookie(new jakarta.servlet.http.Cookie("refreshToken", "valid-refresh-token")))
+                                        .cookie(new Cookie("refreshToken", "valid-refresh-token")))
                                         .andDo(print())
                                         .andExpect(status().isOk())
                                         .andExpect(jsonPath("$.success").value(true))

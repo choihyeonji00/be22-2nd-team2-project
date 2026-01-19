@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
+import java.util.Objects;
 
 /**
  * 인증(Auth) 컨트롤러
@@ -246,7 +247,7 @@ public class AuthController {
         .httpOnly(true) // HttpOnly 속성 설정 (JavaScript에서 접근 불가)
         // .secure(true) // HTTPS 환경일 때만 전송 (운영 환경에서 활성화 권장)
         .path("/") // 쿠키 범위: 전체 경로
-        .maxAge(java.util.Objects.requireNonNull(Duration.ofDays(7))) // 쿠키 만료 기간: 7일
+        .maxAge(Objects.requireNonNull(Duration.ofDays(7))) // 쿠키 만료 기간: 7일
         .sameSite("Lax") // CSRF 공격 방어를 위한 SameSite 설정
         .build();
   }

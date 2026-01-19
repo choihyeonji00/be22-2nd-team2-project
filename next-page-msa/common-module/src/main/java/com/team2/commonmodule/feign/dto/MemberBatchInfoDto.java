@@ -1,10 +1,8 @@
 package com.team2.commonmodule.feign.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.util.List;
+
+import lombok.*;
 
 /**
  * Feign Client용 회원 일괄 조회 응답 DTO

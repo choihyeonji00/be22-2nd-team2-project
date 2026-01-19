@@ -25,6 +25,11 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
+import com.team2.commonmodule.util.SecurityUtil;
+import com.team2.storyservice.category.entity.Category;
+import org.assertj.core.api.Assertions;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
 
 /**
  * BookService 단위 테스트
@@ -100,7 +105,7 @@ class BookServiceTest {
                 given(memberIntegrationService.getUserNickname(writerId)).willReturn("작가닉네임");
                 given(categoryRepository.findById("FANTASY"))
                                 .willReturn(Optional.of(
-                                                new com.team2.storyservice.category.entity.Category("FANTASY", "판타지")));
+                                                new Category("FANTASY", "판타지")));
 
                 // When
                 Long bookId = bookService.createBook(writerId, createBookRequest);
@@ -136,10 +141,10 @@ class BookServiceTest {
                 given(memberIntegrationService.getUserNickname(writerId))
                                 .willReturn("다른작가");
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(false);
 
                         // When
@@ -162,10 +167,10 @@ class BookServiceTest {
                 given(bookRepository.findByIdForUpdate(bookId))
                                 .willReturn(Optional.of(testBook));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(false);
 
                         // When & Then
@@ -191,10 +196,10 @@ class BookServiceTest {
                 given(memberIntegrationService.getUserNickname(writerId))
                                 .willReturn("관리자");
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(true);
 
                         // When
@@ -226,10 +231,10 @@ class BookServiceTest {
                 given(bookRepository.findByIdForUpdate(bookId))
                                 .willReturn(Optional.of(completedBook));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(false);
 
                         // When & Then
@@ -327,10 +332,10 @@ class BookServiceTest {
                 given(bookRepository.findById(bookId))
                                 .willReturn(Optional.of(testBook));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(false);
 
                         // When
@@ -352,10 +357,10 @@ class BookServiceTest {
                 given(bookRepository.findById(bookId))
                                 .willReturn(Optional.of(testBook));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(true);
 
                         // When
@@ -377,10 +382,10 @@ class BookServiceTest {
                 given(bookRepository.findById(bookId))
                                 .willReturn(Optional.of(testBook));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(false);
 
                         // When & Then
@@ -400,10 +405,10 @@ class BookServiceTest {
                 given(bookRepository.findById(bookId))
                                 .willReturn(Optional.of(testBook));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(false);
 
                         // When
@@ -424,10 +429,10 @@ class BookServiceTest {
                 given(bookRepository.findById(bookId))
                                 .willReturn(Optional.of(testBook));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(true);
 
                         // When
@@ -448,10 +453,10 @@ class BookServiceTest {
                 given(bookRepository.findById(bookId))
                                 .willReturn(Optional.of(testBook));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(false);
 
                         // When & Then
@@ -484,10 +489,10 @@ class BookServiceTest {
                 given(sentenceRepository.findById(sentenceId))
                                 .willReturn(Optional.of(lastSentence));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(false);
 
                         // When
@@ -518,10 +523,10 @@ class BookServiceTest {
                 given(sentenceRepository.findById(sentenceId))
                                 .willReturn(Optional.of(notLastSentence));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(false);
 
                         // When & Then
@@ -560,10 +565,10 @@ class BookServiceTest {
                 given(sentenceRepository.findByBookAndSequenceNo(eq(testBook), eq(testBook.getCurrentSequence() - 2)))
                                 .willReturn(Optional.of(previousSentence));
 
-                try (MockedStatic<com.team2.commonmodule.util.SecurityUtil> securityUtil = mockStatic(
-                                com.team2.commonmodule.util.SecurityUtil.class)) {
+                try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
+                                SecurityUtil.class)) {
 
-                        securityUtil.when(com.team2.commonmodule.util.SecurityUtil::isAdmin)
+                        securityUtil.when(SecurityUtil::isAdmin)
                                         .thenReturn(false);
 
                         // When

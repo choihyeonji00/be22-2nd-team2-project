@@ -3,11 +3,11 @@ package com.team2.memberservice.auth.service;
 import com.team2.memberservice.command.member.entity.Member;
 import com.team2.memberservice.command.member.repository.MemberRepository;
 import com.team2.memberservice.config.security.CustomUserDetails;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

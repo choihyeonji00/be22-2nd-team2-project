@@ -1,21 +1,23 @@
 package com.team2.memberservice.api;
 
-import com.team2.memberservice.command.member.entity.Member;
-import com.team2.memberservice.command.member.entity.UserRole;
-import com.team2.memberservice.command.member.entity.UserStatus;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+
+import com.team2.memberservice.command.member.entity.*;
 import com.team2.memberservice.command.member.repository.MemberRepository;
+
+import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
+import org.assertj.core.api.Assertions;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
 
 @ExtendWith(MockitoExtension.class)
 class MemberApiControllerTest {

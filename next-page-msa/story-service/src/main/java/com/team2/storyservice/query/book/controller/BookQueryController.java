@@ -2,31 +2,24 @@ package com.team2.storyservice.query.book.controller;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-import com.team2.storyservice.command.book.controller.BookController;
-// Cross-service HATEOAS links are not directly supported in this service.
-// Clients should construct links via API Gateway.
 
-import com.team2.storyservice.query.book.dto.request.BookSearchRequest;
-import com.team2.storyservice.query.book.dto.response.BookDetailDto;
-import com.team2.storyservice.query.book.dto.response.BookDto;
-import com.team2.storyservice.query.book.dto.response.BookPageResponse;
-import com.team2.storyservice.query.book.dto.response.SentenceDto;
-import com.team2.storyservice.query.book.dto.response.SentencePageResponse;
-import com.team2.storyservice.query.book.service.BookQueryService;
-import com.team2.commonmodule.response.ApiResponse;
-import com.team2.commonmodule.util.SecurityUtil;
 import com.team2.commonmodule.error.BusinessException;
 import com.team2.commonmodule.error.ErrorCode;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import com.team2.commonmodule.response.ApiResponse;
+import com.team2.commonmodule.util.SecurityUtil;
+import com.team2.storyservice.command.book.controller.BookController;
+import com.team2.storyservice.query.book.dto.request.BookSearchRequest;
+import com.team2.storyservice.query.book.dto.response.*;
+import com.team2.storyservice.query.book.service.BookQueryService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 /**
  * 소설 Query 컨트롤러

@@ -1,15 +1,14 @@
 package com.team2.storyservice.command.book.repository;
 
 import com.team2.storyservice.command.book.entity.Book;
+
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.QueryHint;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
+
+import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 
 /**
  * 소설 Command Repository

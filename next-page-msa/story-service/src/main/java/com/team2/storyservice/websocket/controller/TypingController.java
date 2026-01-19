@@ -7,6 +7,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 
 /**
  * WebSocket 메시지 처리 컨트롤러
@@ -27,7 +28,7 @@ public class TypingController {
      * 브로드캐스트: /topic/typing/{bookId} OR /topic/comment-typing/{bookId}
      */
     @MessageMapping("/typing/{bookId}")
-    public void handleTyping(@org.springframework.messaging.handler.annotation.DestinationVariable Long bookId,
+    public void handleTyping(@DestinationVariable Long bookId,
             TypingStatus status) {
         status.setBookId(bookId); // Path Variable에서 ID 설정
         log.debug("Typing status - Book: {}, User: {}, Typing: {}", bookId, status.getUserNickname(),
@@ -36,7 +37,7 @@ public class TypingController {
     }
 
     @MessageMapping("/comment-typing/{bookId}")
-    public void handleCommentTyping(@org.springframework.messaging.handler.annotation.DestinationVariable Long bookId,
+    public void handleCommentTyping(@DestinationVariable Long bookId,
             TypingStatus status) {
         status.setBookId(bookId);
         log.debug("Comment typing status - Book: {}, User: {}, Typing: {}", bookId, status.getUserNickname(),
