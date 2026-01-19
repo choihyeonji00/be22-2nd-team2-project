@@ -115,6 +115,18 @@
         <span style="align-self: center; color: var(--text-muted); font-size: 0.9rem;">{{ page + 1 }} / {{ totalPages }}</span>
         <button class="btn btn-outline" :disabled="page >= totalPages - 1" @click="changePage(page + 1)" style="padding: 5px 15px;">다음</button>
     </div>
+
+    <!-- 확인 모달 -->
+    <ConfirmModal 
+      :show="showConfirmModal"
+      :title="confirmModalConfig.title"
+      :message="confirmModalConfig.message"
+      :type="confirmModalConfig.type"
+      :confirmText="confirmModalConfig.confirmText"
+      :cancelText="confirmModalConfig.cancelText"
+      @confirm="handleConfirmModalConfirm"
+      @close="showConfirmModal = false"
+    />
   </div>
 </template>
 
@@ -124,6 +136,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 import { toast } from '@/utils/toast'
+import ConfirmModal from '@/components/ConfirmModal.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -134,6 +147,24 @@ const items = ref([])
 const page = ref(0)
 const totalPages = ref(0)
 const loadingList = ref(false)
+
+// 확인 모달 상태
+const showConfirmModal = ref(false)
+const confirmModalConfig = ref({
+  title: '',
+  message: '',
+  type: 'warning',
+  confirmText: '확인',
+  cancelText: '취소',
+  onConfirm: null
+})
+
+const handleConfirmModalConfirm = () => {
+  if (confirmModalConfig.value.onConfirm) {
+    confirmModalConfig.value.onConfirm()
+  }
+  showConfirmModal.value = false
+}
 
 onMounted(async () => {
     if (!authStore.isAuthenticated) {
@@ -192,14 +223,23 @@ const goBook = (id) => {
     if (id) router.push(`/books/${id}`)
 }
 
-const withdraw = async () => {
-    if (!confirm('정말로 탈퇴하시겠습니까?')) return
-    try {
-        await axios.delete('/auth/withdraw')
-        authStore.logout()
-        toast.success('탈퇴되었습니다.')
-        router.push('/')
-    } catch(e) { toast.error('탈퇴 실패') }
+const withdraw = () => {
+    confirmModalConfig.value = {
+        title: '회원 탈퇴',
+        message: '정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+        type: 'danger',
+        confirmText: '탈퇴하기',
+        cancelText: '취소',
+        onConfirm: async () => {
+            try {
+                await axios.delete('/auth/withdraw')
+                authStore.logout()
+                toast.success('탈퇴되었습니다. 이용해 주셔서 감사합니다.')
+                router.push('/')
+            } catch(e) { toast.error('탈퇴 처리에 실패했습니다.') }
+        }
+    }
+    showConfirmModal.value = true
 }
 </script>
 

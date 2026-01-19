@@ -33,4 +33,44 @@ class ViewControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("index"));
     }
+
+    @Test
+    @DisplayName("마이페이지 뷰 반환 테스트")
+    void mypage_ReturnView() throws Exception {
+        mockMvc.perform(get("/mypage"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mypage"));
+    }
+
+    @Test
+    @DisplayName("웹소켓 테스트 페이지 뷰 반환 테스트")
+    void websocketTest_ReturnView() throws Exception {
+        mockMvc.perform(get("/websocket-test"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("websocket-test"));
+    }
+
+    @Test
+    @DisplayName("소설 생성 페이지 뷰 반환 테스트")
+    void createBook_ReturnView() throws Exception {
+        mockMvc.perform(get("/books/new"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("create-book"));
+    }
+
+    @Test
+    @DisplayName("소설 상세 페이지 뷰 반환 테스트")
+    void bookDetail_ReturnView() throws Exception {
+        mockMvc.perform(get("/books/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("book-detail"));
+    }
+
+    @Test
+    @DisplayName("소설 뷰어 페이지 뷰 반환 테스트")
+    void viewer_ReturnView() throws Exception {
+        mockMvc.perform(get("/books/1/viewer"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("viewer"));
+    }
 }

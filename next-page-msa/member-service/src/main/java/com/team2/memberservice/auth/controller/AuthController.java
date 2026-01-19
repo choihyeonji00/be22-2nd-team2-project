@@ -247,7 +247,7 @@ public class AuthController {
         // .secure(true) // HTTPS 환경일 때만 전송 (운영 환경에서 활성화 권장)
         .path("/") // 쿠키 범위: 전체 경로
         .maxAge(java.util.Objects.requireNonNull(Duration.ofDays(7))) // 쿠키 만료 기간: 7일
-        .sameSite("Strict") // CSRF 공격 방어를 위한 SameSite 설정
+        .sameSite("Lax") // CSRF 공격 방어를 위한 SameSite 설정
         .build();
   }
 
@@ -259,7 +259,7 @@ public class AuthController {
         .httpOnly(true)
         .path("/")
         .maxAge(0) // 즉시 만료
-        .sameSite("Strict")
+        .sameSite("Lax")
         .build();
   }
 }

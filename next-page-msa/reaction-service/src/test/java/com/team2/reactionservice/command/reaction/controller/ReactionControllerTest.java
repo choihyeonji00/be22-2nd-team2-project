@@ -8,7 +8,14 @@ import com.team2.reactionservice.command.reaction.dto.request.CreateCommentReque
 import com.team2.reactionservice.command.reaction.dto.request.UpdateCommentRequest;
 import com.team2.reactionservice.command.reaction.dto.request.VoteRequest;
 import com.team2.reactionservice.command.reaction.entity.VoteType;
+import com.team2.reactionservice.command.reaction.entity.VoteType;
 import com.team2.reactionservice.command.reaction.service.ReactionService;
+import com.team2.commonmodule.feign.MemberServiceClient;
+import com.team2.commonmodule.feign.StoryServiceClient;
+import com.team2.commonmodule.feign.dto.CommentNotificationDto;
+import com.team2.commonmodule.feign.dto.MemberInfoDto;
+import com.team2.commonmodule.response.ApiResponse;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,6 +33,8 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mockStatic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -45,6 +54,12 @@ class ReactionControllerTest {
 
         @Mock
         private ReactionService reactionService;
+
+        @Mock
+        private MemberServiceClient memberServiceClient;
+
+        @Mock
+        private StoryServiceClient storyServiceClient;
 
         @InjectMocks
         private ReactionController reactionController;
@@ -74,6 +89,11 @@ class ReactionControllerTest {
                                 securityUtil.when(SecurityUtil::getCurrentUserId).thenReturn(1L);
                                 given(reactionService.addComment(any(CreateCommentRequest.class))).willReturn(100L);
 
+                                // MemberServiceClient mock (for nickname)
+                                MemberInfoDto memberInfo = MemberInfoDto.builder().userNicknm("Tester").build();
+                                given(memberServiceClient.getMemberInfo(1L))
+                                                .willReturn(ApiResponse.success(memberInfo));
+
                                 // When & Then
                                 mockMvc.perform(post("/api/reactions/comments")
                                                 .contentType(MediaType.APPLICATION_JSON)
@@ -82,6 +102,37 @@ class ReactionControllerTest {
                                                 .andExpect(status().isOk())
                                                 .andExpect(jsonPath("$.success").value(true))
                                                 .andExpect(jsonPath("$.data").value(100));
+                        }
+                }
+
+                @Test
+                @DisplayName("성공 - Feign Client 오류가 발생해도 댓글 작성은 성공한다 (Fallback)")
+                void createCommentSuccess_FeignFail() throws Exception {
+                        // Given
+                        CreateCommentRequest request = CreateCommentRequest.builder()
+                                        .bookId(1L)
+                                        .content("테스트 댓글입니다.")
+                                        .build();
+
+                        try (MockedStatic<SecurityUtil> securityUtil = mockStatic(SecurityUtil.class)) {
+                                securityUtil.when(SecurityUtil::getCurrentUserId).thenReturn(1L);
+                                given(reactionService.addComment(any(CreateCommentRequest.class))).willReturn(100L);
+
+                                // MemberServiceClient fails
+                                given(memberServiceClient.getMemberInfo(1L))
+                                                .willThrow(new RuntimeException("Service down"));
+
+                                // StoryServiceClient fails
+                                willThrow(new RuntimeException("Service down")).given(storyServiceClient)
+                                                .notifyCommentCreated(any());
+
+                                // When & Then
+                                mockMvc.perform(post("/api/reactions/comments")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(request)))
+                                                .andDo(print())
+                                                .andExpect(status().isOk())
+                                                .andExpect(jsonPath("$.success").value(true));
                         }
                 }
 
@@ -98,6 +149,13 @@ class ReactionControllerTest {
                         try (MockedStatic<SecurityUtil> securityUtil = mockStatic(SecurityUtil.class)) {
                                 securityUtil.when(SecurityUtil::getCurrentUserId).thenReturn(1L);
                                 given(reactionService.addComment(any(CreateCommentRequest.class))).willReturn(101L);
+
+                                // Mocks with default behavior (null/void) to simulate typical successful flow
+                                // without specific interactions needing return
+                                // (actually controller checks return, so we should mock if we want coverage of
+                                // inside if block)
+                                given(memberServiceClient.getMemberInfo(1L)).willReturn(null); // Should handle null
+                                                                                               // gracefully
 
                                 // When & Then
                                 mockMvc.perform(post("/api/reactions/comments")

@@ -200,6 +200,26 @@
         </section>
       </main>
     </div>
+
+    <!-- 완결 축하 모달 -->
+    <CelebrationModal 
+      :show="showCelebration" 
+      :message="celebrationMessage"
+      :subMessage="celebrationSubMessage"
+      @close="showCelebration = false"
+    />
+
+    <!-- 확인 모달 -->
+    <ConfirmModal 
+      :show="showConfirmModal"
+      :title="confirmModalConfig.title"
+      :message="confirmModalConfig.message"
+      :type="confirmModalConfig.type"
+      :confirmText="confirmModalConfig.confirmText"
+      :cancelText="confirmModalConfig.cancelText"
+      @confirm="handleConfirmModalConfirm"
+      @close="handleConfirmModalClose"
+    />
   </div>
 </template>
 
@@ -211,6 +231,8 @@ import axios from 'axios'
 import SockJS from 'sockjs-client'
 import { Client } from '@stomp/stompjs'
 import CommentNode from '@/components/CommentNode.vue'
+import CelebrationModal from '@/components/CelebrationModal.vue'
+import ConfirmModal from '@/components/ConfirmModal.vue'
 import { toast } from '@/utils/toast'
 
 const route = useRoute()
@@ -239,6 +261,23 @@ const activeTypers = ref([])
 const activeCommentTypers = ref([])
 let stompClient = null
 let typingTimeout = null
+
+// 완결 축하 효과
+const showCelebration = ref(false)
+const celebrationMessage = ref('소설이 완결되었습니다!')
+const celebrationSubMessage = ref('여러분의 상상력이 하나의 이야기가 되었습니다 ✨')
+
+// 확인 모달 상태
+const showConfirmModal = ref(false)
+const confirmModalConfig = ref({
+  title: '확인',
+  message: '',
+  type: 'warning',
+  confirmText: '확인',
+  cancelText: '취소',
+  onConfirm: null
+})
+
 let commentTypingTimeout = null
 
 // User focus tracking (for smart auto-scroll)
@@ -510,9 +549,14 @@ const findCommentById = (list, id) => {
 const handleBookStatusUpdate = (update) => {
   // 완결 상태 실시간 업데이트
   if (update.bookId === parseInt(bookId)) {
+    const wasNotCompleted = book.value.status !== 'COMPLETED'
     book.value.status = update.status
-    if (update.status === 'COMPLETED') {
-      toast.success('🎉 소설이 완결되었습니다!')
+    
+    if (update.status === 'COMPLETED' && wasNotCompleted) {
+      // 축하 효과 표시
+      celebrationMessage.value = `"${book.value.title}" 완결!`
+      celebrationSubMessage.value = '여러분의 상상력이 하나의 이야기가 되었습니다 ✨'
+      showCelebration.value = true
     }
   }
 }
@@ -607,12 +651,22 @@ const editComment = async (payload) => {
     } catch(e) { toast.error('수정 실패') }
 }
 
-const deleteComment = async (payload) => {
-    if (!confirm('삭제하시겠습니까?')) return
-    try {
-        await axios.delete(`/reactions/comments/${payload.commentId}`)
-        fetchComments()
-    } catch(e) { toast.error('삭제 실패') }
+const deleteComment = (payload) => {
+    confirmModalConfig.value = {
+        title: '댓글 삭제',
+        message: '댓글을 삭제하시겠습니까?',
+        type: 'danger',
+        confirmText: '삭제',
+        cancelText: '취소',
+        onConfirm: async () => {
+            try {
+                await axios.delete(`/reactions/comments/${payload.commentId}`)
+                toast.success('댓글이 삭제되었습니다.')
+                fetchComments()
+            } catch(e) { toast.error('삭제에 실패했습니다.') }
+        }
+    }
+    showConfirmModal.value = true
 }
 
 const voteBook = async (voteType) => {
@@ -637,25 +691,68 @@ const voteSentence = async (sent, voteType) => {
     }
 }
 
-const completeBook = async () => {
-    if (!confirm('완결하시겠습니까?')) return
-    try {
-        await axios.post(`/books/${bookId}/complete`)
-        toast.success('완결되었습니다!')
-        await fetchBookDetail()
-    } catch(e) { toast.error('완결 처리 실패') }
+const completeBook = () => {
+    confirmModalConfig.value = {
+        title: '소설 완결',
+        message: '완결하시겠습니까? 완결 후에는 더 이상 문장을 추가할 수 없습니다.',
+        type: 'warning',
+        confirmText: '완결하기',
+        cancelText: '취소',
+        onConfirm: async () => {
+            try {
+                await axios.post(`/books/${bookId}/complete`)
+                await fetchBookDetail()
+                
+                // 축하 효과 표시
+                celebrationMessage.value = `"${book.value.title}" 완결!`
+                celebrationSubMessage.value = '작가님의 이야기가 하나의 작품이 되었습니다 🎊'
+                showCelebration.value = true
+            } catch(e) { toast.error('완결 처리에 실패했습니다.') }
+        }
+    }
+    showConfirmModal.value = true
 }
 
-const deleteBook = async () => {
-    if (!confirm('정말 삭제하시겠습니까?')) return
-    try {
-        await axios.delete(`/books/${bookId}`)
-        router.push('/')
-    } catch(e) { toast.error('삭제 실패') }
+const deleteBook = () => {
+    confirmModalConfig.value = {
+        title: '소설 삭제',
+        message: '정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+        type: 'danger',
+        confirmText: '삭제',
+        cancelText: '취소',
+        onConfirm: async () => {
+            try {
+                await axios.delete(`/books/${bookId}`)
+                toast.success('소설이 삭제되었습니다.')
+                router.push('/')
+            } catch(e) { toast.error('삭제에 실패했습니다.') }
+        }
+    }
+    showConfirmModal.value = true
+}
+
+// 확인 모달 핸들러
+const handleConfirmModalConfirm = () => {
+    if (confirmModalConfig.value.onConfirm) {
+        confirmModalConfig.value.onConfirm()
+    }
+    showConfirmModal.value = false
+}
+
+const handleConfirmModalClose = () => {
+    showConfirmModal.value = false
 }
 
 // Sentence Edit
-const canEditSentence = (sent) => (authStore.user && sent.writerId === authStore.user.userId) || isAdmin.value
+const canEditSentence = (sent) => {
+    const hasPermission = (authStore.user && sent.writerId === authStore.user.userId) || isAdmin.value
+    if (!hasPermission) return false
+    
+    // 마지막 문장인지 확인
+    if (!sortedSentences.value || sortedSentences.value.length === 0) return false
+    const last = sortedSentences.value[sortedSentences.value.length - 1]
+    return sent.sentenceId === last.sentenceId
+}
 
 const startEditSentence = (sent) => {
     const last = sortedSentences.value[sortedSentences.value.length - 1]
@@ -679,14 +776,25 @@ const saveSentence = async (sent) => {
     } catch(e) { toast.error('수정 실패') }
 }
 
-const deleteSentence = async (sent) => {
+const deleteSentence = (sent) => {
     const last = sortedSentences.value[sortedSentences.value.length - 1]
-    if (sent.sentenceId !== last.sentenceId) { toast.warning('마지막 문장만 삭제 가능'); return }
-    if (!confirm('삭제하시겠습니까?')) return
-    try {
-        await axios.delete(`/books/${bookId}/sentences/${sent.sentenceId}`)
-        sentences.value = sentences.value.filter(s => s.sentenceId !== sent.sentenceId)
-    } catch(e) { toast.error('삭제 실패') }
+    if (sent.sentenceId !== last.sentenceId) { toast.warning('마지막 문장만 삭제 가능합니다.'); return }
+    
+    confirmModalConfig.value = {
+        title: '문장 삭제',
+        message: '작성한 문장을 삭제하시겠습니까?',
+        type: 'danger',
+        confirmText: '삭제',
+        cancelText: '취소',
+        onConfirm: async () => {
+            try {
+                await axios.delete(`/books/${bookId}/sentences/${sent.sentenceId}`)
+                sentences.value = sentences.value.filter(s => s.sentenceId !== sent.sentenceId)
+                toast.success('문장이 삭제되었습니다.')
+            } catch(e) { toast.error('삭제에 실패했습니다.') }
+        }
+    }
+    showConfirmModal.value = true
 }
 
 // Title Edit

@@ -25,6 +25,8 @@
 6. [ERD 설계](#part-1-6-erd-설계)
 7. [Database Schema](#part-1-7-database-schema)
 8. [팀 그라운드 룰 (XP)](#part-1-8-팀-그라운드-룰-xp)
+9. [단위 테스트 결과서](#part-1-9-단위-테스트-결과서-unit-test-report)
+
 
 ### PART 2: AS-IS (Monolithic)
 
@@ -480,6 +482,234 @@ erDiagram
 - **피드백:** 상호 존중 기반의 코드 리뷰
 - **용기:** 문제 공유 및 적극적인 개선 제안
 - **존중:** 사람 중심이 아닌 기술 중심의 논의
+
+<br>
+
+---
+
+<br>
+
+---
+
+## PART 1-9. 단위 테스트 결과서 (Unit Test Report)
+
+전체 마이크로서비스에 대해 수행된 단위/통합 테스트 명세와 결과입니다. 모든 테스트는 `Pass` 상태입니다.
+<br>
+
+### 🧪 1. Member Service
+<details>
+<summary>👉 <b>접기/펼치기 (총 67개 테스트 항목)</b></summary>
+
+| 분류 | Class | Test Case (Scenario) | Result |
+|:---:|:---:|:---|:---:|
+| **Auth** | `AuthServiceTest` | 로그인 성공 - Access Token과 Refresh Token을 반환한다 | ✅ Pass |
+| **Auth** | `AuthServiceTest` | 로그인 실패 - 존재하지 않는 이메일 | ✅ Pass |
+| **Auth** | `AuthServiceTest` | 로그인 실패 - 비밀번호 불일치 | ✅ Pass |
+| **Auth** | `AuthServiceTest` | 로그인 실패 - 관리자 승인 대기 상태 | ✅ Pass |
+| **Auth** | `AuthServiceTest` | 토큰 갱신 성공 - 새로운 Access Token과 Refresh Token을 반환한다 | ✅ Pass |
+| **Auth** | `AuthServiceTest` | 토큰 갱신 실패 - 유효하지 않은 Refresh Token | ✅ Pass |
+| **Auth** | `AuthServiceTest` | 토큰 갱신 실패 - 저장된 Refresh Token 없음 | ✅ Pass |
+| **Auth** | `AuthServiceTest` | 토큰 갱신 실패 - Refresh Token 불일치 | ✅ Pass |
+| **Auth** | `AuthServiceTest` | 토큰 갱신 실패 - Refresh Token 만료 | ✅ Pass |
+| **Auth** | `AuthServiceTest` | 로그아웃 성공 - Refresh Token을 삭제한다 | ✅ Pass |
+| **Auth** | `AuthServiceTest` | 로그아웃 - 유효하지 않은 토큰이어도 예외를 던지지 않는다 | ✅ Pass |
+| **Auth** | `AuthServiceTest` | Refresh Token 저장 - 기존 토큰이 없으면 새로 저장한다 | ✅ Pass |
+| **Auth** | `AuthServiceTest` | Refresh Token 갱신 - 기존 토큰이 있으면 업데이트한다 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 일반 사용자 등록 성공 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 일반 사용자 등록 실패 - 이메일 중복 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 일반 사용자 등록 실패 - 닉네임 중복 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 관리자 등록 성공 - PENDING 상태로 생성 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 관리자 등록 실패 - 이메일 중복 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 관리자 승인 성공 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 관리자 승인 실패 - 관리자 권한 없음 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 관리자 승인 실패 - 사용자를 찾을 수 없음 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 회원 탈퇴 성공 - Soft Delete | ✅ Pass |
+| **Member** | `MemberServiceTest` | 회원 탈퇴 실패 - 사용자를 찾을 수 없음 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 이메일 중복 검증 - 중복되지 않음 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 이메일 중복 검증 - 중복됨 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 닉네임 중복 검증 - 중복되지 않음 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 닉네임 중복 검증 - 중복됨 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 관리자에 의한 회원 탈퇴 성공 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 관리자에 의한 회원 탈퇴 실패 - 관리자 권한 없음 | ✅ Pass |
+| **Member** | `MemberServiceTest` | 관리자에 의한 회원 탈퇴 실패 - 사용자를 찾을 수 없음 | ✅ Pass |
+| **Query** | `MemberQueryServiceTest` | 마이페이지 조회 - 정상 조회 (모든 통계 성공) | ✅ Pass |
+| **Query** | `MemberQueryServiceTest` | 마이페이지 조회 - Story Service 호출 실패 (통계 0 유지) | ✅ Pass |
+| **Query** | `MemberQueryServiceTest` | 마이페이지 조회 - Reaction Service 호출 실패 (통계 0 유지) | ✅ Pass |
+| **Query** | `MemberQueryServiceTest` | 마이페이지 조회 - 모든 Feign 호출 실패 (기본값 유지) | ✅ Pass |
+| **Query** | `MemberQueryServiceTest` | 마이페이지 조회 - 회원 찾을 수 없음 → BusinessException | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | Access Token 생성 - 정상 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | Access Token 생성 - ADMIN 권한 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | Access Token 생성 - Principal이 CustomUserDetails가 아닌 경우 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | Refresh Token 생성 - 정상 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | Refresh Token 생성 - Principal이 CustomUserDetails가 아닌 경우 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | 토큰 검증 - 유효한 토큰 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | 토큰 검증 - ExpiredJwtException (만료된 토큰) | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | 토큰 검증 - MalformedJwtException (잘못된 형식) | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | 토큰 검증 - IllegalArgumentException (null 토큰, 빈 토큰) | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | 토큰 검증 - 잘못된 형식의 토큰 (점이 부족) | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | 토큰으로부터 Authentication 객체 생성 - 정상 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | 토큰으로부터 Authentication 생성 - 권한 정보 없음 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | 토큰으로부터 Authentication 생성 - 이메일 정보 없음 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | Access Token 생성 후 Authentication 복원 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | 토큰에서 이메일 추출 - 정상 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | 토큰에서 이메일 추출 - 만료된 토큰도 Claims 반환 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | Refresh Token 유효성 검증 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | Refresh Token 만료 시간 확인 | ✅ Pass |
+| **JWT** | `JwtTokenProviderTest` | 토큰의 남은 유효 시간 확인 - 정상/만료 | ✅ Pass |
+| **Integ** | `MemberIntegrationTest` | 회원가입 -> 로그인 -> 내 정보 조회 시나리오 | ✅ Pass |
+| **Integ** | `MemberIntegrationTest` | 중복 이메일 가입 실패 테스트 | ✅ Pass |
+
+</details>
+
+<details>
+<summary>📂 <b>테스트 코드 파일 목록 (Test Files)</b></summary>
+<br>
+
+- [AuthServiceTest.java](next-page-msa/member-service/src/test/java/com/team2/memberservice/auth/service/AuthServiceTest.java)
+- [MemberServiceTest.java](next-page-msa/member-service/src/test/java/com/team2/memberservice/command/member/service/MemberServiceTest.java)
+- [MemberQueryServiceTest.java](next-page-msa/member-service/src/test/java/com/team2/memberservice/query/member/service/MemberQueryServiceTest.java)
+- [JwtTokenProviderTest.java](next-page-msa/member-service/src/test/java/com/team2/memberservice/jwt/JwtTokenProviderTest.java)
+- [MemberIntegrationTest.java](next-page-msa/member-service/src/test/java/com/team2/memberservice/integration/MemberIntegrationTest.java)
+- [MemberApiControllerTest.java](next-page-msa/member-service/src/test/java/com/team2/memberservice/api/MemberApiControllerTest.java)
+- [AuthControllerTest.java](next-page-msa/member-service/src/test/java/com/team2/memberservice/auth/controller/AuthControllerTest.java)
+- [MemberControllerTest.java](next-page-msa/member-service/src/test/java/com/team2/memberservice/command/member/controller/MemberControllerTest.java)
+- [MemberQueryControllerTest.java](next-page-msa/member-service/src/test/java/com/team2/memberservice/query/member/controller/MemberQueryControllerTest.java)
+- [JwtTokenResponseTest.java](next-page-msa/member-service/src/test/java/com/team2/memberservice/jwt/dto/JwtTokenResponseTest.java)
+
+</details>
+
+### 🧪 2. Story Service
+<details>
+<summary>👉 <b>접기/펼치기 (총 46개 테스트 항목)</b></summary>
+
+| 분류 | Class | Test Case (Scenario) | Result |
+|:---:|:---:|:---|:---:|
+| **Book** | `BookServiceTest` | 소설 생성 성공 - 첫 문장과 함께 생성된다 | ✅ Pass |
+| **Book** | `BookServiceTest` | 문장 이어쓰기 성공 - 정상적으로 다음 문장이 추가된다 | ✅ Pass |
+| **Book** | `BookServiceTest` | 문장 이어쓰기 실패 - 연속 작성 불가 (일반 유저) | ✅ Pass |
+| **Book** | `BookServiceTest` | 문장 이어쓰기 성공 - 관리자는 연속 작성 가능 | ✅ Pass |
+| **Book** | `BookServiceTest` | 문장 이어쓰기 실패 - 완결된 소설에는 작성 불가 | ✅ Pass |
+| **Book** | `BookServiceTest` | 문장 이어쓰기 실패 - 존재하지 않는 소설 | ✅ Pass |
+| **Book** | `BookServiceTest` | 소설 수동 완결 성공 - 작성자가 완결 처리 | ✅ Pass |
+| **Book** | `BookServiceTest` | 소설 수동 완결 실패 - 작성자가 아님 | ✅ Pass |
+| **Book** | `BookServiceTest` | 소설 수동 완결 실패 - 이미 완결된 소설 | ✅ Pass |
+| **Book** | `BookServiceTest` | 소설 제목 수정 성공 - 작성자가 수정 | ✅ Pass |
+| **Book** | `BookServiceTest` | 소설 제목 수정 성공 - 관리자가 수정 | ✅ Pass |
+| **Book** | `BookServiceTest` | 소설 제목 수정 실패 - 작성자도 관리자도 아님 | ✅ Pass |
+| **Book** | `BookServiceTest` | 소설 삭제 성공 - 작성자가 삭제 | ✅ Pass |
+| **Book** | `BookServiceTest` | 소설 삭제 성공 - 관리자가 삭제 | ✅ Pass |
+| **Book** | `BookServiceTest` | 소설 삭제 실패 - 작성자도 관리자도 아님 | ✅ Pass |
+| **Book** | `BookServiceTest` | 문장 수정 성공 - 마지막 문장만 수정 가능 | ✅ Pass |
+| **Book** | `BookServiceTest` | 문장 수정 실패 - 마지막 문장이 아님 | ✅ Pass |
+| **Book** | `BookServiceTest` | 문장 삭제 성공 - 마지막 문장만 삭제 가능 | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 소설 검색 - 데이터 있음 | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 소설 검색 - 빈 목록 반환 | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 소설 검색 - Feign 성공: 작가 정보 조회 | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 소설 검색 - Feign 실패: 작가 정보 (닉네임 null) | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 소설 검색 - Feign 성공: 반응 정보 조회 | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 소설 검색 - Feign 실패: 반응 정보 (기본값 0) | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 소설 상세 보기 - 정상 조회 + Feign 성공 | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 소설 상세 보기 - 존재하지 않음 → BusinessException | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 소설 상세 보기 - Feign 실패: 닉네임 null | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 뷰어 모드 조회 - 로그인 사용자 | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 뷰어 모드 조회 - 비로그인 사용자 | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 뷰어 모드 조회 - 존재하지 않는 소설 → BusinessException | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 뷰어 모드 조회 - Feign 성공: 회원 정보 (작가 + 문장 작가들) | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 뷰어 모드 조회 - Feign 성공: 반응 정보 | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 사용자 문장 조회 - 정상 조회 | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 사용자 문장 조회 - 빈 목록 | ✅ Pass |
+| **Query** | `BookQueryServiceTest` | 사용자 문장 조회 - Feign 실패 | ✅ Pass |
+| **API** | `BookControllerTest` | POST /api/books - 소설 생성 성공 | ✅ Pass |
+| **API** | `BookControllerTest` | POST /api/books/{bookId}/sentences - 문장 이어쓰기 성공/실패 | ✅ Pass |
+| **API** | `BookControllerTest` | PATCH /api/books/{bookId}/sentences/{sentenceId} - 문장 수정 | ✅ Pass |
+| **API** | `BookControllerTest` | DELETE /api/books/{bookId}/sentences/{sentenceId} - 문장 삭제 | ✅ Pass |
+| **API** | `BookControllerTest` | PATCH /api/books/{bookId}/title - 제목 수정 | ✅ Pass |
+| **API** | `BookQueryControllerTest` | GET /api/books - 소설 검색 | ✅ Pass |
+| **API** | `BookQueryControllerTest` | GET /api/books/{bookId} - 소설 상세 | ✅ Pass |
+| **API** | `BookQueryControllerTest` | GET /api/books/mysentences - 내 문장 조회 | ✅ Pass |
+| **API** | `BookQueryControllerTest` | GET /api/books/{bookId}/viewer - 뷰어 조회 | ✅ Pass |
+
+</details>
+
+<details>
+<summary>📂 <b>테스트 코드 파일 목록 (Test Files)</b></summary>
+<br>
+
+- [CategoryControllerTest.java](next-page-msa/story-service/src/test/java/com/team2/storyservice/category/controller/CategoryControllerTest.java)
+- [BookControllerTest.java](next-page-msa/story-service/src/test/java/com/team2/storyservice/command/book/controller/BookControllerTest.java)
+- [BookServiceTest.java](next-page-msa/story-service/src/test/java/com/team2/storyservice/command/book/service/BookServiceTest.java)
+- [BookQueryControllerTest.java](next-page-msa/story-service/src/test/java/com/team2/storyservice/query/book/controller/BookQueryControllerTest.java)
+- [BookQueryServiceTest.java](next-page-msa/story-service/src/test/java/com/team2/storyservice/query/book/service/BookQueryServiceTest.java)
+
+</details>
+
+### 🧪 3. Reaction Service
+<details>
+<summary>👉 <b>접기/펼치기 (총 47개 테스트 항목)</b></summary>
+
+| 분류 | Class | Test Case (Scenario) | Result |
+|:---:|:---:|:---|:---:|
+| **Comment** | `ReactionServiceTest` | 댓글 작성 성공 - 일반 댓글 | ✅ Pass |
+| **Comment** | `ReactionServiceTest` | 댓글 작성 성공 - 대댓글 (parentId 존재) | ✅ Pass |
+| **Comment** | `ReactionServiceTest` | 댓글 작성 실패 - 부모 댓글이 존재하지 않음 | ✅ Pass |
+| **Comment** | `ReactionServiceTest` | 댓글 작성 실패 - 부모 댓글과 다른 소설 | ✅ Pass |
+| **Comment** | `ReactionServiceTest` | 댓글 수정 성공 - 작성자가 수정 | ✅ Pass |
+| **Comment** | `ReactionServiceTest` | 댓글 수정 실패 - 작성자가 아님 | ✅ Pass |
+| **Comment** | `ReactionServiceTest` | 댓글 삭제 성공 - 작성자가 삭제 | ✅ Pass |
+| **Comment** | `ReactionServiceTest` | 댓글 삭제 성공 - 관리자가 삭제 | ✅ Pass |
+| **Comment** | `ReactionServiceTest` | 댓글 삭제 실패 - 작성자도 관리자도 아님 | ✅ Pass |
+| **Vote** | `ReactionServiceTest` | 소설 투표 성공 - 새로운 좋아요 투표 | ✅ Pass |
+| **Vote** | `ReactionServiceTest` | 소설 투표 성공 - 같은 투표 토글 (취소) | ✅ Pass |
+| **Vote** | `ReactionServiceTest` | 소설 투표 성공 - 다른 투표로 변경 | ✅ Pass |
+| **Vote** | `ReactionServiceTest` | 문장 투표 성공 - 새로운 좋아요 투표 | ✅ Pass |
+| **Vote** | `ReactionServiceTest` | 문장 투표 성공 - 같은 투표 토글 (취소) | ✅ Pass |
+| **Vote** | `ReactionServiceTest` | 문장 투표 성공 - 다른 투표로 변경 | ✅ Pass |
+| **Query** | `ReactionQueryServiceTest` | 댓글 목록 조회 - 부모-자식 관계 검증 (트리 구조) | ✅ Pass |
+| **Query** | `ReactionQueryServiceTest` | 댓글 목록 조회 - Orphan 처리 (부모 삭제된 댓글은 최상위로) | ✅ Pass |
+| **Query** | `ReactionQueryServiceTest` | 댓글 목록 조회 - 최상위 댓글만 | ✅ Pass |
+| **Query** | `ReactionQueryServiceTest` | 댓글 목록 조회 - 빈 목록 | ✅ Pass |
+| **Query** | `ReactionQueryServiceTest` | 댓글 목록 조회 - Feign 성공: 회원 정보 | ✅ Pass |
+| **Query** | `ReactionQueryServiceTest` | 댓글 목록 조회 - Feign 실패: 닉네임 null | ✅ Pass |
+| **Query** | `ReactionQueryServiceTest` | 사용자 댓글 조회 - 정상 조회 | ✅ Pass |
+| **Query** | `ReactionQueryServiceTest` | 사용자 댓글 조회 - 빈 목록 | ✅ Pass |
+| **Query** | `ReactionQueryServiceTest` | 사용자 댓글 조회 - Feign 성공: 회원 + 소설 정보 | ✅ Pass |
+| **Query** | `ReactionQueryServiceTest` | 사용자 댓글 조회 - Feign 실패: 모든 정보 null | ✅ Pass |
+| **Integ** | `ReactionIntegrationTest` | 댓글 작성 성공 테스트 | ✅ Pass |
+| **Integ** | `ReactionIntegrationTest` | 댓글 작성 실패 - 내용 없음 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 댓글 작성 성공 - 유효한 요청으로 댓글을 작성하면 200 OK와 commentId를 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 댓글 작성 성공 - Feign Client 오류가 발생해도 댓글 작성은 성공한다 (Fallback) | ✅ Pass |
+| **API** | `ReactionControllerTest` | 댓글 작성 성공 - 대댓글 작성에 성공하면 200 OK를 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 댓글 작성 실패 - bookId가 누락되면 400 Bad Request를 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 댓글 작성 실패 - 내용이 비어있으면 400 Bad Request를 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 댓글 작성 실패 - 부모 댓글이 존재하지 않으면 404 Not Found를 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 댓글 수정 성공 - 작성자가 댓글을 수정하면 200 OK를 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 댓글 수정 실패 - 작성자가 아니면 403 Forbidden을 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 댓글 수정 실패 - 존재하지 않는 댓글이면 404 Not Found를 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 댓글 삭제 성공 - 작성자가 댓글을 삭제하면 200 OK를 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 댓글 삭제 실패 - 작성자가 아니면 403 Forbidden을 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 소설 투표 성공 - 새로운 투표가 반영되면 200 OK와 true를 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 소설 투표 성공 - 동일 투표 재클릭으로 취소되면 200 OK와 false를 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 소설 투표 실패 - voteType이 누락되면 400 Bad Request를 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 문장 투표 성공 - 새로운 투표가 반영되면 200 OK와 true를 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 문장 투표 성공 - 동일 투표 재클릭으로 취소되면 200 OK와 false를 반환한다 | ✅ Pass |
+| **API** | `ReactionControllerTest` | 문장 투표 성공 - 투표 타입 변경이 반영되면 200 OK와 true를 반환한다 | ✅ Pass |
+| **API** | `ReactionQueryControllerTest` | 댓글 목록 조회 성공 - 소설의 댓글 목록을 조회하면 200 OK를 반환한다 | ✅ Pass |
+| **API** | `ReactionQueryControllerTest` | 내가 쓴 댓글 조회 성공 - 내가 쓴 댓글 목록을 조회하면 200 OK를 반환한다 | ✅ Pass |
+| **API** | `ReactionQueryControllerTest` | 내가 쓴 댓글 조회 실패 - 로그인하지 않은 경우 401 Unauthorized를 반환한다 | ✅ Pass |
+
+</details>
+
+<details>
+<summary>📂 <b>테스트 코드 파일 목록 (Test Files)</b></summary>
+<br>
+
+- [ReactionControllerTest.java](next-page-msa/reaction-service/src/test/java/com/team2/reactionservice/command/reaction/controller/ReactionControllerTest.java)
+- [ReactionServiceTest.java](next-page-msa/reaction-service/src/test/java/com/team2/reactionservice/command/reaction/service/ReactionServiceTest.java)
+- [ReactionIntegrationTest.java](next-page-msa/reaction-service/src/test/java/com/team2/reactionservice/integration/ReactionIntegrationTest.java)
+- [ReactionQueryControllerTest.java](next-page-msa/reaction-service/src/test/java/com/team2/reactionservice/query/reaction/controller/ReactionQueryControllerTest.java)
+- [ReactionQueryServiceTest.java](next-page-msa/reaction-service/src/test/java/com/team2/reactionservice/query/reaction/service/ReactionQueryServiceTest.java)
+
+</details>
 
 <br>
 

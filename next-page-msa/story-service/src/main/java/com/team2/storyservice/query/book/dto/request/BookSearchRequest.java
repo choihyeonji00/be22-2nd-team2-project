@@ -36,10 +36,8 @@ public class BookSearchRequest {
     private String keyword; // 제목 검색 키워드
     private Long writerId; // 작성자 ID 필터
 
-    /**
-     * 페이지 오프셋 계산
-     */
     public Integer getOffset() {
         return page * size;
     }
+
 }

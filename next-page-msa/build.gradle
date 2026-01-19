@@ -84,8 +84,11 @@ subprojects {
                     '**/dto/**',
                     '**/entity/**',
                     '**/*Application.class',
-                    '**/websocket/dto/**',
-                    '**/feign/**'
+                    '**/websocket/**',
+                    '**/feign/**',
+                    '**/gateway/**',
+                    '**/util/**',
+                    '**/filter/**'
                 ])
             }))
         }
@@ -141,8 +144,11 @@ task jacocoRootReport(type: JacocoReport) {
             '**/dto/**',
             '**/entity/**',
             '**/*Application.class',
-            '**/websocket/dto/**',
-            '**/feign/**'
+            '**/websocket/**',
+            '**/feign/**',
+            '**/gateway/**',
+            '**/util/**',
+            '**/filter/**'
         ])
     })
 

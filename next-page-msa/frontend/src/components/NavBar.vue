@@ -98,6 +98,7 @@ header {
 
 nav {
   display: flex;
+  flex-direction: row; /* Force row layout to override global main.css mobile styles */
   justify-content: space-between;
   align-items: center;
   position: relative;

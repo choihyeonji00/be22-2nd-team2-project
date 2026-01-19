@@ -52,8 +52,10 @@
 
 html {
     height: 100%;
+    /* Prevent pinch zoom */
     touch-action: pan-x pan-y;
-    /* Disable pinch zoom, allow scroll */
+    -ms-touch-action: pan-x pan-y;
+    overscroll-behavior: none;
 }
 
 body {
@@ -65,10 +67,16 @@ body {
     color: var(--text-color);
     line-height: 1.6;
     min-height: 100vh;
+    min-height: 100dvh;
+    /* Dynamic viewport height for mobile */
     overflow-x: hidden;
     position: relative;
+    /* Prevent zoom and bounce */
     touch-action: pan-x pan-y;
-    /* Reinforce prevention */
+    -ms-touch-action: pan-x pan-y;
+    overscroll-behavior-y: contain;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* Cute Floating Background Shapes */
@@ -136,6 +144,9 @@ a {
 .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    /* Prevent text wrapping */
     justify-content: center;
     padding: 12px 28px;
     border-radius: 50px;
@@ -516,10 +527,13 @@ a {
 
     /* Buttons */
     .btn {
-        padding: 10px 20px;
-        font-size: 0.9rem;
-        width: 100%;
-        justify-content: center;
+        padding: 12px 20px;
+        /* 터치 영역 확보 */
+        font-size: 0.95rem;
+        /* 폰트 크기 유지 */
+        /* width: 100%; 제거 - 필요 시 flex로 제어 */
+        min-height: 48px;
+        /* 최소 터치 높이 보장 */
     }
 
     .btn-sm {
@@ -750,4 +764,781 @@ a {
     border: solid white;
     border-width: 0 2.5px 2.5px 0;
     transform: rotate(45deg);
+}
+
+/* ==================== Enhanced UX Utilities ==================== */
+
+/* Better Viewport Utilization */
+.full-height {
+    min-height: 100vh;
+    min-height: 100dvh;
+    /* Dynamic viewport height for mobile */
+}
+
+/* Container improvements */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Smooth Page Transitions */
+.fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInFromBottom {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+    .btn:active:not(:disabled) {
+        transform: scale(0.97);
+    }
+
+    .card:active {
+        transform: scale(0.98);
+    }
+
+    /* Larger touch targets */
+    .icon-btn,
+    .vote-mini {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+
+/* Better focus states for accessibility */
+.btn:focus-visible,
+.form-control:focus-visible {
+    outline: 3px solid rgba(var(--primary-rgb), 0.4);
+    outline-offset: 2px;
+}
+
+/* Content area optimization */
+main.container {
+    padding-top: 20px !important;
+    padding-bottom: 60px !important;
+}
+
+/* Mobile-first improvements */
+@media (max-width: 768px) {
+
+    /* Reduce excessive whitespace on mobile */
+    main.container {
+        padding: 15px 12px 40px !important;
+        min-height: calc(100vh - 120px) !important;
+    }
+
+    /* Hero section compact */
+    .hero-title {
+        margin-bottom: 15px !important;
+    }
+
+    /* Faster transitions on mobile for snappier feel */
+    .card {
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+    }
+
+    /* Better button sizing */
+    .btn:not(.btn-sm) {
+        min-height: 44px;
+    }
+
+    /* Scrollable areas with momentum */
+    .scroll-container {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Compact mode for dense content */
+@media (max-height: 700px) {
+    main.container {
+        padding-top: 10px !important;
+    }
+
+    .hero-title {
+        font-size: 1.8rem !important;
+    }
+
+    .card {
+        padding: 15px;
+    }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+    footer {
+        padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    }
+}
+
+/* Prevent text selection on interactive elements */
+.btn,
+.card,
+.vote-card,
+.nav-links a {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Improved loading states */
+.loading-placeholder {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Floating Text Effect */
+.floating {
+    animation: floatText 3s ease-in-out infinite;
+}
+
+@keyframes floatText {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Text glow effect */
+.text-glow {
+    text-shadow: 0 0 30px rgba(var(--primary-rgb), 0.2);
+}
+
+/* Hide scrollbar but keep functionality */
+.hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Quick action buttons - compact inline */
+.btn-compact {
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+    border-radius: 8px !important;
+}
+
+/* Sticky elements */
+.sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+/* Fixed bottom navigation pattern */
+.fixed-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border-color);
+    padding: 10px 20px;
+    z-index: 100;
+}
+
+@supports (padding: env(safe-area-inset-bottom)) {
+    .fixed-bottom-nav {
+        padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    }
+}
+
+/* Truncate text utilities */
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ==================== Additional UX Enhancements ==================== */
+
+/* Success pulse animation */
+.pulse-success {
+    animation: pulse-success 0.6s ease-out;
+}
+
+@keyframes pulse-success {
+    0% {
+        box-shadow: 0 0 0 0 rgba(132, 94, 247, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 15px rgba(132, 94, 247, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(132, 94, 247, 0);
+    }
+}
+
+/* Completed badge with glow */
+.badge-completed-glow {
+    background: linear-gradient(135deg, #845EF7, #9775FA);
+    color: white;
+    box-shadow: 0 0 20px rgba(132, 94, 247, 0.4);
+    animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(132, 94, 247, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(132, 94, 247, 0.5);
+    }
+}
+
+/* New item indicator */
+.new-indicator {
+    position: relative;
+}
+
+.new-indicator::after {
+    content: 'NEW';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: linear-gradient(135deg, #E85D75, #FF6B9D);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+}
+
+/* Interactive hover effects */
+.hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(var(--primary-rgb), 0.2);
+}
+
+/* Ripple effect for buttons */
+.btn-ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-ripple::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 60%);
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.5s ease, opacity 0.3s ease;
+}
+
+.btn-ripple:active::after {
+    transform: scale(2);
+    opacity: 1;
+    transition: 0s;
+}
+
+/* Typing indicator animation */
+.typing-indicator-dots span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: typing-bounce 1.4s ease-in-out infinite;
+}
+
+.typing-indicator-dots span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.typing-indicator-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing-bounce {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+    }
+
+    30% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Progress indicator */
+.progress-bar-animated {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--primary-color));
+    background-size: 200% 100%;
+    animation: progress-shimmer 2s linear infinite;
+}
+
+@keyframes progress-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Skeleton loading */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Notification dot */
+.notification-dot {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 12px;
+    height: 12px;
+    background: #E85D75;
+    border-radius: 50%;
+    border: 2px solid white;
+    animation: notification-pulse 2s ease-in-out infinite;
+}
+
+@keyframes notification-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+/* Smooth reveal animation */
+.reveal-up {
+    animation: reveal-up 0.5s ease-out forwards;
+}
+
+@keyframes reveal-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stagger children animation helper */
+.stagger-children>*:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.stagger-children>*:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.stagger-children>*:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.stagger-children>*:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.stagger-children>*:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+.stagger-children>*:nth-child(6) {
+    animation-delay: 0.3s;
+}
+
+/* Tooltip */
+.tooltip {
+    position: relative;
+}
+
+.tooltip::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 12px;
+    background: #2D3436;
+    color: white;
+    font-size: 0.8rem;
+    border-radius: 8px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    pointer-events: none;
+    margin-bottom: 8px;
+}
+
+.tooltip:hover::before {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Mobile haptic feedback simulation */
+@media (hover: none) and (pointer: coarse) {
+    .haptic-feedback:active {
+        transform: scale(0.95);
+        transition: transform 0.1s;
+    }
+}
+
+/* ==================== Cross-Platform Compatibility ==================== */
+
+/* iOS Safari Safe Area (for notched devices) */
+@supports (padding: env(safe-area-inset-top)) {
+    .safe-area-top {
+        padding-top: env(safe-area-inset-top);
+    }
+
+    .safe-area-bottom {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* Fixed nav bars */
+    header,
+    nav,
+    .navbar {
+        padding-top: max(15px, env(safe-area-inset-top));
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+
+    footer,
+    .fixed-bottom-nav,
+    .viewer-bottom-nav {
+        padding-bottom: max(15px, env(safe-area-inset-bottom));
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+}
+
+/* iOS Safari: Prevent bounce scroll on modals */
+.modal-open {
+    position: fixed;
+    width: 100%;
+    overflow: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* iOS Safari: Better font rendering */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* iOS Safari: Fix for 100vh issue */
+@supports (-webkit-touch-callout: none) {
+    .full-height {
+        min-height: -webkit-fill-available;
+    }
+
+    .book-viewer-container,
+    .viewer-container {
+        min-height: -webkit-fill-available;
+    }
+}
+
+/* iOS Safari: Prevent text size adjustment */
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* iOS Safari: Fix input zoom on focus (font size >= 16px) */
+@media screen and (max-width: 768px) {
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input[type="number"],
+    textarea,
+    select {
+        font-size: 16px !important;
+    }
+}
+
+/* Android Chrome: Better touch handling */
+@media (pointer: coarse) {
+
+    /* Larger touch targets */
+    button,
+    .btn,
+    a,
+    input[type="checkbox"],
+    input[type="radio"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Disable tap highlight */
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Improve scrolling performance */
+    .scroll-container,
+    .book-content-area,
+    .modal-content {
+        -webkit-overflow-scrolling: touch;
+        overflow-y: auto;
+    }
+}
+
+/* Windows/Mac: Better scrollbar styling */
+@media (hover: hover) and (pointer: fine) {
+
+    /* Show styled scrollbar only on hover for desktop */
+    .scroll-container::-webkit-scrollbar-thumb {
+        background: transparent;
+        transition: background 0.2s;
+    }
+
+    .scroll-container:hover::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, var(--primary-color), var(--accent-color));
+    }
+}
+
+/* Windows High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    :root {
+        --primary-color: #D72D4D;
+        --text-color: #000000;
+        --bg-color: #FFFFFF;
+        --border-color: #333333;
+    }
+
+    .btn,
+    .card {
+        border: 2px solid currentColor;
+    }
+}
+
+/* Mac Safari: Font weight adjustment */
+@supports (-webkit-backdrop-filter: blur(1px)) {
+    body {
+        font-weight: 400;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .btn,
+    .hero-title {
+        font-weight: 700;
+    }
+}
+
+/* Dark mode support (for all platforms) */
+@media (prefers-color-scheme: dark) {
+    /* Note: This is prepared but not fully implemented */
+    /* Add dark mode styles here if needed */
+}
+
+/* Reduced motion for accessibility (all platforms) */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .floating,
+    .shape,
+    .confetti {
+        animation: none !important;
+    }
+}
+
+/* Samsung Internet: Fix for older versions */
+@supports not (gap: 1px) {
+    .flex-gap>*+* {
+        margin-left: 10px;
+    }
+}
+
+/* Print: Hide mobile-only elements */
+@media print {
+
+    .mobile-only,
+    .viewer-toolbar,
+    .viewer-bottom-nav,
+    .keyboard-hint {
+        display: none !important;
+    }
+}
+
+/* Landscape mode adjustments for mobile */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .hero-section {
+        padding: 15px 0 !important;
+    }
+
+    .hero-title {
+        font-size: 1.5rem !important;
+    }
+
+    .book-content-area {
+        padding-top: 40px !important;
+        padding-bottom: 50px !important;
+    }
+
+    .viewer-toolbar {
+        height: 40px !important;
+    }
+
+    .viewer-bottom-nav {
+        height: 45px !important;
+    }
+}
+
+/* Tablet in portrait mode */
+@media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+    .container {
+        padding: 0 30px;
+    }
+
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .book-spread {
+        max-width: 95%;
+    }
+}
+
+/* Very small devices (Galaxy Fold, etc.) */
+@media screen and (max-width: 320px) {
+    .hero-title {
+        font-size: 1.4rem !important;
+    }
+
+    .btn {
+        padding: 8px 14px !important;
+        font-size: 0.85rem !important;
+    }
+
+    .search-card {
+        padding: 10px !important;
+    }
+
+    .card {
+        padding: 15px !important;
+    }
+}
+
+/* Ensure proper display of emojis across platforms */
+.emoji,
+.vote-icon,
+.stat-icon,
+.celebration-icon {
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
 }

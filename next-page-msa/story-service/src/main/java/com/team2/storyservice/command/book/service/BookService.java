@@ -11,6 +11,7 @@ import com.team2.commonmodule.error.ErrorCode;
 import com.team2.commonmodule.util.SecurityUtil;
 import com.team2.storyservice.websocket.dto.BookCreatedEvent;
 import com.team2.storyservice.websocket.dto.SentenceCreatedEvent;
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import com.team2.storyservice.category.repository.CategoryRepository;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class BookService {
 
         private final BookRepository bookRepository;
@@ -66,7 +68,10 @@ public class BookService {
 
                 // 4. WebSocket 이벤트 발행 (새 챕터 생성)
                 // Circuit Breaker 적용: 에러 발생 시 "Unknown Writer" 반환
+                log.info("Attempting to retrieve nickname for writerId: {}", writerId);
                 String writerNickname = memberIntegrationService.getUserNickname(writerId);
+                log.info("Retrieved nickname: {}", writerNickname);
+
                 String categoryName = categoryRepository.findById(savedBook.getCategoryId())
                                 .map(c -> c.getCategoryName()).orElse("카테고리");
 

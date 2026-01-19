@@ -1,34 +1,33 @@
 <template>
-  <div>
+  <div :class="{ 'search-mode': isSearchMode }">
     <!-- Floating Atmosphere -->
     <div class="shape shape-1"></div>
     <div class="shape shape-2"></div>
 
-    <div class="text-center mb-4" style="padding: 60px 0;">
+    <!-- 히어로 섹션 - 검색 모드일 때 축소 -->
+    <div class="text-center hero-section" :class="{ 'hero-collapsed': isSearchMode }">
       <h1 class="hero-title floating text-glow">
         우리가 함께 만드는 이야기
       </h1>
-      <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.8;">
+      <p class="hero-subtitle" v-show="!isSearchMode">
         당신의 한 문장이 베스트셀러의 시작이 됩니다.<br>
         지금 바로 릴레이 소설에 참여해보세요.
       </p>
-      <div class="mt-4" id="hero-cta">
-        <div v-if="!authStore.isAuthenticated" class="guest-only" style="display: flex; justify-content: center; gap: 15px;">
-          <button @click="authStore.openLogin" class="btn btn-outline"
-            style="font-size: 1.1rem; padding: 12px 30px;">로그인</button>
-          <button @click="authStore.openSignup" class="btn btn-primary"
-            style="font-size: 1.1rem; padding: 12px 30px;">회원가입</button>
+      <div class="hero-cta" id="hero-cta" v-show="!isSearchMode">
+        <div v-if="!authStore.isAuthenticated" class="cta-buttons">
+          <button @click="authStore.openLogin" class="btn btn-outline">로그인</button>
+          <button @click="authStore.openSignup" class="btn btn-primary">회원가입</button>
         </div>
-        <div v-else class="user-only" style="display: flex; justify-content: center;">
-          <router-link to="/books/new" class="btn btn-primary" style="font-size: 1.1rem; padding: 12px 30px;">
+        <div v-else class="cta-buttons">
+          <router-link to="/books/new" class="btn btn-primary">
             이야기 시작하기
           </router-link>
         </div>
       </div>
     </div>
 
-    <!-- Filter & Search -->
-    <div class="card search-card" ref="searchContainer">
+    <!-- Filter & Search - 검색 모드일 때 상단 sticky -->
+    <div class="card search-card" :class="{ 'search-card-sticky': isSearchMode }" ref="searchContainer">
       <div class="filter-group">
         <select v-model="filters.categoryId" class="form-control filter-select">
           <option value="">전체 카테고리</option>
@@ -44,9 +43,12 @@
       </div>
       <div class="search-group">
         <input type="text" v-model="filters.keyword" class="form-control search-input" placeholder="제목/작가 검색..." 
-          @input="debouncedSearch" @keyup.enter="searchBooks">
+          @input="debouncedSearch" @keyup.enter="searchBooks" @focus="onSearchFocus">
         <button class="btn btn-primary search-btn" @click="searchBooks">
           검색
+        </button>
+        <button v-if="isSearchMode" class="btn btn-ghost clear-btn" @click="clearSearch" title="검색 초기화">
+          ✕
         </button>
       </div>
     </div>
@@ -132,6 +134,10 @@ const loading = ref(false)
 const hasNext = ref(true)
 const sentinel = ref(null)
 const searchContainer = ref(null)
+const resultsContainer = ref(null)
+
+// 검색 모드 상태
+const isSearchMode = ref(false)
 
 // Category Fetch
 const fetchCategories = async () => {
@@ -181,27 +187,66 @@ const resetAndLoad = () => {
   page.value = 0
   hasNext.value = true
   books.value = []
-  loadBooks()
+  return loadBooks()
 }
 
-// Watchers
-watch(() => filters.categoryId, resetAndLoad)
-watch(() => filters.status, resetAndLoad)
+// 검색 모드 상태 업데이트 함수
+const updateSearchMode = () => {
+  isSearchMode.value = filters.keyword.trim().length > 0 || filters.categoryId !== '' || filters.status !== ''
+}
+
+// 필터 변경 시 검색 모드 적용 및 스크롤
+// 스크롤 함수 (통일된 동작)
+const scrollToResults = () => {
+  if (isSearchMode.value && searchContainer.value) {
+    setTimeout(() => {
+      window.scrollTo({
+        top: searchContainer.value.offsetTop - 100,
+        behavior: 'smooth'
+      })
+    }, 100)
+  }
+}
+
+// 필터 변경 시 검색 모드 적용 및 스크롤
+const handleFilterChange = async () => {
+  updateSearchMode()
+  await resetAndLoad()
+  scrollToResults()
+}
+
+// Watchers - 드롭다운 변경 시에도 동일하게 적용
+watch(() => filters.categoryId, handleFilterChange)
+watch(() => filters.status, handleFilterChange)
 
 let searchTimeout = null
 const debouncedSearch = () => {
   clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(resetAndLoad, 500)
+  searchTimeout = setTimeout(async () => {
+    isSearchMode.value = filters.keyword.trim().length > 0 || filters.categoryId !== '' || filters.status !== ''
+    await resetAndLoad()
+    scrollToResults()
+  }, 500)
 }
 
-const searchBooks = () => {
+const onSearchFocus = () => {
+  // 검색 입력창에 포커스하면 검색 모드 활성화 준비
+}
+
+const searchBooks = async () => {
   clearTimeout(searchTimeout)
-  resetAndLoad().then(() => {
-    // Scroll to Search Container
-    if (searchContainer.value) {
-      searchContainer.value.scrollIntoView({ block: 'start', behavior: 'smooth' })
-    }
-  })
+  isSearchMode.value = filters.keyword.trim().length > 0 || filters.categoryId !== '' || filters.status !== ''
+  await resetAndLoad()
+  scrollToResults()
+}
+
+const clearSearch = () => {
+  filters.keyword = ''
+  filters.categoryId = ''
+  filters.status = ''
+  isSearchMode.value = false
+  resetAndLoad()
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 // Navigation
@@ -243,15 +288,67 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* Hero Section */
+.hero-section {
+  padding: 40px 0 30px;
+  transition: all 0.3s ease;
+}
+
+/* 검색 모드일 때 히어로 축소 */
+.hero-collapsed {
+  padding: 15px 0 10px;
+}
+
+.hero-collapsed .hero-title {
+  font-size: 1.8rem;
+  animation: none;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.hero-cta {
+  margin-top: 25px;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cta-buttons .btn {
+  font-size: 1rem;
+  padding: 10px 25px;
+}
+
 /* Search Card Layout */
 .search-card {
   display: flex;
   gap: 15px;
   align-items: center;
-  z-index: 10;
+  z-index: 50;
   position: relative;
-  margin-bottom: 30px;
-  scroll-margin-top: 20px; /* Ensures scroll stops with padding at top */
+  margin-bottom: 25px;
+  scroll-margin-top: 80px;
+  transition: all 0.3s ease;
+}
+
+/* 검색 모드일 때 sticky */
+.search-card-sticky {
+  position: sticky;
+  top: 70px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(232, 93, 117, 0.15);
+  border-color: var(--primary-color);
+  z-index: 100;
 }
 
 .filter-group {
@@ -269,6 +366,7 @@ onUnmounted(() => {
   display: flex;
   gap: 10px;
   min-width: 250px;
+  align-items: center;
 }
 
 .search-btn {
@@ -277,18 +375,83 @@ onUnmounted(() => {
   white-space: nowrap;
 }
 
-/* Mobile Layout Adjustment */
+.clear-btn {
+  padding: 8px 12px !important;
+  min-width: auto !important;
+  width: auto !important;
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.clear-btn:hover {
+  color: var(--primary-color);
+  background: rgba(232, 93, 117, 0.1);
+}
+
+/* 검색 결과 카운트 표시 */
+.search-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 10px 0;
+}
+
+.results-count {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.results-count strong {
+  color: var(--primary-color);
+}
+
+/* Mobile Layout */
 @media (max-width: 768px) {
+  .hero-section {
+    padding: 25px 0 20px;
+  }
+
+  .hero-collapsed {
+    padding: 10px 0 8px;
+  }
+
+  .hero-collapsed .hero-title {
+    font-size: 1.4rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+    padding: 0 10px;
+  }
+
+  .hero-cta {
+    margin-top: 20px;
+  }
+
+  .cta-buttons .btn {
+    font-size: 0.9rem;
+    padding: 10px 20px;
+  }
+
   .search-card {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     align-items: stretch;
-    padding: 15px; /* Add some padding container */
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+
+  .search-card-sticky {
+    top: 60px;
+    margin: 0 -12px;
+    border-radius: 0;
+    padding: 12px;
   }
 
   .filter-group {
-    display: contents; /* Unwrap to let children participate in grid */
+    display: contents;
   }
 
   .filter-select {
@@ -297,7 +460,7 @@ onUnmounted(() => {
   }
 
   .search-group {
-    grid-column: 1 / -1; /* Span full width */
+    grid-column: 1 / -1;
     display: flex;
     gap: 8px;
     width: 100%;
@@ -305,13 +468,50 @@ onUnmounted(() => {
 
   .search-input {
     flex: 1;
-    min-width: 0; /* Prevent overflow */
+    min-width: 0;
   }
   
   .search-btn {
     flex-shrink: 0;
     width: auto;
-    padding: 0 20px; /* Ensure button isn't too wide or narrow */
+    padding: 0 20px;
+  }
+
+  .clear-btn {
+    padding: 8px !important;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .hero-section {
+    padding: 20px 0 15px;
+  }
+
+  .hero-collapsed {
+    padding: 8px 0 5px;
+  }
+
+  .hero-collapsed .hero-title {
+    font-size: 1.2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cta-buttons .btn {
+    width: 100%;
+  }
+
+  .search-card-sticky {
+    top: 55px;
   }
 }
 </style>
+
