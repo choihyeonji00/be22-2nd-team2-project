@@ -497,7 +497,7 @@ erDiagram
 
 ### 📄 테스트 관련 문서
 
-- **[🔗 전체 테스트 코드 파일 목록](next-page-msa/TEST_CODE_FILES.md)** - 26개 모든 테스트 파일 경로 및 상세 설명
+- **[📝 전체 테스트 코드 보기 (소스 코드 포함)](next-page-msa/TEST_CODE_FILES.md)** - 31개 테스트 파일의 전체 Java 소스 코드 (토글 형식)
 - **[📋 전체 테스트 명세서](next-page-msa/TEST_DOCUMENTATION.md)** - TC 코드 기반 252개 테스트 케이스 상세 문서
 
 ### 📊 테스트 커버리지 요약

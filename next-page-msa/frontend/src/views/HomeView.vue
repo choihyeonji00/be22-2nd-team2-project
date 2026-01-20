@@ -80,7 +80,7 @@
               👥 {{ book.participantCount || 1 }}명
             </span>
             <span style="font-size: 0.85rem; color: var(--text-muted);">
-              📝 {{ book.currentSequence }}
+              📝 {{ Math.max((book.currentSequence || 1) - 1, 0) }}
             </span>
           </div>
           <div style="display: flex; gap: 8px;">

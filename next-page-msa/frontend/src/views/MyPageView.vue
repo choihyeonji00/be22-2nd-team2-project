@@ -70,7 +70,7 @@
                    <span class="badge" :class="book.status === 'WRITING' ? 'badge-writing' : 'badge-completed'" style="margin-left: 10px; font-size: 0.7rem;">{{ book.status }}</span>
                 </div>
                 <div style="text-align: right;">
-                   <div style="font-size: 0.8rem; color: var(--text-muted);">문장 {{ book.currentSequence }} / {{ book.maxSequence }}</div>
+                   <div style="font-size: 0.8rem; color: var(--text-muted);">문장 {{ Math.max((book.currentSequence || 1) - 1, 0) }} / {{ book.maxSequence }}</div>
                 </div>
              </div>
           </template>
