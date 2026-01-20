@@ -11,6 +11,8 @@ import com.team2.storyservice.command.book.repository.BookRepository;
 import com.team2.storyservice.command.book.repository.SentenceRepository;
 import com.team2.storyservice.websocket.dto.BookCreatedEvent;
 import com.team2.storyservice.websocket.dto.SentenceCreatedEvent;
+import com.team2.storyservice.websocket.dto.BookStatsUpdateDto;
+import com.team2.storyservice.query.book.mapper.BookMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,7 @@ public class BookService {
         // Circuit Breaker 적용된 서비스 사용
         private final MemberIntegrationService memberIntegrationService;
         private final CategoryRepository categoryRepository;
+        private final BookMapper bookMapper;
 
         /**
          * 소설 방 생성
@@ -120,6 +123,9 @@ public class BookService {
                                                 sentence.getContent(),
                                                 sentence.getSequenceNo(),
                                                 writerNickname));
+
+                // 6. 홈 화면 소설카드 통계 실시간 업데이트
+                broadcastBookStats(bookId);
 
                 return sentence.getSentenceId();
         }
@@ -211,6 +217,9 @@ public class BookService {
                                 book.updateLastWriterUserId(null);
                         }
                 }
+
+                // 홈 화면 소설카드 통계 실시간 업데이트
+                broadcastBookStats(bookId);
         }
 
         public void deleteBook(Long bookId, Long requesterId) {
@@ -222,5 +231,25 @@ public class BookService {
                 }
 
                 bookRepository.delete(book);
+        }
+
+        /**
+         * 소설 통계를 WebSocket으로 브로드캐스트
+         * 홈 화면의 소설 카드 실시간 업데이트용
+         */
+        public void broadcastBookStats(Long bookId) {
+                try {
+                        Map<String, Object> stats = bookMapper.findBookStats(bookId);
+                        if (stats != null) {
+                                BookStatsUpdateDto dto = BookStatsUpdateDto.builder()
+                                                .bookId(bookId)
+                                                .sentenceCount(((Number) stats.get("sentenceCount")).intValue())
+                                                .participantCount(((Number) stats.get("participantCount")).intValue())
+                                                .build();
+                                messagingTemplate.convertAndSend("/topic/books/stats", dto);
+                        }
+                } catch (Exception e) {
+                        log.warn("Failed to broadcast book stats for bookId: {}", bookId, e);
+                }
         }
 }

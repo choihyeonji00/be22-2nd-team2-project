@@ -110,9 +110,9 @@ VALUES (
         'ROMANCE',
         '첫눈에 반한 이야기',
         'COMPLETED',
-        20,
-        20,
         3,
+        20,
+        2,
         NOW()
     );
 

@@ -137,7 +137,15 @@ public class ReactionService {
         likeCount,
         dislikeCount);
 
+    // 개별 소설 상세 페이지용
     messagingTemplate.convertAndSend("/topic/books/" + bookId + "/votes", updateDto);
+
+    // 홈 화면 소설카드용 (bookId, likeCount, dislikeCount 포함)
+    messagingTemplate.convertAndSend("/topic/books/stats",
+        java.util.Map.of(
+            "bookId", bookId,
+            "likeCount", likeCount,
+            "dislikeCount", dislikeCount));
   }
 
   /**

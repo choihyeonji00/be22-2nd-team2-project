@@ -24,7 +24,7 @@
 | **안정성** | Circuit Breaker 적용 | ✅ 완료 | Resilience4j, Fallback 처리 |
 | **안정성** | Load Balancing | ✅ 완료 | Spring Cloud LoadBalancer |
 | **빌드** | 전체 MSA 빌드 | ✅ 성공 | 43 tasks, 21초 |
-| **기능** | WebSocket (실시간) | ✅ 완료 | story-service, reaction-service 기동, 7개 토픽 |
+| **기능** | WebSocket (실시간) | ✅ 완료 | story-service, reaction-service 기동, 8개 토픽 |
 | **기능** | 댓글 알림 (서비스 간 WebSocket) | ✅ 완료 | Reaction → Story 알림 연동 |
 | **UI/UX** | Frontend Polish | ✅ 완료 | 로고 폰트(Gaegu), 모달 UX, 503 에러 해결 |
 | **문서화** | JavaDoc 추가 | ✅ 완료 | 모든 Java 파일에 작성자 정보 포함 |
@@ -202,12 +202,13 @@ public class Book {
 1. `/topic/typing/{bookId}` - 문장 작성 타이핑 상태
 2. `/topic/comment-typing/{bookId}` - 댓글 작성 타이핑 상태
 3. `/topic/books/new` - 새 소설 생성 알림
-4. `/topic/sentences/{bookId}` - 문장 추가 알림
-5. `/topic/comments/{bookId}` - 댓글 생성 알림 (Reaction → Story)
-6. `/topic/books/{bookId}/status` - 소설 상태 변경 (완결)
+4. `/topic/books/stats` - 소설 카드 통계 실시간 업데이트 (문장 수, 참여자 수, 좋아요/싫어요)
+5. `/topic/sentences/{bookId}` - 문장 추가 알림
+6. `/topic/comments/{bookId}` - 댓글 생성 알림 (Reaction → Story)
+7. `/topic/books/{bookId}/status` - 소설 상태 변경 (완결)
 
 **Reaction Service WebSocket** (`/ws` 엔드포인트):
-7. `/topic/books/{bookId}/votes` - 투표 업데이트
+8. `/topic/books/{bookId}/votes` - 투표 업데이트
 
 ### 2. InternalNotificationController 발견
 
@@ -292,6 +293,6 @@ resilience4j:
 
 ---
 
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-01-20
 **Completion Date:** 2026-01-15
-**Result:** Monolithic 아키텍처에서 MSA로의 전환이 성공적으로 완료되었으며, 2026-01-16 문서화 업데이트를 통해 누락된 내용이 모두 보완됨.
+**Result:** Monolithic 아키텍처에서 MSA로의 전환이 성공적으로 완료되었으며, 2026-01-20 WebSocket 실시간 통계 업데이트 기능(/topic/books/stats)이 추가됨.

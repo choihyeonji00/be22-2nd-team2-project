@@ -1,6 +1,8 @@
 spring:
   application:
     name: REACTION-SERVICE
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   cloud:
     config:
       uri: http://localhost:8888

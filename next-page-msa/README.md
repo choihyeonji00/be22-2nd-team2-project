@@ -477,12 +477,13 @@ graph TD
 - **타이핑 인디케이터**: 문장/댓글 작성 중 상태 실시간 표시
 - **실시간 업데이트**: 새 문장/댓글 추가 시 자동 화면 갱신
 - **소설 생성 알림**: 메인 페이지에서 새 소설 생성 알림
+- **소설 카드 통계 실시간 업데이트**: 문장 추가/삭제 시 메인 페이지 소설 카드의 문장 수, 참여자 수, 좋아요/싫어요 실시간 반영
 - **댓글 알림**: 댓글 작성 시 소설 페이지에 실시간 알림 (서비스 간 WebSocket 연동)
 - **투표 업데이트**: 좋아요/싫어요 투표 시 실시간 집계 결과 반영
 - **소설 완결 알림**: 소설 완결 시 실시간 상태 변경 알림
 
 **WebSocket 토픽**:
-- Story Service: `/topic/typing/{bookId}`, `/topic/comment-typing/{bookId}`, `/topic/books/new`, `/topic/sentences/{bookId}`, `/topic/comments/{bookId}`, `/topic/books/{bookId}/status`
+- Story Service: `/topic/typing/{bookId}`, `/topic/comment-typing/{bookId}`, `/topic/books/new`, `/topic/books/stats`, `/topic/sentences/{bookId}`, `/topic/comments/{bookId}`, `/topic/books/{bookId}/status`
 - Reaction Service: `/topic/books/{bookId}/votes`
 
 ### 프론트엔드 (Vue 3)

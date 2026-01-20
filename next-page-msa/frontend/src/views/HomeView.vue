@@ -80,7 +80,7 @@
               👥 {{ book.participantCount || 1 }}명
             </span>
             <span style="font-size: 0.85rem; color: var(--text-muted);">
-              📝 {{ Math.max((book.currentSequence || 1) - 1, 0) }}
+              📝 {{ book.sentenceCount || 0 }}
             </span>
           </div>
           <div style="display: flex; gap: 8px;">
@@ -116,6 +116,8 @@ import { ref, reactive, onMounted, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
+import SockJS from 'sockjs-client'
+import { Client } from '@stomp/stompjs'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -269,9 +271,64 @@ const getIcon = (catId) => {
 
 // Observer
 let observer = null
+
+// WebSocket for real-time stats updates
+let stompClient = null
+
+const connectWebSocket = () => {
+  stompClient = new Client({
+    brokerURL: 'ws://localhost:8082/ws',
+    webSocketFactory: () => new SockJS('/ws'),
+    debug: () => {},
+    reconnectDelay: 5000,
+    heartbeatIncoming: 4000,
+    heartbeatOutgoing: 4000,
+  })
+
+  stompClient.onConnect = () => {
+    // 새 소설 생성 알림 구독
+    stompClient.subscribe('/topic/books/new', (message) => {
+      const newBook = JSON.parse(message.body)
+      // 새 소설은 목록 앞에 추가
+      books.value.unshift({
+        bookId: newBook.bookId,
+        title: newBook.title,
+        categoryId: newBook.categoryId,
+        writerNicknm: newBook.writerNickname,
+        status: 'WRITING',
+        currentSequence: 2,
+        sentenceCount: 1,
+        participantCount: 1,
+        likeCount: 0,
+        dislikeCount: 0,
+        createdAt: new Date().toISOString()
+      })
+    })
+
+    // 소설 통계 업데이트 구독 (문장수, 참여자수, 좋아요/싫어요)
+    stompClient.subscribe('/topic/books/stats', (message) => {
+      const stats = JSON.parse(message.body)
+      const book = books.value.find(b => b.bookId === stats.bookId)
+      if (book) {
+        if (stats.sentenceCount !== undefined) book.sentenceCount = stats.sentenceCount
+        if (stats.participantCount !== undefined) book.participantCount = stats.participantCount
+        if (stats.likeCount !== undefined) book.likeCount = stats.likeCount
+        if (stats.dislikeCount !== undefined) book.dislikeCount = stats.dislikeCount
+      }
+    })
+  }
+
+  stompClient.onStompError = (frame) => {
+    console.error('[STOMP] Error:', frame.headers['message'])
+  }
+
+  stompClient.activate()
+}
+
 onMounted(() => {
   fetchCategories()
   loadBooks()
+  connectWebSocket()
   
   observer = new IntersectionObserver((entries) => {
     if (entries[0].isIntersecting) {
@@ -284,6 +341,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (observer) observer.disconnect()
+  if (stompClient) stompClient.deactivate()
 })
 </script>
 

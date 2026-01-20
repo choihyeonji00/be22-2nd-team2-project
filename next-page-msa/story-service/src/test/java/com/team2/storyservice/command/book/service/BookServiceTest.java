@@ -20,6 +20,8 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -56,6 +58,9 @@ class BookServiceTest {
 
         @Mock
         private CategoryRepository categoryRepository;
+
+        @Mock
+        private com.team2.storyservice.query.book.mapper.BookMapper bookMapper;
 
         private Book testBook;
         private CreateBookRequest createBookRequest;
@@ -141,6 +146,12 @@ class BookServiceTest {
                 given(memberIntegrationService.getUserNickname(writerId))
                                 .willReturn("다른작가");
 
+                // 실시간 통계 브로드캐스트용 Mock 설정
+                Map<String, Object> stats = new HashMap<>();
+                stats.put("sentenceCount", 3);
+                stats.put("participantCount", 2);
+                given(bookMapper.findBookStats(bookId)).willReturn(stats);
+
                 try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
                                 SecurityUtil.class)) {
 
@@ -153,7 +164,9 @@ class BookServiceTest {
                         // Then
                         then(bookRepository).should(times(1)).findByIdForUpdate(bookId);
                         then(sentenceRepository).should(times(1)).save(any(Sentence.class));
-                        // WebSocket 메시지 전송 검증 생략
+                        // 실시간 통계 브로드캐스트 검증
+                        then(bookMapper).should(times(1)).findBookStats(bookId);
+                        then(messagingTemplate).should(atLeastOnce()).convertAndSend(eq("/topic/books/stats"), any(Object.class));
                 }
         }
 
@@ -565,6 +578,12 @@ class BookServiceTest {
                 given(sentenceRepository.findByBookAndSequenceNo(eq(testBook), eq(testBook.getCurrentSequence() - 2)))
                                 .willReturn(Optional.of(previousSentence));
 
+                // 실시간 통계 브로드캐스트용 Mock 설정
+                Map<String, Object> stats = new HashMap<>();
+                stats.put("sentenceCount", 2);
+                stats.put("participantCount", 1);
+                given(bookMapper.findBookStats(bookId)).willReturn(stats);
+
                 try (MockedStatic<SecurityUtil> securityUtil = mockStatic(
                                 SecurityUtil.class)) {
 
@@ -576,6 +595,43 @@ class BookServiceTest {
 
                         // Then
                         then(sentenceRepository).should(times(1)).delete(lastSentence);
+                        // 실시간 통계 브로드캐스트 검증
+                        then(bookMapper).should(times(1)).findBookStats(bookId);
+                        then(messagingTemplate).should(atLeastOnce()).convertAndSend(eq("/topic/books/stats"), any(Object.class));
                 }
+        }
+
+        @Test
+        @DisplayName("소설 통계 브로드캐스트 성공 - WebSocket으로 실시간 통계 전송")
+        void broadcastBookStatsSuccess() {
+                // Given
+                Long bookId = 1L;
+                Map<String, Object> stats = new HashMap<>();
+                stats.put("sentenceCount", 5);
+                stats.put("participantCount", 3);
+
+                given(bookMapper.findBookStats(bookId)).willReturn(stats);
+
+                // When
+                bookService.broadcastBookStats(bookId);
+
+                // Then
+                then(bookMapper).should(times(1)).findBookStats(bookId);
+                then(messagingTemplate).should(times(1)).convertAndSend(eq("/topic/books/stats"), any(Object.class));
+        }
+
+        @Test
+        @DisplayName("소설 통계 브로드캐스트 실패 - 통계 없을 경우 전송하지 않음")
+        void broadcastBookStatsNotSentWhenStatsNull() {
+                // Given
+                Long bookId = 999L;
+                given(bookMapper.findBookStats(bookId)).willReturn(null);
+
+                // When
+                bookService.broadcastBookStats(bookId);
+
+                // Then
+                then(bookMapper).should(times(1)).findBookStats(bookId);
+                then(messagingTemplate).should(never()).convertAndSend(eq("/topic/books/stats"), any(Object.class));
         }
 }
