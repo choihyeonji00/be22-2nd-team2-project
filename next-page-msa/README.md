@@ -353,14 +353,100 @@ cd gateway-server && ./gradlew bootRun       # Port 8000
 
 ---
 
-## 📚 관련 문서
+## 📚 프로젝트 문서 구조
 
-- **[API 명세서](API_SPECIFICATION.md):** REST API 및 WebSocket 상세 스펙, Internal API 포함
-- **[기술 아키텍처](TECH_ARCHITECTURE.md):** MSA 아키텍처 상세 설명, Feign Client, CQRS 패턴
-- **[MSA 전환 완료 보고서](MSA_IMPLEMENTATION_COMPLETE.md):** 전환 과정 및 변경 사항 상세
-- **[데이터베이스 가이드](database-scripts/README.md):** 데이터베이스 스키마 및 설치 가이드
-- **[통합 개발자 가이드](../DEVELOPER_GUIDE.md):** 아키텍처 및 코딩 컨벤션
-- **[팀 그라운드 룰 (XP)](../GROUND_RULES.md):** 협업 규칙 및 XP 핵심 가치
+프로젝트 내 모든 문서들의 위치와 참조 관계를 정리한 문서 맵입니다.
+
+```
+next-page-msa/
+├── README.md                         # 📖 프로젝트 메인 문서 (현재 문서)
+│
+├── 📁 API 및 아키텍처 문서
+│   ├── API_SPECIFICATION.md          # REST API 및 WebSocket 상세 스펙
+│   ├── TECH_ARCHITECTURE.md          # MSA 아키텍처, Feign Client, CQRS 패턴
+│   └── MSA_IMPLEMENTATION_COMPLETE.md # MSA 전환 완료 보고서
+│
+├── 📁 테스트 문서
+│   ├── TESTING.md                    # 테스트 실행 가이드 및 테스트 목록
+│   ├── TEST_DOCUMENTATION.md         # 전체 테스트 케이스 문서 (252개+)
+│   ├── TEST_CODE_FILES.md            # 테스트 코드 전체 소스
+│   ├── COMPLETE_TEST_CODE.md         # 테스트 코드 요약
+│   ├── JACOCO_GUIDE.md               # JaCoCo 커버리지 리포트 가이드
+│   └── docs/
+│       └── API-Test-Result.md        # API 통합 테스트 결과서 ⭐ NEW
+│
+├── 📁 인프라 및 설정 문서
+│   ├── database-scripts/README.md    # 데이터베이스 스키마 및 설치 가이드
+│   ├── HELP.md                       # Spring Boot 기본 도움말
+│   ├── common-module/HELP.md         # Common Module 도움말
+│   └── config-server/HELP.md         # Config Server 도움말
+│
+├── 📁 HTTP 테스트
+│   └── http/api-test.http            # IntelliJ HTTP Client 테스트 스크립트
+│
+└── 📁 상위 디렉토리 문서 (team2/)
+    ├── DEVELOPER_GUIDE.md            # 통합 개발자 가이드
+    └── GROUND_RULES.md               # 팀 그라운드 룰 (XP)
+```
+
+### 📑 문서 참조 관계도
+
+```mermaid
+graph TD
+    README["📖 README.md<br/>(메인 진입점)"]
+    
+    subgraph "API & 아키텍처"
+        API["API_SPECIFICATION.md"]
+        TECH["TECH_ARCHITECTURE.md"]
+        MSA["MSA_IMPLEMENTATION_COMPLETE.md"]
+    end
+    
+    subgraph "테스트 문서"
+        TESTING["TESTING.md"]
+        TEST_DOC["TEST_DOCUMENTATION.md"]
+        TEST_CODE["TEST_CODE_FILES.md"]
+        JACOCO["JACOCO_GUIDE.md"]
+        API_TEST["docs/API-Test-Result.md"]
+    end
+    
+    subgraph "인프라"
+        DB["database-scripts/README.md"]
+        HTTP["http/api-test.http"]
+    end
+    
+    README --> API
+    README --> TECH
+    README --> MSA
+    README --> TESTING
+    README --> DB
+    
+    TESTING --> JACOCO
+    TESTING --> TEST_DOC
+    TEST_DOC --> TEST_CODE
+    
+    API --> HTTP
+    HTTP --> API_TEST
+    
+    TECH --> API
+    MSA --> TECH
+```
+
+### 📋 문서별 상세 설명
+
+| 카테고리 | 문서 | 설명 | 대상 |
+|---------|------|------|------|
+| **메인** | [README.md](README.md) | 프로젝트 개요, 시작 가이드, 트러블슈팅 | 전체 |
+| **API** | [API_SPECIFICATION.md](API_SPECIFICATION.md) | REST API 엔드포인트, 요청/응답 형식, WebSocket | 개발자 |
+| **아키텍처** | [TECH_ARCHITECTURE.md](TECH_ARCHITECTURE.md) | MSA 구조, Feign Client, CQRS, Circuit Breaker | 개발자 |
+| **전환 보고** | [MSA_IMPLEMENTATION_COMPLETE.md](MSA_IMPLEMENTATION_COMPLETE.md) | Monolith→MSA 전환 과정, 변경 사항 | PM/개발자 |
+| **테스트 가이드** | [TESTING.md](TESTING.md) | 테스트 실행 방법, Gradle 명령어 | 개발자 |
+| **테스트 문서** | [TEST_DOCUMENTATION.md](TEST_DOCUMENTATION.md) | 전체 테스트 케이스 252개+ 상세 | QA/개발자 |
+| **테스트 코드** | [TEST_CODE_FILES.md](TEST_CODE_FILES.md) | 테스트 소스 코드 전체 아카이브 | 개발자 |
+| **커버리지** | [JACOCO_GUIDE.md](JACOCO_GUIDE.md) | JaCoCo 설정, 리포트 생성 및 분석 | 개발자 |
+| **API 테스트** | [docs/API-Test-Result.md](docs/API-Test-Result.md) | HTTP Client API 통합 테스트 결과서 | QA/개발자 |
+| **DB 가이드** | [database-scripts/README.md](database-scripts/README.md) | 데이터베이스 스키마 및 설치 | DBA/개발자 |
+| **개발자 가이드** | [../DEVELOPER_GUIDE.md](../DEVELOPER_GUIDE.md) | 코딩 컨벤션, 아키텍처 원칙 | 개발자 |
+| **그라운드 룰** | [../GROUND_RULES.md](../GROUND_RULES.md) | XP 핵심 가치, 협업 규칙 | 전체 팀 |
 
 ---
 
@@ -444,5 +530,5 @@ cd gateway-server && ./gradlew bootRun       # Port 8000
 
 ---
 
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-01-20
 **Status:** ✅ Production Ready

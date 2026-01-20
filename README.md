@@ -26,6 +26,7 @@
 7. [Database Schema](#part-1-7-database-schema)
 8. [팀 그라운드 룰 (XP)](#part-1-8-팀-그라운드-룰-xp)
 9. [단위 테스트 결과서](#part-1-9-단위-테스트-결과서-unit-test-report)
+10. [API 테스트 결과서](#part-1-10-api-테스트-결과서-api-test-report)
 
 
 ### PART 2: AS-IS (Monolithic)
@@ -535,6 +536,54 @@ erDiagram
 
 **JaCoCo 리포트 확인:**
 - `next-page-msa/[module]/build/reports/jacoco/test/html/index.html`
+
+<br>
+
+---
+
+## PART 1-10. API 테스트 결과서 (API Test Report)
+
+전체 마이크로서비스의 REST API에 대해 수행된 통합 테스트 결과입니다.
+
+### 📄 API 테스트 관련 문서
+
+- **[🧪 API 통합 테스트 스크립트](next-page-msa/http/api-test.http)** - IntelliJ HTTP Client 기반 31개 API 테스트
+- **[📋 API 테스트 결과서](next-page-msa/docs/API-Test-Result.md)** - 시나리오별 테스트 결과 상세 문서
+
+### 📊 API 테스트 커버리지 요약
+
+| 서비스 | 총 API 수 | PASS | FAIL | 커버리지 |
+|:---:|:---:|:---:|:---:|:---:|
+| **Member Service** | 11 | 11 | 0 | 100% |
+| **Story Service** | 12 | 12 | 0 | 100% |
+| **Reaction Service** | 8 | 8 | 0 | 100% |
+| **합계** | **31** | **31** | **0** | **100%** |
+
+**✅ 전체 API 테스트 Pass 상태**
+
+### 🔄 테스트 시나리오 흐름
+
+```
+1. 회원 가입 및 인증 (Member)
+   └─→ 2. 소설 생성 및 관리 (Story)
+       └─→ 3. 반응 및 투표 (Reaction)
+           └─→ 4. 관리자 승인 프로세스 (Admin)
+               └─→ 5. 콘텐츠 관리 및 삭제
+                   └─→ 6. 데이터 정리 (Cleanup)
+```
+
+### 🧪 테스트 실행 방법
+
+1. IntelliJ IDEA에서 `next-page-msa/http/api-test.http` 파일 열기
+2. 시나리오 순서대로 각 요청 실행 (▶ 버튼)
+3. 전역 변수 자동 설정 확인 (토큰, ID 등)
+
+**📄 상세 결과 문서:** [👉 API 테스트 결과서 보기 (next-page-msa/docs/API-Test-Result.md)](next-page-msa/docs/API-Test-Result.md)
+
+- 31개 API 엔드포인트 전체 검증
+- 시나리오별 상세 테스트 케이스 (TC 코드 체계)
+- 투표 토글 로직, 연속 작성 제한, 권한 검증 등 특수 시나리오 포함
+- 성공/실패 응답 형식 및 에러 코드 참조
 
 <br>
 

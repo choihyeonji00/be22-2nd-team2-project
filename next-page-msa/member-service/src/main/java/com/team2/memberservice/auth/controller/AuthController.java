@@ -1,6 +1,7 @@
 package com.team2.memberservice.auth.controller;
 
 import com.team2.memberservice.auth.dto.LoginRequest;
+import com.team2.memberservice.auth.dto.RefreshRequest;
 import com.team2.memberservice.auth.dto.TokenResponse;
 import com.team2.memberservice.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.*;
@@ -171,8 +172,19 @@ public class AuthController {
   })
   @PostMapping("/refresh")
   public ResponseEntity<com.team2.commonmodule.response.ApiResponse<TokenResponse>> refreshToken(
-      @Parameter(description = "쿠키에 저장된 Refresh Token (자동으로 전송됨)", required = false) @CookieValue(name = "refreshToken", required = false) String refreshToken) {
-    // 쿠키에 refresh token이 없을 경우
+      @Parameter(description = "쿠키에 저장된 Refresh Token (자동으로 전송됨)", required = false) @CookieValue(name = "refreshToken", required = false) String cookieRefreshToken,
+      @Parameter(description = "Request Body로 전달되는 Refresh Token (자동로그인 시 사용)", required = false) @RequestBody(required = false) RefreshRequest refreshRequest) {
+
+    // Request Body 또는 Cookie에서 refreshToken 추출 (Body 우선)
+    String refreshToken = null;
+    if (refreshRequest != null && refreshRequest.getRefreshToken() != null
+        && !refreshRequest.getRefreshToken().isBlank()) {
+      refreshToken = refreshRequest.getRefreshToken();
+    } else if (cookieRefreshToken != null) {
+      refreshToken = cookieRefreshToken;
+    }
+
+    // refresh token이 없을 경우
     if (refreshToken == null) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
