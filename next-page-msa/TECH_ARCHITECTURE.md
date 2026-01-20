@@ -397,6 +397,7 @@ WebSocket은 그냥 "선"만 연결해주는 것입니다. 그 안에서 어떤 
 | `/topic/typing/{bookId}` | 사용자가 문장 입력 중 | `{nickname, status}` | 문장 작성 타이핑 상태 |
 | `/topic/comment-typing/{bookId}` | 사용자가 댓글 입력 중 | `{nickname, status}` | 댓글 작성 타이핑 상태 |
 | `/topic/books/new` | 새 소설 생성 시 | `{bookId, title, category}` | 메인 페이지 실시간 목록 갱신 |
+| `/topic/books/stats` | 문장 추가/삭제 시 | `{bookId, sentenceCount, participantCount, likeCount, dislikeCount}` | 메인 페이지 소설 카드 통계 실시간 업데이트 |
 | `/topic/sentences/{bookId}` | 문장 추가 시 | `{sentenceId, content, writer}` | 소설 뷰어 실시간 문장 추가 |
 | `/topic/comments/{bookId}` | 댓글 생성 시 (Reaction → Story) | `{commentId, content, nickname}` | 소설 페이지 댓글 실시간 알림 |
 | `/topic/books/{bookId}/status` | 소설 완결 시 | `{bookId, status}` | 소설 상태 변경 알림 |
@@ -854,5 +855,5 @@ public class MemberController {
 
 ---
 
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-01-20
 **Status:** ✅ Production Ready

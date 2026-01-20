@@ -56,4 +56,9 @@ public interface BookMapper {
      * 특정 사용자가 쓴 문장 전체 개수
      */
     Long countSentencesByWriterId(@Param("writerId") Long writerId);
+
+    /**
+     * 특정 소설의 통계 조회 (WebSocket 실시간 업데이트용)
+     */
+    java.util.Map<String, Object> findBookStats(@Param("bookId") Long bookId);
 }

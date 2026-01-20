@@ -14,7 +14,8 @@
             b.status,
             b.current_sequence,
             b.max_sequence,
-            (SELECT COUNT(DISTINCT s.writer_id) FROM sentences s WHERE s.book_id = b.book_id) AS participantCount,
+            (SELECT COUNT(DISTINCT s.writer_id) FROM sentences s WHERE s.book_id = b.book_id) AS participant_count,
+            (SELECT COUNT(*) FROM sentences s WHERE s.book_id = b.book_id) AS sentence_count,
             b.created_at
         FROM books b
         <where>
@@ -129,6 +130,7 @@
             b.current_sequence,
             b.max_sequence,
             (SELECT COUNT(DISTINCT s.writer_id) FROM sentences s WHERE s.book_id = b.book_id) AS participantCount,
+            (SELECT COUNT(*) FROM sentences s WHERE s.book_id = b.book_id) AS sentence_count,
             b.created_at
         FROM books b
         ORDER BY b.created_at DESC
@@ -158,5 +160,15 @@
         SELECT COUNT(*)
         FROM sentences
         WHERE writer_id = #{writerId}
+    </select>
+
+    <!-- 특정 소설의 통계 조회 (WebSocket 실시간 업데이트용) -->
+    <select id="findBookStats" resultType="map">
+        SELECT
+            b.book_id AS bookId,
+            (SELECT COUNT(*) FROM sentences s WHERE s.book_id = b.book_id) AS sentenceCount,
+            (SELECT COUNT(DISTINCT s.writer_id) FROM sentences s WHERE s.book_id = b.book_id) AS participantCount
+        FROM books b
+        WHERE b.book_id = #{bookId}
     </select>
 </mapper>

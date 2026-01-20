@@ -515,6 +515,25 @@
 
 ---
 
+### 소설 카드 통계 실시간 업데이트
+- **ID**: WS-BOOK-STATS-UPDATED
+- **1 DEPTH**: 실시간
+- **2 DEPTH**: 알림
+- **3 DEPTH**: 통계 업데이트
+- **설명**: 문장 추가/삭제 시 메인 페이지 소설 카드의 통계(문장 수, 참여자 수, 좋아요/싫어요)를 실시간으로 업데이트한다.
+- **Subscribe**: `/topic/books/stats`
+
+☑ **Message Parameter**
+| 파라미터명 | 타입 | 설명 |
+| --- | --- | --- |
+| bookId | LONG | 소설 ID |
+| sentenceCount | INTEGER | 문장 수 |
+| participantCount | INTEGER | 참여자 수 |
+| likeCount | INTEGER | 좋아요 수 |
+| dislikeCount | INTEGER | 싫어요 수 |
+
+---
+
 ### 새 문장 추가 알림
 - **ID**: WS-SENTENCE-CREATED
 - **1 DEPTH**: 실시간
@@ -915,6 +934,6 @@
 
 ---
 
-**Last Updated:** 2026-01-16
-**Version:** 3.0
+**Last Updated:** 2026-01-20
+**Version:** 3.1
 
